@@ -1,0 +1,13 @@
+CGI Implementation:
+
+
+Set environment variables:
+	either in CGI class or in Request.
+
+SCRIPTS:
+make a list of possible scripts for this particular page
+Create a file for each in the script folder.
+
+Figure out how to run and get their output.
+	in case of invalid oor empty file, figure out exception handling.
+	

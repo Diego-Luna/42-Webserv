@@ -49,12 +49,23 @@ std::string CGI::m_httpRequestGet() {
     return "UNKNOWN";
 }
 
+
+
+
 // Member function to get the path info
 std::string CGI::m_pathInfoGet() {
-    // Implement the m_pathInfoGet() function
-    
-    return "";
+	if (!std::getenv("PATH_INFO"))
+		throw std::invalid_argument("PATH_INFO not set");		// uncaught so far
+
+
+	return std::getenv("PATH_INFO");
 }
+
+
+
+
+
+
 
 // Member function to get the query string
 std::string CGI::m_queryStringGet() {
