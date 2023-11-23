@@ -19,10 +19,10 @@ std::string Req::cType( void )
 void Req::header_creation(void)
 {
 	this->header = "Host: " + std::string(inet_ntoa(b.getAddr().sin_addr)) + ":" + std::to_string(ntohs(b.getAddr().sin_port)) + "\r\n";
-	if (this->methode == &Req::getFonc || this->status_code == 404 || this->status_code == 400)
+	if (this->methode == &Req::getFunc || this->_statusCode == 404 || this->_statusCode == 400)
 	{
 		this->header += "Content-Type: " + cType() + "; charset=UTF-8\r\n"; // peut PEUT ËTRE causé un problme (utf-8 etc.)
-		this->header += "Content-Length: " + std::to_string(this->body.length()) + "\r\n";
+		this->header += "Content-Length: " + std::to_string(this->_body.length()) + "\r\n";
 	}
 
 	// 				User-Agent

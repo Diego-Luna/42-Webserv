@@ -236,7 +236,6 @@ size_t Server::get_listenners_size()
 	return this->_listenners.size();
 }
 
-
 std::vector<std::string>& Server::get_ports_ref()
 {
     return _ports;

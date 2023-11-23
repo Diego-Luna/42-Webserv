@@ -12,7 +12,7 @@ void Req::body_creation(void)
 		if (this->status_code == 404)	
 			this->file.open(this->file_name);
 		else if (this->status_code == 400)
-			this->file.open(this->file_name);
+			this->file.open(this->file_name);  
 		if (!this->file.is_open())
 			fatal("open");
 	}
@@ -26,14 +26,13 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location) : b(fd), _locat
 	if (HTTP_Req.length()  < 1)
 		fatal("Bad HTTP REQUEST");
 	this->http_Req = HTTP_Req;
-	status_line_creation(HTTP_Req.substr(0, HTTP_Req.find('\n')));
+	statusLineCreation(HTTP_Req.substr(0, HTTP_Req.find('\n')));
 	if (this->methode == &Req::getFonc || this->status_code == 404 || this->status_code == 400)
 	{
 		body_creation();
 	}
 	header_creation();
 }
-
 
 u_int16_t Req::get_status_code() const
 {

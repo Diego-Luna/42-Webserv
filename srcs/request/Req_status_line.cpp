@@ -3,9 +3,9 @@
 Req::meth			Req::find_methode(std::string &methode)
 {
 	if (methode == "GET")
-		return (&Req::getFonc);
+		return (&Req::getFunc);
 	if (methode == "POST")
-		return (&Req::postFonc);
+		return (&Req::postFunc);
 	if (methode == "PUT")
 		return (0);
 	if (methode == "DELETE")
@@ -35,22 +35,22 @@ const std::string Req::message_status_code(u_int16_t code)
 		return (MESSAGE_INTERNAL_SERVER_ERROR);	
 }
 
-u_int16_t Req::getFonc(std::string &element)
+u_int16_t Req::getFunc(std::string &element)
 {
 	element = _location.get_root() + element;
 	if (element == _location.get_root() + "/")
 		element += "index.html"; // peut être remplacer par le root index
-	this->file.open(element);
-	this->file_name = element;
-	if (!file.is_open())
+	this->_file.open(element);
+	this->_fileName = element;
+	if (!_file.is_open())
 	{
-		this->file_name = _location.get_root() + "/ErrorPages/404notFound.html"; // même chose ici
+		this->_fileName = _location.get_root() + "/ErrorPages/404notFound.html"; // même chose ici
 		return (NOT_FOUND);
 	}
 	return(OK);
 }
 
-u_int16_t Req::postFonc(std::string &element)
+u_int16_t Req::postFunc(std::string &element)
 {
 	(void)element;
 	
@@ -67,18 +67,18 @@ u_int16_t Req::postFonc(std::string &element)
 }
 
 
-u_int16_t Req::parsing_status_line(std::vector<std::string> status_line)
+u_int16_t Req::parsingStatusLine(std::vector<std::string> statusLine)
 {
-	if (status_line.size() != 3 || (status_line[2] != "HTTP/1.1\r" && status_line[2] != "HTTP/1.1" ) || (this->methode = find_methode(status_line[0])) == 0)
+	if (statusLine.size() != 3 || (statusLine[2] != "HTTP/1.1\r" && statusLine[2] != "HTTP/1.1" ) || (this->methode = find_methode(statusLine[0])) == 0)
 	{	
-		this->file_name = _location.get_root() + "/ErrorPages/400badRequest.html";
+		this->_fileName = _location.get_root() + "/ErrorPages/400badRequest.html";
 		return (BAD_REQUEST);
 	}
-	return ((this->*methode)(status_line[1]));
+	return ((this->*methode)(statusLine[1]));
 }
 
-void Req::status_line_creation(const std::string &line)
+void Req::statusLineCreation(const std::string &line)
 {
-	this->status_code = parsing_status_line(split(line, ' '));
-	this->status_line = "HTTP/1.1 " + std::to_string(this->status_code)	 + " " + message_status_code(this->status_code) + "\r\n";
+	this->_statusCode = parsingStatusLine(split(line, ' '));
+	this->statusLine = "HTTP/1.1 " + std::to_string(this->_statusCode)	 + " " + message_status_code(this->_statusCode) + "\r\n";
 }

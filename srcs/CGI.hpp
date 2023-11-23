@@ -5,16 +5,19 @@
 #include "request/Req.hpp"
 #include "../Includes/Parsing.hpp"
 
-class CGI {
+using std::string;
 
+class CGI {
+private:
+	// char						**_cEnv;
+	std::map<string, string>	_env;
+	CGI();			// undefined
 public:
 	CGI(Req &req_);
 	~CGI();
 
-public:
-
 	void m_setEnv();
-     
+
 	std::string	m_scriptGet();
 	std::string m_httpRequestGet();
 	std::string m_pathInfoGet();
@@ -24,11 +27,10 @@ public:
 	void	exec();
 
 	Req& 					_req;
-	std::vector<std::string>	_env;
+	// std::vector<std::string>	_env;
 	
 	// shouldnt it be a reference to the server that called it?
 	Server			m_server;
-
 
 };
 
@@ -122,6 +124,14 @@ to use global variables and the like or if that workflow wouldn't work for any r
 
 which is why I come to you.
 	any thoughts?
+
+
+Today's goal:
+
+Create the env and a cstring version of the env. (needed by execve)
+
+
+
 
 */
 
