@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/10/05 17:54:29 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2023/11/24 13:28:53 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,25 @@ int main(int argc, char const *argv[])
 
 	parsing.seeData();
 
+	// testing req parsing
+	(void)argc;
+	(void)argv;
+	Location	testLocation;
+	string testString;
+	int	testFd = open("./mockHttpRequest.txt", O_RDONLY);
+	if (testFd < 0) {
+		cout << "count not open file" << endl;
+		exit(1);
+	}
+	ssize_t	bytesRead;
+	char	buffer[4096];
+	while ((bytesRead = read(testFd, buffer, 4096)) > 0) {
+		testString.append(buffer, bytesRead);
+	}
+
+	cout << "calling Req\n";
+	Req			testReq(testString, testFd, testLocation);
+	testReq.printReq();
 
 	return 0;
 }

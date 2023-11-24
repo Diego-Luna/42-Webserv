@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:14 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/23 13:04:28 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2023/10/03 09:42:40 by diegofranci      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,10 @@ public:
     void set_new_method(std::string method);
 
 
+
     void set_new_location(Location lo);
     void initPorts(void);
+
 
 	listenner &get_listenners(int index);
 	size_t get_listenners_size();
