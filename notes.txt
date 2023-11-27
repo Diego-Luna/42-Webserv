@@ -1,13 +1,19 @@
-CGI Implementation:
+questions for the meeting:
+
+Do we know which classes have been implemented and tested?
+Should I trust what's in there?
+
+when in the process do we call it?
+	whats the larger architecture of things?
+
+how to test Request class?
+	I've been trying to use a testFile, but haven't been able
+	to call the class
 
 
-Set environment variables:
-	either in CGI class or in Request.
 
-SCRIPTS:
-make a list of possible scripts for this particular page
-Create a file for each in the script folder.
 
-Figure out how to run and get their output.
-	in case of invalid oor empty file, figure out exception handling.
-	
+variables file and fd. 
+Do they relate to the same socket? How to manage them?
+
+

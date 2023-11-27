@@ -18,7 +18,8 @@ void listenner::init(u_int32_t port)
 	if (listen(this->fd_socket, SOMAXCONN) < 0)
 		fatal("listen");
 
-	memset(this->fds, 0, MAX_CLIENT);
+	// memset(this->fds, 0, MAX_CLIENT);	// Linux compilation flagged as error to not multiply by the size of the element
+	memset(this->fds, 0, MAX_CLIENT * sizeof(this->fds[0]));
 	this->fds[0].fd = this->getfd();
 	this->fds[0].events = POLLIN;
 	this->n_fd = 1;

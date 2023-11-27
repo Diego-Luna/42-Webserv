@@ -222,7 +222,7 @@ void Server::initPorts(void)
 
   for (size_t i = 0; i < this->_ports.size(); i++)
   {
-	    listenner tmp = listenner(std::stoi(this->_ports[i]), this->v_locations.at(0));
+	    listenner tmp = listenner(std::stoi(this->_ports[i]), this->v_locations.at(0));     // std::soit not compatiable with c++98
 
       // location is weird
       
