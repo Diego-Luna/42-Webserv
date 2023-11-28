@@ -37,17 +37,21 @@ const std::string Req::message_status_code(u_int16_t code)
 
 u_int16_t Req::getFonc(std::string &element)
 {
-	element = _location.get_root() + element;
-	if (element == _location.get_root() + "/")
-		element += "index.html"; // peut être remplacer par le root index
-	this->file.open(element);
-	this->file_name = element;
-	if (!file.is_open())
-	{
-		this->file_name = _location.get_root() + "/ErrorPages/404notFound.html"; // même chose ici
-		return (NOT_FOUND);
-	}
-	return(OK);
+
+					// need to change to use fd
+	// element = _location.get_root() + element;
+	// if (element == _location.get_root() + "/")
+	// 	element += "index.html"; // peut être remplacer par le root index
+	// this->file.open(element);
+	// this->file_name = element;
+	// if (!file.is_open())
+	// {
+	// 	this->file_name = _location.get_root() + "/ErrorPages/404notFound.html"; // même chose ici
+	// 	return (NOT_FOUND);
+	// }
+	// return(OK);
+		(void)element;
+		return (OK);
 }
 
 u_int16_t Req::postFonc(std::string &element)

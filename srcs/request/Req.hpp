@@ -4,6 +4,7 @@
 #include "../../Includes/Utils.hpp"
 
 #include "../socket/Client/Client.hpp"
+#include <sstream>
 
 using std::cout;
 using std::endl;
@@ -14,15 +15,18 @@ class Req
 {
 private:
 	std::string 			status_line;
-	std::string 			header;
-	std::string 			body;
-	std::string				file_name;
-	std::string				http_Req;
-	std::ifstream 			file;
+	std::string 			_header;
+	std::string 			_body;
+
+	std::string				file_name;		// which file?? html?
+
 	u_int16_t				status_code;
-	client					b;
+	client					_client;
 	Location				&_location;
-	
+	string					http_Req;
+	std::istringstream		_ReqStream;
+	bool					_isCGI;
+	string					_method;
 	
 	// u_int16_t			methode;
 	typedef u_int16_t 		(Req::*meth)(std::string &element);
@@ -38,7 +42,10 @@ private:
 	meth					find_methode(std::string &methode);
 	const std::string		message_status_code(u_int16_t code);
 	// header
-	void 					header_creation(void);
+	void					parseHeader(void);
+	void					parseFirstLine(void);
+	bool					_hasMultipleMethods(const string &line);
+	void 					header_creation(void);	// unable to test, more details inside
 	std::string 			cType( void );
 	// body
 	void 					body_creation(void);

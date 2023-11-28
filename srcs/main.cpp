@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/24 13:28:53 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2023/11/28 10:22:46 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,9 @@ int main(int argc, char const *argv[])
 	while ((bytesRead = read(testFd, buffer, 4096)) > 0) {
 		testString.append(buffer, bytesRead);
 	}
-
+						// printf("buffer: \n|%s|\n", buffer);
+						// printf("testFd: %d\n", testFd);
+						// cout << testString << endl;
 	cout << "calling Req\n";
 	Req			testReq(testString, testFd, testLocation);
 	testReq.printReq();

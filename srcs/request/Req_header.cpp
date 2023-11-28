@@ -16,15 +16,18 @@ std::string Req::cType( void )
 	return (std::string("application/octet-stream"));
 }
 
+				// unable to test right now due to funcitons needind to be a socket and not just an fd
+				// I think this method is actually creating the response _header, as the request _header is 
+				// already given to use
 void Req::header_creation(void)
 {
-	this->header = "Host: " + std::string(inet_ntoa(b.getAddr().sin_addr)) + ":" + std::to_string(ntohs(b.getAddr().sin_port)) + "\r\n";
+	this->_header = "Host: " + std::string(inet_ntoa(_client.getAddr().sin_addr)) + ":" + std::to_string(ntohs(_client.getAddr().sin_port)) + "\r\n";
 	if (this->methode == &Req::getFonc || this->status_code == 404 || this->status_code == 400)
 	{
-		this->header += "Content-Type: " + cType() + "; charset=UTF-8\r\n"; // peut PEUT ËTRE causé un problme (utf-8 etc.)
-		this->header += "Content-Length: " + std::to_string(this->body.length()) + "\r\n";
+		this->_header += "Content-Type: " + cType() + "; charset=UTF-8\r\n"; // peut PEUT ËTRE causé un problme (utf-8 etc.)
+		this->_header += "Content-Length: " + std::to_string(this->_body.length()) + "\r\n";
 	}
 
 	// 				User-Agent
-	this->header += "\r\n";
+	this->_header += "\r\n";
 }
