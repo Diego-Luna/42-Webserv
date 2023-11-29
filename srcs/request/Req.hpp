@@ -62,20 +62,24 @@ private:
 	u_int16_t 				parsing_status_line(std::vector<std::string> status_line);
 	meth					find_methode(std::string &methode);
 	const std::string		message_status_code(u_int16_t code);
+
 public:
+	Req						(std::string HTTP_Req, const int fd, Location &location);
+	
+	
 	std::map<string, string>	envCGI;
 	char						**envCGIExecve;		// deleted by destructor
 	int							fds[2];
 
-	std::string				getHttpString(void);
-	std::string				get_header()const;
+		// getters / setters
+	string					getHttpString()const;
+	string					get_header()const;
 	u_int16_t				get_status_code() const;
-	void 					set_status_code(u_int16_t statusCode_);
-	Req						(std::string HTTP_Req, const int fd, Location &location);
-
 
 	void					printReq();
 	
+	void 					set_status_code(u_int16_t statusCode_);
+
 			// what is mime?
 	static					std::vector<std::pair<std::string, std::string> > mime;
 	static void 			innitMime(void);

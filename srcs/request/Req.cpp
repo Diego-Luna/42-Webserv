@@ -234,7 +234,7 @@ std::string	Req::get_header()const
 	return this->_header;
 }
 
-std::string	Req::getHttpString(void)
+std::string	Req::getHttpString()const
 {
 	return this->_http_Req;
 }
