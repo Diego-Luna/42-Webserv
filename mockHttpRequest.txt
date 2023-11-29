@@ -4,9 +4,9 @@ User-Agent: Your-User-Agent
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
 Accept-Language: en-US,en;q=0.5
 Connection: keep-alive
-CGI = true
-Querry-String = |query string here|
-Content-Type = |content type here|
-Content-Length = |content length here|
+CGI: true
+Querry-String: |query string here|
+Content-Type: /content type here/
+Content-Length: \content length here\
 
 this is the body text

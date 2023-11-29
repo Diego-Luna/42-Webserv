@@ -1,0 +1,131 @@
+------------------
+
+ --- server> 
+Server name:default
+Server listen:8080
+Server host:127.0.0.1:8080
+Server root:data/www/Pages
+Server index:
+Server error_page:404 /ErrorPages/404notFound.html
+Server methods:GET
+Server methods:POST
+Server methods:DELETE
+
+Location name:/error
+Location root:data/www/Pages/
+Location index:400badRequest.html
+Location methods:GET
+Location methods:POST
+Location methods:DELETE
+Location autoindex:1
+
+------------------
+calling Req
+
+PRINTING REQUEST
+
+FULL http Req:
+GET /path/to/resource HTTP/1.1
+Host: www.example.com
+User-Agent: Your-User-Agent
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Connection: keep-alive
+CGI: true
+Querry-String: |query string here|
+Content-Type: /content type here/
+Content-Length: \content length here\
+
+this is the body text
+
+header:
+GET /path/to/resource HTTP/1.1
+Host: www.example.com
+User-Agent: Your-User-Agent
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Connection: keep-alive
+CGI: true
+Querry-String: |query string here|
+Content-Type: /content type here/
+Content-Length: \content length here\
+
+end of header
+body: this is the body text
+
+file_name: /path/to/resource
+CGI: true
+
+printing envCGI
+ACCEPT: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+ACCEPT_LANGUAGE: en-US,en;q=0.5
+CONNECTION: keep-alive
+CONTENT_LENGTH: \content length here\
+CONTENT_TYPE: /content type here/
+HOST: www.example.com
+METHOD: GET
+QUERRY_STRING: |query string here|
+USER_AGENT: Your-User-Agent
+VERSION: HTTP/1.0
+
+printing char** CGIenv
+ACCEPT = text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+ACCEPT_LANGUAGE = en-US,en;q=0.5
+CONNECTION = keep-alive
+CONTENT_LENGTH = \content length here\
+CONTENT_TYPE = /content type here/
+HOST = www.example.com
+METHOD = GET
+QUERRY_STRING = |query string here|
+USER_AGENT = Your-User-Agent
+VERSION = HTTP/1.0
+END OF PRINT
+calling Req
+
+PRINTING REQUEST
+
+FULL http Req:
+GET /path/to/resource HTTP/1.1
+Host: www.example.com
+User-Agent: Your-User-Agent
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Connection: keep-alive
+CGI: true
+Querry-String: |query string here|
+Content-Type: /content type here/
+Content-Length: \content length here\
+
+this is the body text
+
+header:
+GET /path/to/resource HTTP/1.1
+Host: www.example.com
+User-Agent: Your-User-Agent
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Connection: keep-alive
+CGI: true
+Querry-String: |query string here|
+Content-Type: /content type here/
+Content-Length: \content length here\
+
+end of header
+body: this is the body text
+
+file_name: /path/to/resource
+CGI: true
+
+printing envCGI
+ACCEPT: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+ACCEPT_LANGUAGE: en-US,en;q=0.5
+CONNECTION: keep-alive
+CONTENT_LENGTH: \content length here\
+CONTENT_TYPE: /content type here/
+HOST: www.example.com
+METHOD: GET
+QUERRY_STRING: |query string here|
+USER_AGENT: Your-User-Agent
+VERSION: HTTP/1.0
+
+printing char** CGIenv

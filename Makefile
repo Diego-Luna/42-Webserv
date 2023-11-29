@@ -29,6 +29,11 @@ run: re
 	@echo "\r\033[33mSERVER LAUNCHED!\033[0m         "
 	@./$(NAME)
 
+log: re
+	@clear
+	@echo "\r\033[33mSERVER LAUNCHED!\033[0m         "
+	@./$(NAME) >> log.txt
+
 debug: $(NAME)
 		lldb ./$(NAME) ConfigFiles/ok.config
 

@@ -14,57 +14,58 @@ using std::string;
 class Req
 {
 private:
-	std::string 			status_line;
-	std::string 			_header;
-	std::string 			_body;
-	string					_method;
-
-	std::string				file_name;		// which file?? html?
-
-	u_int16_t				status_code;
 	client					_client;
 	Location				&_location;
-	string					http_Req;
+	string	 				_header;
+	string 					_body;
+	string					_method;
+	string					_http_Req;
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
-	
-	// u_int16_t			methode;
-	typedef u_int16_t 		(Req::*meth)(std::string &element);
-	meth 					methode;
 
-
-	// status line
-	void 					status_line_creation(const std::string &line);
-	// pt a supp
-	u_int16_t 				parsing_status_line(std::vector<std::string> status_line);
-	meth					find_methode(std::string &methode);
-	const std::string		message_status_code(u_int16_t code);
-	
-	
-	// header
+	// header parsing
 	void					parseHeader(void);
 	void					parseFirstLine(void);
 	bool					_validMethod(const string &line);
 	bool					_validPath(string &line);
 	bool					_validVersion(string &line);
-	void					_makeEnvCGI(void);
+
+	// CGI PREP	
 	string					_formatStringEnvCGI(string str);
-	void					_populateVarEnvCGI(string var);
+	void					_populateEnvCGI(string var);
+	void					_makeEnvCGI(void);
+	void					_makeExecveEnv(void);
+	bool					_isValidVariable(string &var);
+/*
+	below this line: things that were here before but I dont understand
+	the functionallity of yet.
 	
-	
+	Some of these seem to be better suited for Response, rather than Request
+*/
 	void 					header_creation(void);	// unable to test, more details inside
 	std::string 			cType( void );
-	// body
+	string					file_name;		// which file?? html?
+	std::string 			status_line;
+	u_int16_t				status_code;
 	void 					body_creation(void);
+	// body
 	//fonc
 	u_int16_t 				getFonc(std::string &element);
 	u_int16_t 				postFonc(std::string &element);
 	
-	
+	// u_int16_t			methode;
+	typedef u_int16_t 		(Req::*meth)(std::string &element);
+	meth 					methode;
+	// status line /
+	void 					status_line_creation(const std::string &line);
+	// pt a supp
+	u_int16_t 				parsing_status_line(std::vector<std::string> status_line);
+	meth					find_methode(std::string &methode);
+	const std::string		message_status_code(u_int16_t code);
 public:
 	std::map<string, string>	envCGI;
-	char						**envCGIExecve;
-	int						fds[2]; // CGI fds
+	char						**envCGIExecve;		// deleted by destructor
+	int							fds[2];
 
 	std::string				getHttpString(void);
 	std::string				get_header()const;

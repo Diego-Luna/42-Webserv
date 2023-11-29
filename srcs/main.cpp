@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/28 10:22:46 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2023/11/29 15:30:05 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,12 @@ int main(int argc, char const *argv[])
 		parsing.saveData("run default");
 		if (parsing.check_error())
 			return (1);
-		parsing.seeData();
+		parsing.seeData();					// commenting this line segfaults Req parsing for some reason
 		if (parsing.check_error())
 			return (1);
 	}
 
-	parsing.seeData();
+	// parsing.seeData();
 
 	// testing req parsing
 	(void)argc;

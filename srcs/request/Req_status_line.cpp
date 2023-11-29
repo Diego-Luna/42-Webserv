@@ -60,7 +60,7 @@ u_int16_t Req::postFonc(std::string &element)
 	
 	std::string tmp;
 	std::vector<std::string> info;
-	tmp = this->http_Req.substr(http_Req.rfind('\n'));
+	tmp = this->_http_Req.substr(_http_Req.rfind('\n'));
 
 	info = split(tmp, '&');
 	std::cout << "voici les infos obtenue : " << std::endl;

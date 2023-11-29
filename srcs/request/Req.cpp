@@ -1,124 +1,52 @@
 #include "Req.hpp"
 
-
-
-
-
-				// depracated due to not using fd
-				// I think this might actuallly be creating the body for the response
-void Req::body_creation(void)
-{
-	// if (!this->file.is_open())
-	// {
-	// 	if (this->status_code == 404)
-	// 		this->file.open(this->file_name);
-	// 	else if (this->status_code == 400)
-	// 		this->file.open(this->file_name);
-	// 	if (!this->file.is_open())
-	// 		fatal("open");
-	// }
-	// this->body.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-	// file.close();
-}
-
+/*************************************************************************
+		CANNONICAL FORM REQUIREMENTS
+**************************************************************************/
 Req::Req(std::string HTTP_Req, const int fd, Location &location)
-	: _client(fd), _location(location), http_Req(HTTP_Req)
+	: _client(fd), _location(location), _http_Req(HTTP_Req)
 {
 	if (HTTP_Req.length() < 1)
 		fatal("Bad HTTP REQUEST");
-	_ReqStream.str(http_Req);
+	_ReqStream.str(_http_Req);
 	if (!_ReqStream.good())
 		fatal ("failed to create request string stream");
 	parseHeader();
 
 }
+			// MISSING: copy, operator=overload, default constructor
 
+Req::~Req()
+{
+	size_t	mapSize = envCGI.size();
+	for (size_t i = 0; i < mapSize + 1; i++)
+	{
+		delete[] envCGIExecve[i];
+	}
+	delete[] envCGIExecve;
+}
+
+/**************************************************************************
+		PARSING
+**************************************************************************/
 // sets _header and variable. Checks if it's a CGI request. determines which function(GET POST DELETE).
 void	Req::parseHeader(void)
 {
 	string line;
 	while (std::getline(_ReqStream, line) && !line.empty())
 		_header += line + '\n';
+	while (std::getline(_ReqStream, line) && !line.empty())
+		_body += line + '\n';
 										// cout << "print header: \n\n" << _header << endl << endl;
-	if (_header.find("CGI = true") != string::npos)		// can be replaced for any other way to determine cgi. file .cgi for instance
-	{
+	if (_header.find("CGI: true") != string::npos)		// can be replaced for any other way to determine cgi. file .cgi for instance
 		_isCGI = true;
-		_makeEnvCGI();
-	}
 	else
 		_isCGI = false;
 	parseFirstLine();
+	if (_isCGI)
+		_makeEnvCGI();
 	
 }
-
-void	Req::_makeEnvCGI(void)
-{
-	_populateVarEnvCGI(string("Host"));
-	_populateVarEnvCGI(string("User-Agent"));
-	_populateVarEnvCGI(string("Querry-String"));
-	_populateVarEnvCGI(string("Content-Type"));
-	_populateVarEnvCGI(string("Content-Length"));
-	_populateVarEnvCGI(string("Accept"));
-	_populateVarEnvCGI(string("Accept-Language"));
-	_populateVarEnvCGI(string("Connection"));
-	envCGI["METHOD"] = _method;		// faulty
-	if (_header.find("HTTP/1.0"))
-		envCGI["VERSION"] = "HTTP/1.0";
-	else if (_header.find("HTTP/1.1"))
-		envCGI["VERSION"] = "HTTP/1.1";
-	
-	// MISSING: path name/file name? whats the variable? Could be set prior during verification.
-	
-				// cout << "printing envCGI[QUERRY STRING]:\n" << envCGI["QUERRY_STRING"] << endl;
-	size_t	mapSize = envCGI.size();
-
-	envCGIExecve = new char*[mapSize + 1];
-	envCGIExecve[mapSize + 1] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
-	size_t	i = 0;
-	std::map<string, string>::iterator it = envCGI.begin();
-	
-	while(it != envCGI.end())
-	{
-		envCGIExecve[i] = new char [it->first.size() + it->second.size() + 4];	// +4 -> 3 for " = " + Null termination
-		std::strcpy(envCGIExecve[i], (it->first + " = " + it->second).c_str());
-		i++;
-		it++;
-	}
-}
-
-void	Req::_populateVarEnvCGI(string var)
-{
-	string				tmp;
-	string::iterator	it;
-	
-	size_t pos = _header.find(var);
-	if (pos != string::npos)
-	{
-		it = _header.begin() + pos;
-		while (*it != '\n' && it != _header.end())
-		{
-			tmp += *it;
-			it++;
-		}
-		envCGI[_formatStringEnvCGI(var)] = tmp;
-	}
-	return;
-}
-
-
-string	Req::_formatStringEnvCGI(string str)
-{
-	string::iterator	it = str.begin();
-	while (it != str.end())
-	{
-		*it = std::toupper(*it);
-		if (*it == '-')
-			*it = '_';
-		it++;
-	}
-	return str;
-}
-
 
 	// checks if the first line is valid, which method is called and if the version is correct.
 void	Req::parseFirstLine(void)
@@ -150,9 +78,16 @@ bool	Req::_validVersion(string &line)
 
 bool	Req::_validPath(string &line)
 {
+	string::iterator it = line.begin() + line.find('/');
+	
+	while(*it != ' ' && it != line.end())
+	{
+		file_name += *it;
+		it++;
+	}
+	// if (file_name if valid?)
 	//	checks if the given path is valid:
 		//check with Location?
-		(void)line;
 	return true;
 }
 
@@ -187,7 +122,104 @@ bool	Req::_validMethod(const string &line)
 		return true;
 }
 
+/**************************************************************************
+		CGI PREP
+**************************************************************************/
 
+void	Req::_makeEnvCGI(void)
+{
+	_populateEnvCGI(string("Host"));
+	_populateEnvCGI(string("User-Agent"));
+	_populateEnvCGI(string("Querry-String"));
+	_populateEnvCGI(string("Content-Type"));
+	_populateEnvCGI(string("Content-Length"));
+	_populateEnvCGI(string("Accept"));
+	_populateEnvCGI(string("Accept-Language"));
+	_populateEnvCGI(string("Connection"));
+	envCGI["METHOD"] = _method;		// faulty
+	if (_header.find("HTTP/1.0"))
+		envCGI["VERSION"] = "HTTP/1.0";
+	else if (_header.find("HTTP/1.1"))
+		envCGI["VERSION"] = "HTTP/1.1";
+	// MISSING: path name/file name? whats the variable? Could be set prior during verification.
+	_makeExecveEnv();
+}
+
+void	Req::_makeExecveEnv()
+{
+	size_t	mapSize = envCGI.size();
+	envCGIExecve = new char*[mapSize + 1];
+	envCGIExecve[mapSize + 1] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
+	size_t	i = 0;
+	std::map<string, string>::iterator it = envCGI.begin();
+	
+	while(it != envCGI.end())
+	{
+		envCGIExecve[i] = new char [it->first.size() + it->second.size() + 4];	// +4 -> 3 for " = " + Null termination
+		std::strcpy(envCGIExecve[i], (it->first + " = " + it->second).c_str());
+		i++;
+		it++;
+	}
+}
+
+void	Req::_populateEnvCGI(string var)
+{
+	string				tmp;
+	string::iterator	it;
+	
+	if (!_isValidVariable(var))
+		return;
+	size_t pos = _header.find(var) + var.length() + 2; // +2 -> accounts for the ": "
+	if (pos != string::npos)
+	{
+		it = _header.begin() + pos;
+		while (*it != '\n' && it != _header.end())
+		{
+			tmp += *it;
+			it++;
+		}
+		envCGI[_formatStringEnvCGI(var)] = tmp;
+	}
+								// cout << "TMP!!!! : " << tmp << endl;
+
+	return;
+}
+
+bool	Req::_isValidVariable(string &var)
+{
+	if (_header.find(var) == string::npos)
+		return false;
+	string::iterator it = _header.begin() + _header.find(var) + var.length();	// moves it to the last char of 
+	if (it >= _header.end())
+		return false;
+	if (*it != ':')
+		return false;
+	it++;
+	if(*it != ' ')
+		return false;
+	it++;
+	if(std::isgraph(*it) == false)
+		return false;
+	return true;
+}
+
+
+string	Req::_formatStringEnvCGI(string str)
+{
+	string::iterator	it = str.begin();
+	while (it != str.end())
+	{
+		*it = std::toupper(*it);
+		if (*it == '-')
+			*it = '_';
+		it++;
+	}
+	return str;
+}
+
+/**************************************************************************
+		GETTERS / SETTERS
+**************************************************************************/
 
 u_int16_t Req::get_status_code() const
 {
@@ -205,38 +237,60 @@ std::string	Req::get_header()const
 
 std::string	Req::getHttpString(void)
 {
-	return this->http_Req;
+	return this->_http_Req;
 }
 
+
+/**************************************************************************
+		PRINTING / TESTING
+**************************************************************************/
 void	Req::printReq() {
 	
 	cout << "\nPRINTING REQUEST\n" << endl;
-	cout << "status line: ";
-	cout << status_line << endl;
-	cout << "header: ";
-	cout << _header << endl;
+	cout << "FULL http Req:\n";
+	cout << _http_Req << endl << endl;
+	cout << "header:\n";
+	cout << _header << endl << "end of header" << endl;
 	cout << "body: ";
 	cout << _body << endl;
 	cout << "file_name: ";
 	cout << file_name << endl;
-	cout << "http Req: ";
-	cout << http_Req << endl;
-	cout << "status code: ";
-	cout << status_code << endl;
-	cout << "printing char** CGIenv" << endl;
-	for(int i = 0; envCGIExecve[i] != NULL; i++)
+	if (_isCGI)
 	{
-		printf("%s\n", envCGIExecve[i]);
+		cout << "CGI: true"	<< endl;
+		cout << "\nprinting envCGI" << endl;
+		for (std::map<string, string>::iterator it = envCGI.begin(); it != envCGI.end(); it++)
+		{
+			cout << it->first << ": " << it->second << endl;
+		}
+		cout << "\nprinting char** CGIenv" << endl;
+		for(int i = 0; envCGIExecve[i] != NULL; i++)
+		{
+			printf("%s\n", envCGIExecve[i]);
+		}
 	}
 	cout << "END OF PRINT" << endl;
 }
 
-Req::~Req()
+/**************************************************************************
+		UNKNOWN OR DEPRECATED
+**************************************************************************/
+
+				// depracated due to not using fd
+				// I think this might actuallly be creating the body for the response
+void Req::body_creation(void)
 {
-	size_t	mapSize = envCGI.size();
-	for (size_t i = 0; i < mapSize + 1; i++)
-	{
-		delete[] envCGIExecve[i];
-	}
-	delete[] envCGIExecve;
+	// if (!this->file.is_open())
+	// {
+	// 	if (this->status_code == 404)
+	// 		this->file.open(this->file_name);
+	// 	else if (this->status_code == 400)
+	// 		this->file.open(this->file_name);
+	// 	if (!this->file.is_open())
+	// 		fatal("open");
+	// }
+	// this->body.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+	// file.close();
 }
+
+
