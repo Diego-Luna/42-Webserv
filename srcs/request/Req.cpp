@@ -19,7 +19,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 Req::~Req()
 {
 	size_t	mapSize = envCGI.size();
-	for (size_t i = 0; i < mapSize + 1; i++)
+	for (size_t i = 0; i < mapSize; i++)
 	{
 		delete[] envCGIExecve[i];
 	}
@@ -45,7 +45,6 @@ void	Req::parseHeader(void)
 	parseFirstLine();
 	if (_isCGI)
 		_makeEnvCGI();
-	
 }
 
 	// checks if the first line is valid, which method is called and if the version is correct.
@@ -148,8 +147,8 @@ void	Req::_makeEnvCGI(void)
 void	Req::_makeExecveEnv()
 {
 	size_t	mapSize = envCGI.size();
-	envCGIExecve = new char*[mapSize + 1];
-	envCGIExecve[mapSize + 1] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
+	envCGIExecve = new char*[mapSize];
+	// envCGIExecve[mapSize + 1] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
 	size_t	i = 0;
 	std::map<string, string>::iterator it = envCGI.begin();
 	
@@ -264,7 +263,7 @@ void	Req::printReq() {
 			cout << it->first << ": " << it->second << endl;
 		}
 		cout << "\nprinting char** CGIenv" << endl;
-		for(int i = 0; envCGIExecve[i] != NULL; i++)
+		for(size_t i = 0; i < envCGI.size(); i++)
 		{
 			printf("%s\n", envCGIExecve[i]);
 		}
