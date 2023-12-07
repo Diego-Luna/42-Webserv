@@ -14,12 +14,14 @@ using std::string;
 class Req
 {
 private:
+	Req();
 	client					_client;
 	Location				&_location;
 	string	 				_header;
 	string 					_body;
 	string					_method;
 	string					_http_Req;
+	string					_scriptName;
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
 
@@ -29,6 +31,7 @@ private:
 	bool					_validMethod(const string &line);
 	bool					_validPath(string &line);
 	bool					_validVersion(string &line);
+	bool					_checkCGI(string &firstLine);
 
 	// CGI PREP	
 	string					_formatStringEnvCGI(string str);
@@ -44,7 +47,6 @@ private:
 */
 	void 					header_creation(void);	// unable to test, more details inside
 	std::string 			cType( void );
-	string					file_name;		// which file?? html?
 	std::string 			status_line;
 	u_int16_t				status_code;
 	void 					body_creation(void);
@@ -65,8 +67,7 @@ private:
 
 public:
 	Req						(std::string HTTP_Req, const int fd, Location &location);
-	
-	
+
 	std::map<string, string>	envCGI;
 	char						**envCGIExecve;		// deleted by destructor
 	int							fds[2];
@@ -77,7 +78,8 @@ public:
 	u_int16_t				get_status_code() const;
 
 	void					printReq();
-	
+
+
 	void 					set_status_code(u_int16_t statusCode_);
 
 			// what is mime?

@@ -7,12 +7,14 @@
 
 class CGI {
 
+private:
+	CGI();
+
 public:
-	CGI(Req &req_);
+
 	~CGI();
-
-public:
-
+	CGI(Req &req_);
+	
 	void m_setEnv();
      
 	std::string	m_scriptGet();

@@ -14,7 +14,8 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 	parseHeader();
 
 }
-			// MISSING: copy, operator=overload, default constructor
+			// MISSING: copy, operator=overload
+Req::Req() = delete;
 
 Req::~Req()
 {
@@ -38,10 +39,6 @@ void	Req::parseHeader(void)
 	while (std::getline(_ReqStream, line) && !line.empty())
 		_body += line + '\n';
 										// cout << "print header: \n\n" << _header << endl << endl;
-	if (_header.find("CGI: true") != string::npos)		// can be replaced for any other way to determine cgi. file .cgi for instance
-		_isCGI = true;
-	else
-		_isCGI = false;
 	parseFirstLine();
 	if (_isCGI)
 		_makeEnvCGI();
@@ -60,6 +57,21 @@ void	Req::parseFirstLine(void)
 		fatal("Invalid HTTP Request");
 	if (!_validVersion(line))
 		fatal("Invalid HTTP Request");
+	_isCGI = _checkCGI(line);
+}
+
+bool	Req::_checkCGI(string &firstLine)
+{
+	size_t pos	= firstLine.find(".cgi");
+	if (pos == string::npos)
+		return false;
+	size_t repeatCheck = firstLine.rfind(".cgi");
+	if (pos != repeatCheck)
+	{
+		fatal("Invalid HTTP Request");
+		return false;
+	}
+	return true;
 }
 
 	// currently doesn't account for spaces. Request must contain
@@ -81,7 +93,7 @@ bool	Req::_validPath(string &line)
 	
 	while(*it != ' ' && it != line.end())
 	{
-		file_name += *it;
+		_scriptName += *it;
 		it++;
 	}
 	// if (file_name if valid?)
@@ -125,6 +137,11 @@ bool	Req::_validMethod(const string &line)
 		CGI PREP
 **************************************************************************/
 
+
+	// add  a few new vars:
+	//	script name
+	//	path info: 
+
 void	Req::_makeEnvCGI(void)
 {
 	_populateEnvCGI(string("Host"));
@@ -140,6 +157,7 @@ void	Req::_makeEnvCGI(void)
 		envCGI["VERSION"] = "HTTP/1.0";
 	else if (_header.find("HTTP/1.1"))
 		envCGI["VERSION"] = "HTTP/1.1";
+	envCGI["SCRIPT_NAME"] = _scriptName;			// might need to be broken down into script_name and path_info
 	// MISSING: path name/file name? whats the variable? Could be set prior during verification.
 	_makeExecveEnv();
 }
@@ -147,8 +165,8 @@ void	Req::_makeEnvCGI(void)
 void	Req::_makeExecveEnv()
 {
 	size_t	mapSize = envCGI.size();
-	envCGIExecve = new char*[mapSize];
-	// envCGIExecve[mapSize + 1] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
+	envCGIExecve = new char*[mapSize + 1];
+	envCGIExecve[mapSize + 1] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
 	size_t	i = 0;
 	std::map<string, string>::iterator it = envCGI.begin();
 	
@@ -252,8 +270,8 @@ void	Req::printReq() {
 	cout << _header << endl << "end of header" << endl;
 	cout << "body: ";
 	cout << _body << endl;
-	cout << "file_name: ";
-	cout << file_name << endl;
+	cout << "_scriptName: ";
+	cout << _scriptName << endl;
 	if (_isCGI)
 	{
 		cout << "CGI: true"	<< endl;

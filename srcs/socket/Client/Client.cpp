@@ -3,17 +3,19 @@
 
 
 
-client::client(listenner &_server)
+Client::Client(listenner &_server)
 {
 	this->fd_socket = accept(_server.getfd(), (struct sockaddr*)&this->addr, &this->addr_size);
 	if (fd_socket == -1)
 		fatal("accept");
 }
 
-client::client(int fd)
+Client::Client(int fd)
 {
 	this->fd_socket = fd;	
 }
 
-client::~client()
+Client::~Client()
 {}
+
+Client::Client() == delete;

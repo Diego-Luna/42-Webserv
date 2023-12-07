@@ -7,13 +7,14 @@
 
 class listenner;
 
-class client : public Csocket
+class Client : public Csocket
 {
 public:
-	client(listenner &_server);
-	client(int fd);
-	~client();
+	Client(listenner &_server);
+	Client(int fd);
+	~Client();
 private:
+	Client();
 };
 
 #endif
