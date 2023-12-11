@@ -56,7 +56,16 @@ void	Req::parseFirstLine(void)
 		fatal("Invalid HTTP Request");
 	if (!_validVersion(line))
 		fatal("Invalid HTTP Request");
+	_querryString = _getQuerryString(line);
 	_isCGI = _checkCGI(line);
+}
+
+string	Req::_getQuerryString(string &line)
+{
+	size_t querryStringStart = line.find("?");
+	if (querryStringStart == string::npos)
+		return "";
+	return (line.substr(querryStringStart, string::npos));
 }
 
 bool	Req::_checkCGI(string &firstLine)
@@ -86,35 +95,19 @@ bool	Req::_validVersion(string &line)
 	return true;
 }
 
-		// OG - working on a better version
-// bool	Req::_validPath(string &line)
-// {
-// 	string::iterator it = line.begin() + line.find('/');
-	
-// 	while(*it != ' ' && it != line.end())
-// 	{
-// 		_scriptName += *it;
-// 		it++;
-// 	}
-// 	// if (file_name if valid?)
-// 	//	checks if the given path is valid:
-// 		//check with Location?
-// 	return true;
-// }
-
 bool	Req::_validPath(string &line)
 {
-
 	string::iterator it = line.begin() + line.find('/');
 	size_t	extensionEnd = _findExtensionEnd(line);
 	if (extensionEnd == string::npos)
 		fatal("invalid HTTP Request: resource path");
 	_scriptName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
-					cout << "\n PRINTING SCRIPT NAME:\n" << _scriptName << endl;
-
-
-
-
+	it = line.begin() + extensionEnd;
+	while (*it != ' ' && it != line.end())
+	{
+		_pathInfo += *it;
+		it++;
+	}
 	return true;
 }
 
@@ -122,12 +115,12 @@ bool	Req::_validPath(string &line)
 size_t	 Req::_findExtensionEnd(string &line)
 {
 	size_t	extentionPos;
-	extentionPos = line.find(".hmtl");
+	extentionPos = line.find(".hmtl/");
+	if (extentionPos != string::npos)
+		return extentionPos + 6;
+	extentionPos = line.find(".cgi/");
 	if (extentionPos != string::npos)
 		return extentionPos + 5;
-	extentionPos = line.find(".cgi");
-	if (extentionPos != string::npos)
-		return extentionPos + 4;
 	return string::npos;
 }
 
@@ -176,7 +169,6 @@ void	Req::_makeEnvCGI(void)
 {
 	_populateEnvCGI(string("Host"));
 	_populateEnvCGI(string("User-Agent"));
-	_populateEnvCGI(string("Querry-String"));
 	_populateEnvCGI(string("Content-Type"));
 	_populateEnvCGI(string("Content-Length"));
 	_populateEnvCGI(string("Accept"));
@@ -189,6 +181,8 @@ void	Req::_makeEnvCGI(void)
 		envCGI["VERSION"] = "HTTP/1.1";
 	envCGI["SCRIPT_NAME"] = _scriptName;
 	envCGI["PATH_INFO"] = _pathInfo;
+	if (!_querryString.empty())
+		envCGI["QUERRY_STRING"] = _querryString;
 	// MISSING: path name/file name? whats the variable? Could be set prior during verification.
 	_makeExecveEnv();
 }

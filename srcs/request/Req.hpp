@@ -23,6 +23,7 @@ private:
 	string					_http_Req;
 	string					_scriptName;
 	string					_pathInfo;
+	string					_querryString;
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
 
@@ -34,6 +35,8 @@ private:
 	bool					_validVersion(string &line);
 	bool					_checkCGI(string &firstLine);
 	size_t					_findExtensionEnd(string &line);
+	string					_getQuerryString(string &line);
+	
 	// CGI PREP	
 	string					_formatStringEnvCGI(string str);
 	void					_populateEnvCGI(string var);
