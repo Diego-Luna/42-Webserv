@@ -4,10 +4,10 @@ std::string Req::cType( void )
 {
 	std::string tmp;
 
-	size_t pos = this->file_name.find('.');
+	size_t pos = this->_scriptName.find('.');
 	if (pos == std::string::npos)
 		return(std::string("application/octet-stream"));
-	tmp = this->file_name.substr(pos);
+	tmp = this->_scriptName.substr(pos);
 	for (size_t i = 0; i < mime.size(); i++)
 	{
 		if (tmp == mime[i].first)

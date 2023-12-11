@@ -10,18 +10,19 @@ using std::cout;
 using std::endl;
 using std::string;
 
-
 class Req
 {
 private:
 	Req();
-	client					_client;
+
+	Client					_client;
 	Location				&_location;
 	string	 				_header;
 	string 					_body;
 	string					_method;
 	string					_http_Req;
 	string					_scriptName;
+	string					_pathInfo;
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
 
@@ -32,7 +33,7 @@ private:
 	bool					_validPath(string &line);
 	bool					_validVersion(string &line);
 	bool					_checkCGI(string &firstLine);
-
+	size_t					_findExtensionEnd(string &line);
 	// CGI PREP	
 	string					_formatStringEnvCGI(string str);
 	void					_populateEnvCGI(string var);

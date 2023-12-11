@@ -18,4 +18,4 @@ Client::Client(int fd)
 Client::~Client()
 {}
 
-Client::Client() == delete;
+Client::Client(){};

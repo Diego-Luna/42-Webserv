@@ -25,18 +25,27 @@ public:
 
 	void	exec();
 
-	Req& 					_req;
+	Req& 					req;
 	std::vector<std::string>	_env;
 	
 	// shouldnt it be a reference to the server that called it?
 	Server			m_server;
-
-
 };
 
-
-
 /*
+				TODO LIST
+				verify each environment variable according to documentation
+				set PATH_INFO
+				
+				
+				
+				Verify PATH etc
+				
+				check execution method.
+				
+				make some test scripts
+				
+
 The common gateway interface is a standard protocol
 for enabling applications (called CGi scripts or programs)
 to interact with web servers and clients.

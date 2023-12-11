@@ -3,11 +3,9 @@
 #define PIPE_READ 1
 #define PIPE_WRITE 0
 // Constructor implementation
-CGI::CGI(Req &req_) : _req(req_),  m_server() {
+CGI::CGI(Req &req_) : req(req_), m_server() {
 }
 
-
-CGI::CGI() = delete;
 CGI::~CGI() {}
 
 		// deprecated. Might have some useful ideas for environment variables that
@@ -44,11 +42,11 @@ std::string CGI::m_scriptGet() {
 
 // Member function to get the HTTP request
 std::string CGI::m_httpRequestGet() {
-    if (_req.getHttpString() == "GET")
+    if (req.getHttpString() == "GET")
 		return "GET";
-	else if (_req.getHttpString() == "POST")
+	else if (req.getHttpString() == "POST")
 		return "POST";
-	else if (_req.getHttpString() == "DELETE")
+	else if (req.getHttpString() == "DELETE")
 		return "DELETE";
     return "UNKNOWN";
 }
@@ -70,8 +68,8 @@ std::string CGI::m_queryStringGet() {
 }
 
 std::string CGI::m_headerGet(std::string header_) {
-    if (_req.get_header() == header_ ) {
-        return _req.get_header();
+    if (req.get_header() == header_ ) {
+        return req.get_header();
     }
     return "";
 }
@@ -89,18 +87,18 @@ void CGI::exec() {
 
 	if (pid == -1) {
         std::cout<< "Error while forking process." << std::endl;
-        _req.set_status_code(500);
+        req.set_status_code(500);
 	}
 	else if (pid == 0) {
         std::cout << "Executing CGI script..." << std::endl;
 
-		dup2(_req.fds[PIPE_WRITE], 1);
-		close(_req.fds[PIPE_READ]);
+		dup2(req.fds[PIPE_WRITE], 1);
+		close(req.fds[PIPE_READ]);
 
-		execve(args[0], args, _req.envCGIExecve);
+		execve(args[0], args, req.envCGIExecve);
         std::cout << "Error while trying to execute CGI script." << std::endl;
-		close(_req.fds[PIPE_WRITE]);
-		_req.set_status_code(500);
+		close(req.fds[PIPE_WRITE]);
+		req.set_status_code(500);
 		exit(1);
 	}
 }

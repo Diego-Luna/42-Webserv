@@ -50,7 +50,7 @@ void listenner::run()
 		{
 			if (i == 0)
 			{
-				this->fds[this->n_fd].fd = client(*this).getfd();
+				this->fds[this->n_fd].fd = Client(*this).getfd();
 				this->fds[this->n_fd].events = POLLIN;
 				this->n_fd++;
 			}

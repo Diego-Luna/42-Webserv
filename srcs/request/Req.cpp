@@ -15,16 +15,15 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 
 }
 			// MISSING: copy, operator=overload
-Req::Req() = delete;
 
 Req::~Req()
 {
-	size_t	mapSize = envCGI.size();
-	for (size_t i = 0; i < mapSize; i++)
-	{
-		delete[] envCGIExecve[i];
-	}
-	delete[] envCGIExecve;
+	// size_t	mapSize = envCGI.size();
+	// for (size_t i = 0; i < mapSize; i++)
+	// {
+	// 	delete[] envCGIExecve[i];
+	// }
+	// delete[] envCGIExecve;
 }
 
 /**************************************************************************
@@ -87,20 +86,51 @@ bool	Req::_validVersion(string &line)
 	return true;
 }
 
+		// OG - working on a better version
+// bool	Req::_validPath(string &line)
+// {
+// 	string::iterator it = line.begin() + line.find('/');
+	
+// 	while(*it != ' ' && it != line.end())
+// 	{
+// 		_scriptName += *it;
+// 		it++;
+// 	}
+// 	// if (file_name if valid?)
+// 	//	checks if the given path is valid:
+// 		//check with Location?
+// 	return true;
+// }
+
 bool	Req::_validPath(string &line)
 {
+
 	string::iterator it = line.begin() + line.find('/');
-	
-	while(*it != ' ' && it != line.end())
-	{
-		_scriptName += *it;
-		it++;
-	}
-	// if (file_name if valid?)
-	//	checks if the given path is valid:
-		//check with Location?
+	size_t	extensionEnd = _findExtensionEnd(line);
+	if (extensionEnd == string::npos)
+		fatal("invalid HTTP Request: resource path");
+	_scriptName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
+					cout << "\n PRINTING SCRIPT NAME:\n" << _scriptName << endl;
+
+
+
+
 	return true;
 }
+
+	// assumes files can only be either .hmtl or .cgi
+size_t	 Req::_findExtensionEnd(string &line)
+{
+	size_t	extentionPos;
+	extentionPos = line.find(".hmtl");
+	if (extentionPos != string::npos)
+		return extentionPos + 5;
+	extentionPos = line.find(".cgi");
+	if (extentionPos != string::npos)
+		return extentionPos + 4;
+	return string::npos;
+}
+
 
 bool	Req::_validMethod(const string &line)
 {
@@ -157,7 +187,8 @@ void	Req::_makeEnvCGI(void)
 		envCGI["VERSION"] = "HTTP/1.0";
 	else if (_header.find("HTTP/1.1"))
 		envCGI["VERSION"] = "HTTP/1.1";
-	envCGI["SCRIPT_NAME"] = _scriptName;			// might need to be broken down into script_name and path_info
+	envCGI["SCRIPT_NAME"] = _scriptName;
+	envCGI["PATH_INFO"] = _pathInfo;
 	// MISSING: path name/file name? whats the variable? Could be set prior during verification.
 	_makeExecveEnv();
 }
@@ -286,6 +317,8 @@ void	Req::printReq() {
 			printf("%s\n", envCGIExecve[i]);
 		}
 	}
+	else
+		cout << "NO CGI" << endl;
 	cout << "END OF PRINT" << endl;
 }
 
