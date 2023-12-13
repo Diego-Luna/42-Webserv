@@ -18,12 +18,12 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 
 Req::~Req()
 {
-	// size_t	mapSize = envCGI.size();
-	// for (size_t i = 0; i < mapSize; i++)
-	// {
-	// 	delete[] envCGIExecve[i];
-	// }
-	// delete[] envCGIExecve;
+	size_t	mapSize = envCGI.size();
+	for (size_t i = 0; i < mapSize; i++)
+	{
+		delete[] envCGIExecve[i];
+	}
+	delete[] envCGIExecve;
 }
 
 /**************************************************************************
@@ -195,8 +195,10 @@ void	Req::_makeExecveEnv()
 	size_t	i = 0;
 	std::map<string, string>::iterator it = envCGI.begin();
 	
+
 	while(it != envCGI.end())
 	{
+						cout << "pre loop insinde _makeExecEnv" << endl;
 		envCGIExecve[i] = new char [it->first.size() + it->second.size() + 4];	// +4 -> 3 for " = " + Null termination
 		std::strcpy(envCGIExecve[i], (it->first + " = " + it->second).c_str());
 		i++;

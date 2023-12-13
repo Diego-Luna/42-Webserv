@@ -5,6 +5,7 @@
 
 #include "../socket/Client/Client.hpp"
 #include <sstream>
+#include <cstring>
 
 using std::cout;
 using std::endl;
