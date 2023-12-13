@@ -3,8 +3,8 @@
 /*************************************************************************
 		CANNONICAL FORM REQUIREMENTS
 **************************************************************************/
-Req::Req(std::string HTTP_Req, const int fd, Location &location)
-	: _client(fd), _location(location), _http_Req(HTTP_Req)
+Req::Req(std::string HTTP_Req, const int fd, Location &location, Server &server_)
+	: _client(fd), _location(location), _server(server_), _http_Req(HTTP_Req)
 {
 	if (HTTP_Req.length() < 1)
 		fatal("Bad HTTP REQUEST");
@@ -65,7 +65,14 @@ string	Req::_getQuerryString(string &line)
 	size_t querryStringStart = line.find("?");
 	if (querryStringStart == string::npos)
 		return "";
-	return (line.substr(querryStringStart, string::npos));
+	string::iterator	it = line.begin() + querryStringStart;
+	string	querryString;
+	while (*it != ' ' && it != line.end())
+	{
+		querryString += *it;
+		it++;
+	}
+	return querryString;
 }
 
 bool	Req::_checkCGI(string &firstLine)
@@ -174,16 +181,18 @@ void	Req::_makeEnvCGI(void)
 	_populateEnvCGI(string("Accept"));
 	_populateEnvCGI(string("Accept-Language"));
 	_populateEnvCGI(string("Connection"));
-	envCGI["METHOD"] = _method;		// faulty
+	envCGI["REQUEST_METHOD"] = _method;
 	if (_header.find("HTTP/1.0"))
-		envCGI["VERSION"] = "HTTP/1.0";
+		envCGI["SERVER_PROTOCOL"] = "HTTP/1.0";
 	else if (_header.find("HTTP/1.1"))
-		envCGI["VERSION"] = "HTTP/1.1";
+		envCGI["SERVER_PROTOCOL"] = "HTTP/1.1";
 	envCGI["SCRIPT_NAME"] = _scriptName;
 	envCGI["PATH_INFO"] = _pathInfo;
 	if (!_querryString.empty())
 		envCGI["QUERRY_STRING"] = _querryString;
-	// MISSING: path name/file name? whats the variable? Could be set prior during verification.
+	//     _env.push_back("SERVER_PORT=" + std::to_string(m_server.get_ports()[0]));
+
+
 	_makeExecveEnv();
 }
 
@@ -191,15 +200,14 @@ void	Req::_makeExecveEnv()
 {
 	size_t	mapSize = envCGI.size();
 	envCGIExecve = new char*[mapSize + 1];
-	envCGIExecve[mapSize + 1] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
+	envCGIExecve[mapSize] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
+
 	size_t	i = 0;
 	std::map<string, string>::iterator it = envCGI.begin();
-	
-
 	while(it != envCGI.end())
 	{
+		envCGIExecve[i] = new char[it->first.size() + it->second.size() + 4];	// +4 -> 3 for " = " + Null termination
 						cout << "pre loop insinde _makeExecEnv" << endl;
-		envCGIExecve[i] = new char [it->first.size() + it->second.size() + 4];	// +4 -> 3 for " = " + Null termination
 		std::strcpy(envCGIExecve[i], (it->first + " = " + it->second).c_str());
 		i++;
 		it++;

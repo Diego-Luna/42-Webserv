@@ -18,6 +18,7 @@ private:
 
 	Client					_client;
 	Location				&_location;
+	Server					&_server;
 	string	 				_header;
 	string 					_body;
 	string					_method;
@@ -71,7 +72,7 @@ private:
 	const std::string		message_status_code(u_int16_t code);
 
 public:
-	Req						(std::string HTTP_Req, const int fd, Location &location);
+	Req						(std::string HTTP_Req, const int fd, Location &location, Server &server_);
 
 	std::map<string, string>	envCGI;
 	char						**envCGIExecve;		// deleted by destructor
@@ -84,9 +85,7 @@ public:
 
 	void					printReq();
 
-
 	void 					set_status_code(u_int16_t statusCode_);
-
 			// what is mime?
 	static					std::vector<std::pair<std::string, std::string> > mime;
 	static void 			innitMime(void);

@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/29 15:30:05 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2023/12/13 14:14:14 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ int main(int argc, char const *argv[])
 	(void)argc;
 	(void)argv;
 	Location	testLocation;
+	Server		server;
 	string testString;
 	int	testFd = open("./mockHttpRequest.txt", O_RDONLY);
 	if (testFd < 0) {
@@ -93,7 +94,7 @@ int main(int argc, char const *argv[])
 						// printf("testFd: %d\n", testFd);
 						// cout << testString << endl;
 	cout << "calling Req\n";
-	Req			testReq(testString, testFd, testLocation);
+	Req			testReq(testString, testFd, testLocation, server);
 	testReq.printReq();
 
 	return 0;
