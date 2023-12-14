@@ -1,15 +1,25 @@
 questions for the meeting:
 
-Do we know which classes have been implemented and tested?
-Should I trust what's in there?
+Call structure
+	who calls Requests, it would be useful to have a 
+	reference to the server in the request Class, how best to do it?
 
-when in the process do we call it?
-	whats the larger architecture of things?
 
-how to test Request class?
-	I've been trying to use a testFile, but get stuck into an open() problem
+Steps to implement:
 
-variables file and fd. 
-Do they relate to the same socket? How to manage them?
+	Environment creation -> mostly done.
 
-Get a better understanding of the structure: 
+	testing execution: there seems to be things in there
+	but it's not been tested to check how well it is doing
+
+	handling redirection -> somewhat done, but I do think
+	we might have better ways to deal with it.
+
+	Grabbing output from CGI execution and reading into
+	a response class / dealing with the response.
+
+	Response class in cases without CGI, for simple GET / DELETE
+
+	Final Checks
+
+send which vars are eneded from server

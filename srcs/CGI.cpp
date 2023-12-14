@@ -34,46 +34,44 @@ CGI::~CGI() {}
 // }
 
 
-// Member function to get the script
-std::string CGI::m_scriptGet() {
-    // Implement the m_scriptGet() function
-    return "";
-}
+// // Member function to get the script
+// std::string CGI::m_scriptGet() {
+//     // Implement the m_scriptGet() function
+//     return "";
+// }
 
-// Member function to get the HTTP request
-std::string CGI::m_httpRequestGet() {
-    if (req.getHttpString() == "GET")
-		return "GET";
-	else if (req.getHttpString() == "POST")
-		return "POST";
-	else if (req.getHttpString() == "DELETE")
-		return "DELETE";
-    return "UNKNOWN";
-}
+// // Member function to get the HTTP request
+// std::string CGI::m_httpRequestGet() {
+//     if (req.getHttpString() == "GET")
+// 		return "GET";
+// 	else if (req.getHttpString() == "POST")
+// 		return "POST";
+// 	else if (req.getHttpString() == "DELETE")
+// 		return "DELETE";
+//     return "UNKNOWN";
+// }
+
+// // Member function to get the path info
+// std::string CGI::m_pathInfoGet() {
+// 	if (!std::getenv("PATH_INFO"))
+// 		throw std::invalid_argument("PATH_INFO not set");		// uncaught so far
 
 
-// Member function to get the path info
-std::string CGI::m_pathInfoGet() {
-	if (!std::getenv("PATH_INFO"))
-		throw std::invalid_argument("PATH_INFO not set");		// uncaught so far
+// 	return std::getenv("PATH_INFO");
+// }
 
+// // Member function to get the query string
+// std::string CGI::m_queryStringGet() {
+    
+//     return "";
+// }
 
-	return std::getenv("PATH_INFO");
-}
-
-// Member function to get the query string
-std::string CGI::m_queryStringGet() {
-    // Implement the m_queryStringGet() function
-    return "";
-}
-
-std::string CGI::m_headerGet(std::string header_) {
-    if (req.get_header() == header_ ) {
-        return req.get_header();
-    }
-    return "";
-}
-
+// std::string CGI::m_headerGet(std::string header_) {
+//     if (req.get_header() == header_ ) {
+//         return req.get_header();
+//     }
+//     return "";
+// }
 
 // Member function to execute CGI
 void CGI::exec() {
@@ -83,13 +81,11 @@ void CGI::exec() {
 	char *args[] = {path, NULL};
 
 	pid_t pid = fork();
-
-
 	if (pid == -1) {
         std::cout<< "Error while forking process." << std::endl;
         req.set_status_code(500);
 	}
-	else if (pid == 0) {
+	else if (pid == 0) {	// child process
         std::cout << "Executing CGI script..." << std::endl;
 
 		dup2(req.fds[PIPE_WRITE], 1);
@@ -101,6 +97,20 @@ void CGI::exec() {
 		req.set_status_code(500);
 		exit(1);
 	}
+	/*
+			what do we do in the main process? 
+			wait  and get the output to pass through to Response?
+			shoulde we output it to a file, or how would we access the output of it?
+					- create tmp file
+					- write the output
+					-waitpid
+					- process output to string
+					- pass to Response
+					- delete tmp file.
+
+			How to keep track of status code? -> there was already methods about this.
+			
+	*/
 }
     // Implement the executeCgi() function
  

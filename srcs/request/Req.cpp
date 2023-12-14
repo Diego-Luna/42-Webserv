@@ -12,6 +12,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location, Server &server_
 	if (!_ReqStream.good())
 		fatal ("failed to create request string stream");
 	parseHeader();
+	_validate();
 
 }
 			// MISSING: copy, operator=overload
@@ -27,146 +28,8 @@ Req::~Req()
 }
 
 /**************************************************************************
-		PARSING
-**************************************************************************/
-// sets _header and variable. Checks if it's a CGI request. determines which function(GET POST DELETE).
-void	Req::parseHeader(void)
-{
-	string line;
-	while (std::getline(_ReqStream, line) && !line.empty())
-		_header += line + '\n';
-	while (std::getline(_ReqStream, line) && !line.empty())
-		_body += line + '\n';
-										// cout << "print header: \n\n" << _header << endl << endl;
-	parseFirstLine();
-	if (_isCGI)
-		_makeEnvCGI();
-}
-
-	// checks if the first line is valid, which method is called and if the version is correct.
-void	Req::parseFirstLine(void)
-{
-	std::stringstream	stream(_header);
-	string				line;
-
-	std::getline(stream, line);
-	if (!_validMethod(line))
-		fatal("Invalid HTTP Request");
-	if (!_validPath(line))
-		fatal("Invalid HTTP Request");
-	if (!_validVersion(line))
-		fatal("Invalid HTTP Request");
-	_querryString = _getQuerryString(line);
-	_isCGI = _checkCGI(line);
-}
-
-string	Req::_getQuerryString(string &line)
-{
-	size_t querryStringStart = line.find("?");
-	if (querryStringStart == string::npos)
-		return "";
-	string::iterator	it = line.begin() + querryStringStart;
-	string	querryString;
-	while (*it != ' ' && it != line.end())
-	{
-		querryString += *it;
-		it++;
-	}
-	return querryString;
-}
-
-bool	Req::_checkCGI(string &firstLine)
-{
-	size_t pos	= firstLine.find(".cgi");
-	if (pos == string::npos)
-		return false;
-	size_t repeatCheck = firstLine.rfind(".cgi");
-	if (pos != repeatCheck)
-	{
-		fatal("Invalid HTTP Request");
-		return false;
-	}
-	return true;
-}
-
-	// currently doesn't account for spaces. Request must contain
-	// exactly "HTTP/{VERSION}" or br considered invalid.
-bool	Req::_validVersion(string &line)
-{
-	size_t	ver1 = line.find("HTTP/1.1");
-	size_t	ver2 = line.find("HTTP/1.0");
-	if ((ver1 == string::npos && ver2 == string::npos) ||
-		(ver1 != string::npos && ver2 != string::npos))
-		return false;
-	
-	return true;
-}
-
-bool	Req::_validPath(string &line)
-{
-	string::iterator it = line.begin() + line.find('/');
-	size_t	extensionEnd = _findExtensionEnd(line);
-	if (extensionEnd == string::npos)
-		fatal("invalid HTTP Request: resource path");
-	_scriptName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
-	it = line.begin() + extensionEnd;
-	while (*it != ' ' && it != line.end())
-	{
-		_pathInfo += *it;
-		it++;
-	}
-	return true;
-}
-
-	// assumes files can only be either .hmtl or .cgi
-size_t	 Req::_findExtensionEnd(string &line)
-{
-	size_t	extentionPos;
-	extentionPos = line.find(".hmtl/");
-	if (extentionPos != string::npos)
-		return extentionPos + 6;
-	extentionPos = line.find(".cgi/");
-	if (extentionPos != string::npos)
-		return extentionPos + 5;
-	return string::npos;
-}
-
-
-bool	Req::_validMethod(const string &line)
-{
-	int	count = 0;
-
-	if (line.find("GET") != string::npos)
-	{
-		_method = "GET";
-		if (line.find("GET") != line.rfind("GET"))
-			return false;
-		count++;
-	}
-	if (line.find("POST") != string::npos)
-	{
-		_method = "POST";
-		if (line.find("POST") != line.rfind("POST"))
-			return false;
-		count++;
-	}
-	if (line.find("DELETE") != string::npos)
-	{
-		_method = "DELETE";
-		if (line.find("DELETE") != line.rfind("DELETE"))
-			return false;
-		count++;
-	}
-	if (count != 1)
-		return false;
-	else
-		return true;
-}
-
-/**************************************************************************
 		CGI PREP
 **************************************************************************/
-
 
 	// add  a few new vars:
 	//	script name
@@ -191,8 +54,6 @@ void	Req::_makeEnvCGI(void)
 	if (!_querryString.empty())
 		envCGI["QUERRY_STRING"] = _querryString;
 	//     _env.push_back("SERVER_PORT=" + std::to_string(m_server.get_ports()[0]));
-
-
 	_makeExecveEnv();
 }
 
@@ -268,6 +129,25 @@ string	Req::_formatStringEnvCGI(string str)
 	}
 	return str;
 }
+
+/*************************************************************************
+		VALIDATION
+**************************************************************************/
+
+void	Req::_validate()
+{
+	// check version
+	if ()
+
+	// check content type / mime
+
+	// check filename
+
+	// check port
+
+
+}
+
 
 /**************************************************************************
 		GETTERS / SETTERS

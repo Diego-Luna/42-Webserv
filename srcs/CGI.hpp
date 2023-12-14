@@ -11,39 +11,28 @@ private:
 	CGI();
 
 public:
-
 	~CGI();
 	CGI(Req &req_);
 	
-	void m_setEnv();
-     
-	std::string	m_scriptGet();
-	std::string m_httpRequestGet();
-	std::string m_pathInfoGet();
-	std::string m_queryStringGet();
-	std::string m_headerGet(std::string header_);
+
+		// likely won't need thses anymore as env has been converted to map in Req
+	// void m_setEnv();
+	// std::string	m_scriptGet();
+	// std::string m_httpRequestGet();
+	// std::string m_pathInfoGet();
+	// std::string m_queryStringGet();
+	// std::string m_headerGet(std::string header_);
+	// std::vector<std::string>	_env;
 
 	void	exec();
 
 	Req& 					req;
-	std::vector<std::string>	_env;
 	
-	// shouldnt it be a reference to the server that called it?
+	// should probably be set in Req, and accessed through it.
 	Server			m_server;
 };
 
 /*
-				TODO LIST
-				verify each environment variable according to documentation
-				set PATH_INFO
-				
-				
-				
-				Verify PATH etc
-				
-				check execution method.
-				
-				make some test scripts
 				
 
 The common gateway interface is a standard protocol

@@ -45,6 +45,10 @@ private:
 	void					_makeEnvCGI(void);
 	void					_makeExecveEnv(void);
 	bool					_isValidVariable(string &var);
+
+	// VALIDATION
+	void					_validate();
+
 /*
 	below this line: things that were here before but I dont understand
 	the functionallity of yet.
@@ -87,6 +91,13 @@ public:
 
 	void 					set_status_code(u_int16_t statusCode_);
 			// what is mime?
+	/*
+		Multipurpose Internet Mail Extension
+		which files extensions are accepted by the webserver.
+				- why is this in the Request?
+				- should probably be in the Server, which should be accessible by the Request
+				CONTENT_TYPE?
+	*/
 	static					std::vector<std::pair<std::string, std::string> > mime;
 	static void 			innitMime(void);
 	~Req					();
