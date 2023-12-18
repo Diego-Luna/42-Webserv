@@ -31,10 +31,6 @@ Req::~Req()
 		CGI PREP
 **************************************************************************/
 
-	// add  a few new vars:
-	//	script name
-	//	path info: 
-
 void	Req::_makeEnvCGI(void)
 {
 	_populateEnvCGI(string("Host"));
@@ -50,38 +46,13 @@ void	Req::_makeEnvCGI(void)
 	else if (_header.find("HTTP/1.1"))
 		env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_buildEncoded();
-	env["SCRIPT_NAME"] = _decodeURI(_scriptName);
+	env["SCRIPT_NAME"] = _decodeURI(_fileName);
 	env["PATH_INFO"] = _decodeURI(_pathInfo);
 	if (!_querryString.empty())
 		env["QUERRY_STRING"] = _decodeURI(_querryString);
 	//     _env.push_back("SERVER_PORT=" + std::to_string(m_server.get_ports()[0]));
 	_makeExecveEnv();
 }
-
-
-/*
-			find %
-			get the hex = %+2
-			compare with encoded set;
-			replace hex with decoded string
-    %20 - Space
-    %21 - !
-    %24 - $
-    %26 - &
-    %27 - '
-    %28 - (
-    %29 - )
-    %2A - *
-    %2B - +
-    %2C - ,
-    %2F - /
-    %3A - :
-    %3B - ;
-    %3D - =
-    %3F - ?
-    %40 - @
-
-*/
 
 void	Req::_buildEncoded()
 {
@@ -211,39 +182,41 @@ string	Req::_formatStringEnvCGI(string str)
 		VALIDATION
 **************************************************************************/
 
+	//	 
 void	Req::_validate()
 {
+		// checks for invalid characters
+	if (!_allValidCharsURI(_fileName))
+		fatal("invalid Character in Script Name");
+	if (!_allValidCharsURI(_pathInfo))
+		fatal("invalid Character in Path Info");
+	if (!_allValidCharsURI(_querryString))
+		fatal("invalid Character in Querry String");
+		// checks if files are accessible
+					cout << "filename: " << _fileName << endl;
+					cout << "pathInfo: " << _pathInfo << endl;
+	if (access(_fileName.c_str(), F_OK) != 0)
+		fatal("file not found");
+	if (access(_pathInfo.c_str(), F_OK) != 0)
+		fatal("Path Info file not found");
+		
 	// check version -> must have access to Server class.
-	// if ()
-	// if (!_isValidHeaderURI(_header))		// currently bugged.
-	// 	fatal("Invalid character in HTTP request");
-	
-	
-	
-	// if (env["REQUEST_METHOD"] != "GET" || env["REQUEST_METHOD"] != "POST"
-	// 	|| env["REQUEST_METHOD"] != "DELETE")
-	// {
-	// 	fatal("Invalid Request Method");
-	// }
-	
-	
-	// check content type / mime
 
-	// check filename
+	// check content type / mime
 
 	// check port
 
 
 }
 
-bool	Req::_isValidHeaderURI(string header)
+bool	Req::_allValidCharsURI(string str)
 {
-	string::iterator	it = header.begin();
-	while (it != header.end())
+	string::iterator	it = str.begin();
+	while (it != str.end())
 	{
 		if (!_isValidCharURI(static_cast<uint8_t>(*it)))
 		{
-			cout << "invalid char: " << *it << endl;
+							// cout << "invalid char: " << *it << endl;
 			return false;
 		}
 		
@@ -255,7 +228,7 @@ bool	Req::_isValidHeaderURI(string header)
 bool	Req::_isValidCharURI(uint8_t ch)
 {
 	if ((ch >= '#' && ch <= ';') || (ch >= '?' && ch <= '[') || (ch >= 'a' && ch <= 'z') ||
-       ch == '!' || ch == '=' || ch == ']' || ch == '_' || ch == '~' || ch == ' ' || ch == '\n')
+       ch == '!' || ch == '=' || ch == ']' || ch == '_' || ch == '~')
         return (true);
 	return false;
 }
@@ -296,8 +269,8 @@ void	Req::printReq() {
 	cout << _header << endl << "end of header" << endl;
 	cout << "body: ";
 	cout << _body << endl;
-	cout << "_scriptName: ";
-	cout << _scriptName << endl;
+	cout << "_fileName: ";
+	cout << _fileName << endl;
 	if (_isCGI)
 	{
 		cout << "CGI: true"	<< endl;

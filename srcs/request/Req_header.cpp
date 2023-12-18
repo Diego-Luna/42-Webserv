@@ -85,7 +85,7 @@ bool	Req::_validPath(string &line)
 	size_t	extensionEnd = _findExtensionEnd(line);
 	if (extensionEnd == string::npos)
 		fatal("invalid HTTP Request: resource path");
-	_scriptName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
+	_fileName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
 	it = line.begin() + extensionEnd;
 	while (*it != ' ' && it != line.end() && *it != '?')
 	{
@@ -148,10 +148,10 @@ std::string Req::cType( void )
 {
 	std::string tmp;
 
-	size_t pos = this->_scriptName.find('.');
+	size_t pos = this->_fileName.find('.');
 	if (pos == std::string::npos)
 		return(std::string("application/octet-stream"));
-	tmp = this->_scriptName.substr(pos);
+	tmp = this->_fileName.substr(pos);
 	for (size_t i = 0; i < mime.size(); i++)
 	{
 		if (tmp == mime[i].first)

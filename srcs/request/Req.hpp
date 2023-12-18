@@ -23,7 +23,7 @@ private:
 	string 					_body;
 	string					_method;
 	string					_http_Req;
-	string					_scriptName;
+	string					_fileName;
 	string					_pathInfo;
 	string					_querryString;
 	std::istringstream		_ReqStream;
@@ -51,7 +51,7 @@ private:
 	
 	// VALIDATION
 	void					_validate();
-	bool					_isValidHeaderURI(string header);
+	bool					_allValidCharsURI(string str);
 	bool					_isValidCharURI(uint8_t ch);
 
 /*

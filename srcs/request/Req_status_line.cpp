@@ -75,7 +75,7 @@ u_int16_t Req::parsing_status_line(std::vector<std::string> status_line)
 {
 	if (status_line.size() != 3 || (status_line[2] != "HTTP/1.1\r" && status_line[2] != "HTTP/1.1" ) || (this->methode = find_methode(status_line[0])) == 0)
 	{	
-		this->_scriptName = _location.get_root() + "/ErrorPages/400badRequest.html";
+		this->_fileName = _location.get_root() + "/ErrorPages/400badRequest.html";
 		return (BAD_REQUEST);
 	}
 	return ((this->*methode)(status_line[1]));
