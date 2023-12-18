@@ -18,7 +18,7 @@ private:
 
 	Client					_client;
 	Location				&_location;
-	Server					&_server;
+	// Server					&_server;
 	string	 				_header;
 	string 					_body;
 	string					_method;
@@ -39,15 +39,20 @@ private:
 	size_t					_findExtensionEnd(string &line);
 	string					_getQuerryString(string &line);
 	
-	// CGI PREP	
+	// CGI AND ENV PREP	
 	string					_formatStringEnvCGI(string str);
 	void					_populateEnvCGI(string var);
 	void					_makeEnvCGI(void);
 	void					_makeExecveEnv(void);
 	bool					_isValidVariable(string &var);
-
+	string					_decodeURI(string	str);
+	void					_buildEncoded();
+	std::map<string, string>	_encoded;
+	
 	// VALIDATION
 	void					_validate();
+	bool					_isValidHeaderURI(string header);
+	bool					_isValidCharURI(uint8_t ch);
 
 /*
 	below this line: things that were here before but I dont understand
@@ -76,13 +81,13 @@ private:
 	const std::string		message_status_code(u_int16_t code);
 
 public:
-	Req						(std::string HTTP_Req, const int fd, Location &location, Server &server_);
+	Req						(std::string HTTP_Req, const int fd, Location &location);
 
-	std::map<string, string>	envCGI;
-	char						**envCGIExecve;		// deleted by destructor
+	std::map<string, string>	env;
+	char						**envCGIExecve;		// must be deleted by destructor
 	int							fds[2];
 
-		// getters / setters
+		// GETTER / SETTER
 	string					getHttpString()const;
 	string					get_header()const;
 	u_int16_t				get_status_code() const;

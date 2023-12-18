@@ -3,8 +3,8 @@
 /*************************************************************************
 		CANNONICAL FORM REQUIREMENTS
 **************************************************************************/
-Req::Req(std::string HTTP_Req, const int fd, Location &location, Server &server_)
-	: _client(fd), _location(location), _server(server_), _http_Req(HTTP_Req)
+Req::Req(std::string HTTP_Req, const int fd, Location &location)
+	: _client(fd), _location(location), _http_Req(HTTP_Req)
 {
 	if (HTTP_Req.length() < 1)
 		fatal("Bad HTTP REQUEST");
@@ -12,14 +12,14 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location, Server &server_
 	if (!_ReqStream.good())
 		fatal ("failed to create request string stream");
 	parseHeader();
-	_validate();
+
 
 }
 			// MISSING: copy, operator=overload
 
 Req::~Req()
 {
-	size_t	mapSize = envCGI.size();
+	size_t	mapSize = env.size();
 	for (size_t i = 0; i < mapSize; i++)
 	{
 		delete[] envCGIExecve[i];
@@ -44,31 +44,108 @@ void	Req::_makeEnvCGI(void)
 	_populateEnvCGI(string("Accept"));
 	_populateEnvCGI(string("Accept-Language"));
 	_populateEnvCGI(string("Connection"));
-	envCGI["REQUEST_METHOD"] = _method;
+	env["REQUEST_METHOD"] = _method;
 	if (_header.find("HTTP/1.0"))
-		envCGI["SERVER_PROTOCOL"] = "HTTP/1.0";
+		env["SERVER_PROTOCOL"] = "HTTP/1.0";
 	else if (_header.find("HTTP/1.1"))
-		envCGI["SERVER_PROTOCOL"] = "HTTP/1.1";
-	envCGI["SCRIPT_NAME"] = _scriptName;
-	envCGI["PATH_INFO"] = _pathInfo;
+		env["SERVER_PROTOCOL"] = "HTTP/1.1";
+	_buildEncoded();
+	env["SCRIPT_NAME"] = _decodeURI(_scriptName);
+	env["PATH_INFO"] = _decodeURI(_pathInfo);
 	if (!_querryString.empty())
-		envCGI["QUERRY_STRING"] = _querryString;
+		env["QUERRY_STRING"] = _decodeURI(_querryString);
 	//     _env.push_back("SERVER_PORT=" + std::to_string(m_server.get_ports()[0]));
 	_makeExecveEnv();
 }
 
+
+/*
+			find %
+			get the hex = %+2
+			compare with encoded set;
+			replace hex with decoded string
+    %20 - Space
+    %21 - !
+    %24 - $
+    %26 - &
+    %27 - '
+    %28 - (
+    %29 - )
+    %2A - *
+    %2B - +
+    %2C - ,
+    %2F - /
+    %3A - :
+    %3B - ;
+    %3D - =
+    %3F - ?
+    %40 - @
+
+*/
+
+void	Req::_buildEncoded()
+{
+	_encoded["%20"] = " ";
+	_encoded["%21"] = "!";
+	_encoded["%24"] = "$";
+	_encoded["%26"] = "&";
+	_encoded["%27"] = "'";
+	_encoded["%28"] = "(";
+	_encoded["%29"] = ")";
+	_encoded["%2A"] = "*";
+	_encoded["%2B"] = "+";
+	_encoded["%2C"] = ",";
+	_encoded["%2F"] = "/";
+	_encoded["%3A"] = ":";
+	_encoded["%3B"] = ";";
+	_encoded["%3D"] = "=";
+	_encoded["%3F"] = "?";
+	_encoded["%40"] = "@";
+	return;
+}
+
+string	Req::_decodeURI(string str)
+{
+	std::map<string, string>::iterator	it = _encoded.begin();
+
+	while (it != _encoded.end())
+	{
+		size_t pos = str.find(it->first);
+		while (pos != string::npos)
+		{
+			str.replace(pos, it->first.length(), it->second);
+			pos = str.find(it->first);
+		}
+		it++;
+	}
+	string::iterator	it2 = str.begin();
+	while (it2 != str.end())
+	{
+		if (*it2 == '%')
+		{
+			string hex = str.substr(it2 - str.begin(), 3);
+			if (hex != "%25")
+				fatal("Invalid header character");
+			str.replace(it2 - str.begin(), 3, "%");
+		}
+		it2++;
+	}
+	return str;
+}
+
+
 void	Req::_makeExecveEnv()
 {
-	size_t	mapSize = envCGI.size();
+	size_t	mapSize = env.size();
 	envCGIExecve = new char*[mapSize + 1];
 	envCGIExecve[mapSize] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
 
 	size_t	i = 0;
-	std::map<string, string>::iterator it = envCGI.begin();
-	while(it != envCGI.end())
+	std::map<string, string>::iterator it = env.begin();
+	while(it != env.end())
 	{
 		envCGIExecve[i] = new char[it->first.size() + it->second.size() + 4];	// +4 -> 3 for " = " + Null termination
-						cout << "pre loop insinde _makeExecEnv" << endl;
+						// cout << "pre loop insinde _makeExecEnv" << endl;
 		std::strcpy(envCGIExecve[i], (it->first + " = " + it->second).c_str());
 		i++;
 		it++;
@@ -91,7 +168,7 @@ void	Req::_populateEnvCGI(string var)
 			tmp += *it;
 			it++;
 		}
-		envCGI[_formatStringEnvCGI(var)] = tmp;
+		env[_formatStringEnvCGI(var)] = tmp;
 	}
 								// cout << "TMP!!!! : " << tmp << endl;
 
@@ -136,9 +213,20 @@ string	Req::_formatStringEnvCGI(string str)
 
 void	Req::_validate()
 {
-	// check version
-	if ()
-
+	// check version -> must have access to Server class.
+	// if ()
+	// if (!_isValidHeaderURI(_header))		// currently bugged.
+	// 	fatal("Invalid character in HTTP request");
+	
+	
+	
+	// if (env["REQUEST_METHOD"] != "GET" || env["REQUEST_METHOD"] != "POST"
+	// 	|| env["REQUEST_METHOD"] != "DELETE")
+	// {
+	// 	fatal("Invalid Request Method");
+	// }
+	
+	
 	// check content type / mime
 
 	// check filename
@@ -148,6 +236,29 @@ void	Req::_validate()
 
 }
 
+bool	Req::_isValidHeaderURI(string header)
+{
+	string::iterator	it = header.begin();
+	while (it != header.end())
+	{
+		if (!_isValidCharURI(static_cast<uint8_t>(*it)))
+		{
+			cout << "invalid char: " << *it << endl;
+			return false;
+		}
+		
+		it++;
+	}
+	return true;
+}
+
+bool	Req::_isValidCharURI(uint8_t ch)
+{
+	if ((ch >= '#' && ch <= ';') || (ch >= '?' && ch <= '[') || (ch >= 'a' && ch <= 'z') ||
+       ch == '!' || ch == '=' || ch == ']' || ch == '_' || ch == '~' || ch == ' ' || ch == '\n')
+        return (true);
+	return false;
+}
 
 /**************************************************************************
 		GETTERS / SETTERS
@@ -190,13 +301,13 @@ void	Req::printReq() {
 	if (_isCGI)
 	{
 		cout << "CGI: true"	<< endl;
-		cout << "\nprinting envCGI" << endl;
-		for (std::map<string, string>::iterator it = envCGI.begin(); it != envCGI.end(); it++)
+		cout << "\nprinting env" << endl;
+		for (std::map<string, string>::iterator it = env.begin(); it != env.end(); it++)
 		{
 			cout << it->first << ": " << it->second << endl;
 		}
 		cout << "\nprinting char** CGIenv" << endl;
-		for(size_t i = 0; i < envCGI.size(); i++)
+		for(size_t i = 0; i < env.size(); i++)
 		{
 			printf("%s\n", envCGIExecve[i]);
 		}

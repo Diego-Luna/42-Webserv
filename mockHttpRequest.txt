@@ -1,4 +1,4 @@
-GET /path/to/resource.com/script.cgi/path/info/here?querry=string&goes=here HTTP/1.1
+GET /path/to/%25resource.com/%21script.cgi/path/info/here?querry=string&goes=here HTTP/1.1
 Host: www.example.com
 User-Agent: Your-User-Agent
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8

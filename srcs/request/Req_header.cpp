@@ -15,6 +15,7 @@ void	Req::parseHeader(void)
 										// cout << "print header: \n\n" << _header << endl << endl;
 	parseFirstLine();
 	_makeEnvCGI();
+	_validate();
 	if (_isCGI)
 		_makeExecveEnv();
 }
@@ -86,7 +87,7 @@ bool	Req::_validPath(string &line)
 		fatal("invalid HTTP Request: resource path");
 	_scriptName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
 	it = line.begin() + extensionEnd;
-	while (*it != ' ' && it != line.end())
+	while (*it != ' ' && it != line.end() && *it != '?')
 	{
 		_pathInfo += *it;
 		it++;
