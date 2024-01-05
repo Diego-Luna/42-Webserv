@@ -11,6 +11,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 	_ReqStream.str(_http_Req);
 	if (!_ReqStream.good())
 		fatal ("failed to create request string stream");
+						cout << "pre parseHeader" << endl;
 	parseHeader();
 
 
