@@ -13,10 +13,13 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 		fatal ("failed to create request string stream");
 						cout << "pre parseHeader" << endl;
 	parseHeader();
-
-
+	if (_isCGI)
+	{
+		CGI	Cgi(*this);
+	}
 }
-			// MISSING: copy, operator=overload
+
+			// MISSING:operator=overload
 
 Req::~Req()
 {
@@ -105,7 +108,6 @@ string	Req::_decodeURI(string str)
 	return str;
 }
 
-
 void	Req::_makeExecveEnv()
 {
 	size_t	mapSize = env.size();
@@ -142,7 +144,6 @@ void	Req::_populateEnvCGI(string var)
 		}
 		env[_formatStringEnvCGI(var)] = tmp;
 	}
-								// cout << "TMP!!!! : " << tmp << endl;
 
 	return;
 }
@@ -193,9 +194,9 @@ void	Req::_validate()
 		fatal("invalid Character in Path Info");
 	if (!_allValidCharsURI(_querryString))
 		fatal("invalid Character in Querry String");
+						// cout << "filename: " << _fileName << endl;
+						// cout << "pathInfo: " << _pathInfo << endl;
 		// checks if files are accessible
-					cout << "filename: " << _fileName << endl;
-					cout << "pathInfo: " << _pathInfo << endl;
 	if (access(_fileName.c_str(), F_OK) != 0)
 		fatal("file not found");
 	if (access(_pathInfo.c_str(), F_OK) != 0)

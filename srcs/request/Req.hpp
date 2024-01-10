@@ -1,6 +1,7 @@
 #ifndef REQ_HPP
 #define REQ_HPP
 
+#include "../../CGI.hpp"
 #include "../../Includes/Utils.hpp"
 
 #include "../socket/Client/Client.hpp"
@@ -15,6 +16,7 @@ class Req
 {
 private:
 	Req();
+	Req(const Req &original);
 
 	Client					_client;
 	Location				&_location;
@@ -81,7 +83,7 @@ private:
 	const std::string		message_status_code(u_int16_t code);
 
 public:
-	Req						(std::string HTTP_Req, const int fd, Location &location);
+	Req(std::string HTTP_Req, const int fd, Location &location);
 
 	std::map<string, string>	env;
 	char						**envCGIExecve;		// must be deleted by destructor
