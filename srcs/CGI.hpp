@@ -14,7 +14,7 @@ public:
 public:
 
 	void m_setEnv();
-     
+
 	std::string	m_scriptGet();
 	std::string m_httpRequestGet();
 	std::string m_pathInfoGet();

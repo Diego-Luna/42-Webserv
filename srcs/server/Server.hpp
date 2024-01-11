@@ -6,7 +6,7 @@
 /*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:14 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/10/03 09:42:40 by diegofranci      ###   ########.fr       */
+/*   Updated: 2023/12/14 11:24:38 by diegofranci      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,17 @@
 #include <vector>
 #include <map>
 #include "Location.hpp"
+
+
+// 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <cstring>
+#include <iostream>
+// 
+
 
 #include "../socket/Listenner/Listenner.hpp"
 class Parsing;
@@ -97,6 +108,8 @@ public:
 
 	listenner &get_listenners(int index);
 	size_t get_listenners_size();
+
+    void startListeningOnPorts();
 };
 
 std::ostream& operator<<(std::ostream& out, Server& src);

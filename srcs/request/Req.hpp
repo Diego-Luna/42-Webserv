@@ -40,8 +40,7 @@ private:
 	//fonc
 	u_int16_t 				getFonc(std::string &element);
 	u_int16_t 				postFonc(std::string &element);
-	
-	
+
 public:
 	int						fds[2]; // CGI fds
 

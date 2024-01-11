@@ -2,7 +2,7 @@
 #include "Listenner.hpp"
 #include "../../request/Req.hpp"
 
-void listenner::init(u_int32_t port)
+void listenner::init(u_int32_t port, std::string host)
 {
 	u_int32_t e = 1;
 	this->fd_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -12,7 +12,8 @@ void listenner::init(u_int32_t port)
 		fatal("setsockopt");
 	this->addr.sin_family = AF_INET;
 	this->addr.sin_port = htons(port);
-	this->addr.sin_addr.s_addr = INADDR_ANY;
+	// this->addr.sin_addr.s_addr = INADDR_ANY;
+	this->addr.sin_addr.s_addr = inet_addr(host.c_str());
 	if (bind(this->fd_socket, (struct sockaddr *)&this->addr, this->addr_size) < 0)
 		fatal("bind");
 	if (listen(this->fd_socket, SOMAXCONN) < 0)
@@ -24,14 +25,15 @@ void listenner::init(u_int32_t port)
 	this->n_fd = 1;
 }
 
-listenner::listenner(u_int32_t port, Location &location) : _location(location)
+listenner::listenner(u_int32_t port, Location &location, std::string host) : _location(location)
 {
-	init(port);
+	std::cout << "host: " << host << " port :" <<  port << std::endl;
+	init(port, host);
 }
 
 listenner::listenner()
 {
-	init(DEFAULT_PORT);
+	init(DEFAULT_PORT, "127.0.0.1");
 }
 
 listenner::~listenner()
@@ -77,11 +79,11 @@ void listenner::run()
 						{
 							continue; // même chose quen haut, pt erreur 500, a voir
 						}
-						
-						std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
+
+						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}
 					catch (std::exception &e) {
-						std::cout << RED << "[DEBUG] : \n" << RESET <<  e.what() << std::endl;
+						std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
 					}
 				}
 			}
