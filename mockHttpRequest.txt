@@ -1,4 +1,4 @@
-GET bin/cgi/testfile.cgi/bin/cgi/pathInfoTest.py?querry=string&goes=here HTTP/1.1
+GET cgi/bin/testfile.cgi/cgi/bin/pathInfoTest.py?querry=string&goes=here HTTP/1.1
 Host: www.example.com
 User-Agent: Your-User-Agent
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8

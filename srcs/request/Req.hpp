@@ -1,16 +1,17 @@
-#ifndef REQ_HPP
-#define REQ_HPP
+#pragma once
 
-#include "../../CGI.hpp"
 #include "../../Includes/Utils.hpp"
 
 #include "../socket/Client/Client.hpp"
+#include "../CGI.hpp"
 #include <sstream>
 #include <cstring>
 
 using std::cout;
 using std::endl;
 using std::string;
+
+class CGI;
 
 class Req
 {
@@ -31,7 +32,7 @@ private:
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
 
-	// header parsing
+	// HEADER PARSING
 	void					parseHeader(void);
 	void					parseFirstLine(void);
 	bool					_validMethod(const string &line);
@@ -67,7 +68,7 @@ private:
 	std::string 			status_line;
 	u_int16_t				status_code;
 	void 					body_creation(void);
-	// body
+
 	//fonc
 	u_int16_t 				getFonc(std::string &element);
 	u_int16_t 				postFonc(std::string &element);
@@ -93,10 +94,9 @@ public:
 	string					getHttpString()const;
 	string					get_header()const;
 	u_int16_t				get_status_code() const;
+	void 					set_status_code(u_int16_t statusCode_);
 
 	void					printReq();
-
-	void 					set_status_code(u_int16_t statusCode_);
 			// what is mime?
 	/*
 		Multipurpose Internet Mail Extension
@@ -109,6 +109,3 @@ public:
 	static void 			innitMime(void);
 	~Req					();
 };
-
-
-#endif
