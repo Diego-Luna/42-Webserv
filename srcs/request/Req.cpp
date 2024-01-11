@@ -55,7 +55,6 @@ void	Req::_makeEnvCGI(void)
 	if (!_querryString.empty())
 		env["QUERRY_STRING"] = _decodeURI(_querryString);
 	//     _env.push_back("SERVER_PORT=" + std::to_string(m_server.get_ports()[0]));
-	_makeExecveEnv();
 }
 
 void	Req::_buildEncoded()
@@ -184,7 +183,7 @@ string	Req::_formatStringEnvCGI(string str)
 		VALIDATION
 **************************************************************************/
 
-	//	 
+
 void	Req::_validate()
 {
 		// checks for invalid characters
@@ -312,5 +311,8 @@ void Req::body_creation(void)
 	// this->body.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	// file.close();
 }
+
+
+
 
 

@@ -39,7 +39,7 @@ private:
 	bool					_validPath(string &line);
 	bool					_validVersion(string &line);
 	bool					_checkCGI(string &firstLine);
-	size_t					_findExtensionEnd(string &line);
+	size_t					_findExtensionEnd(string &line, const string &extension);
 	string					_getQuerryString(string &line);
 	
 	// CGI AND ENV PREP	

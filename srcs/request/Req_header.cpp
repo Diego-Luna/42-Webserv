@@ -74,14 +74,14 @@ bool	Req::_validVersion(string &line)
 	if ((ver1 == string::npos && ver2 == string::npos) ||
 		(ver1 != string::npos && ver2 != string::npos))
 		return false;
-	
+
 	return true;
 }
 
 bool	Req::_validPath(string &line)
 {
 	string::iterator it = line.begin() + line.find(' ') + 1;
-	size_t	extensionEnd = _findExtensionEnd(line);
+	size_t	extensionEnd = _findExtensionEnd(line, ".html");
 	if (extensionEnd == string::npos)
 		fatal("invalid HTTP Request: resource path");
 	_fileName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
@@ -98,18 +98,15 @@ bool	Req::_validPath(string &line)
 	return true;
 }
 
-	// assumes files can only be either .hmtl or .cgi
-size_t	 Req::_findExtensionEnd(string &line)
+size_t	 Req::_findExtensionEnd(string &line, const string &extension)
 {
-	size_t	extentionPos;
-	extentionPos = line.find(".hmtl");
-	if (extentionPos != string::npos)
-		return extentionPos + 5;
-	extentionPos = line.find(".cgi");
-	if (extentionPos != string::npos)
-		return extentionPos + 4;
+	size_t	extensionPos;
+	extensionPos = line.find(extension);
+	if (extensionPos != string::npos)
+		return extensionPos + extension.length();
 	return string::npos;
 }
+
 
 bool	Req::_validMethod(const string &line)
 {

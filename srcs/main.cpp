@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/01/11 11:03:46 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:14:55 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int main(int argc, char const *argv[])
 						// cout << testString << endl;
 	cout << "calling Req\n";
 	Req			testReq(testString, testFd, testLocation);
-	// testReq.printReq();
+	testReq.printReq();
 
 	return 0;
 }
