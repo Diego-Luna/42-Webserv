@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/10/05 17:54:29 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2023/12/14 14:11:20 by diegofranci      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,33 +37,16 @@ int main(int argc, char const *argv[])
 	Parsing parsing;
 
 	if (argc == 2) {
+		std::cerr << "-> file" << std::endl;
 		parsing.checkData(argv[1]);
 		if (parsing.check_error())
 			return (1);
 		parsing.saveData(argv[1]);
 		if (parsing.check_error())
 			return (1);
-
-		// Req::innitMime();
-
-		// parsing.get_ref_server(0).initPorts();
-
-		// Location tmp = parsing.get_ref_server(0).get_location(0);
-
-		// while (1)
-		// {
-		// 	for (size_t i = 0 ;i < parsing.get_ref_server(0).get_listenners_size(); i++)
-		// 	{
-		// 		parsing.get_ref_server(0).get_listenners(i).run();
-		// 	}
-		// }
-
-		// while (1) // infinite running for servers
-		// 	for (size_t i = 0; i < parsing.get_server_size(); i++) // get each server
-		// 		for (size_t j = 0; parsing.get_server(i).get_ports_size(); j++) // get each server's port
-		// 				parsing.get_server(i).get_listenners(j).run();
 	}
 	else {
+		std::cerr << "-> run default" << std::endl;
 		parsing.saveData("run default");
 		if (parsing.check_error())
 			return (1);
@@ -73,6 +56,28 @@ int main(int argc, char const *argv[])
 	}
 
 	parsing.seeData();
+
+	Req::innitMime();
+
+	for (size_t i = 0; i < parsing.get_server_size(); i++)
+	{
+		parsing.get_ref_server(i).initPorts();
+	}
+
+
+	while (true) {
+    for (size_t i = 0; i < parsing.get_server_size(); i++) {
+        Server &server = parsing.get_ref_server(i);
+        for (size_t j = 0; j < server.get_ports_size(); j++) {
+            server.get_listenners(j).run(); // Aquí se inicia el servidor en cada puerto
+        }
+    }
+	}
+
+	// for (size_t i = 0; i < parsing.get_server_size(); i++) {
+  //   Server &server = parsing.get_ref_server(i);
+  //   server.startListeningOnPorts(); // Inicia el servidor en sus puertos
+	// }
 
 
 	return 0;

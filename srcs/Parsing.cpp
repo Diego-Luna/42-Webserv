@@ -6,7 +6,7 @@
 /*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/07 15:12:09 by diegofranci      ###   ########.fr       */
+/*   Updated: 2023/11/21 14:09:20 by diegofranci      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -364,21 +364,31 @@ void Parsing::saveData(std::string dataUrl)
 
         this->f_organise_listen();
         this->f_clean_listen();
-        
+
         for (size_t serve_i = 0; serve_i < get_server_size(); serve_i++)
         {
           if ((this->v_servers[serve_i].get_name().length() == 0 &&
-            this->v_servers[serve_i].get_ports_size() == 0 &&
-            this->v_servers[serve_i].get_host().length() == 0 &&
-            this->v_servers[serve_i].get_root().length() == 0 &&
-            this->v_servers[serve_i].get_index().length() == 0 &&
-            this->v_servers[serve_i].get_error_page_size() == 0 &&
-            this->v_servers[serve_i].get_methods_size() == 0 ) ||
-            (this->v_servers[serve_i].get_host().length() == 0 ||
-             this->v_servers[serve_i].get_ports_size() == 0 ))
+                this->v_servers[serve_i].get_ports_size() == 0  &&
+                this->v_servers[serve_i].get_host().length() == 0 &&
+                this->v_servers[serve_i].get_root().length() == 0 &&
+                this->v_servers[serve_i].get_index().length() == 0 &&
+                this->v_servers[serve_i].get_error_page_size() == 0 &&
+                this->v_servers[serve_i].get_methods_size() == 0))
           {
             throw formatWrong();
           }
+          // if ((this->v_servers[serve_i].get_name().length() == 0 &&
+          //   this->v_servers[serve_i].get_ports_size() == 0 &&
+          //   this->v_servers[serve_i].get_host().length() == 0 &&
+          //   this->v_servers[serve_i].get_root().length() == 0 &&
+          //   this->v_servers[serve_i].get_index().length() == 0 &&
+          //   this->v_servers[serve_i].get_error_page_size() == 0 &&
+          //   this->v_servers[serve_i].get_methods_size() == 0 ) ||
+          //   (this->v_servers[serve_i].get_host().length() == 0 ||
+          //    this->v_servers[serve_i].get_ports_size() == 0 ))
+          // {
+          //   throw formatWrong();
+          // }
         }
 
         this->f_save_default();
@@ -668,45 +678,71 @@ void    Parsing::f_check_data_with_path(){
   }
 }
 
+int  print_run_default(bool *default_mode, int mode)
+{
+
+  if (*default_mode == false && mode == 0)
+  {
+    *default_mode =  true;
+    std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "------------------- default server -------------------" << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
+  }
+  if (mode == 1)
+  {
+    std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "------------------- default server -------------------" << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
+  }
+
+  return 1;
+}
+
 void    Parsing::f_save_default(){
+
+
   for(size_t i = 0; i <  this->get_server_size(); i++){
+
+    bool default_mode = false;
     Server server_save = get_server(i);
-    if (server_save.get_name().length() == 0)
+
+    if (server_save.get_name().length() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> name: Server" << std::to_string(i) << std::endl;
       server_save.set_name("Server" + std::to_string(i));
     }
-    if (server_save.get_ports_size() == 0)
+    if (server_save.get_ports_size() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> ports: 8" << std::to_string(i) << std::endl;
       server_save.set_new_port("8" + std::to_string(i));
     }
-    if (server_save.get_host().length() == 0)
+    if (server_save.get_host().length() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> host: 8" << std::to_string(i) << std::endl;
       server_save.set_host("8" + std::to_string(i));
     }
-    if (server_save.get_root().length() == 0)
+    if (server_save.get_root().length() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> root: " << "data/www/Pages" << std::endl;
       server_save.set_root("data/www/Pages");
     }
-    if (server_save.get_index().length() == 0)
+    if (server_save.get_index().length() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> index: " << "index.html" << std::endl;
       server_save.set_index("index.html");
     }
-    if (server_save.get_error_page_size() == 0)
+    if (server_save.get_error_page_size() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> error_page: 404 /ErrorPages/404notFound.html" << std::endl;
       server_save.set_new_error_page("404", "/ErrorPages/404notFound.html");
     }
-    if (server_save.get_methods_size() == 0)
+    if (server_save.get_methods_size() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> methods: GET" << std::endl;
       server_save.set_new_method("GET");
     }
     this->v_servers[i] = server_save;
+    print_run_default(&default_mode, 1);
   }
 }
 
