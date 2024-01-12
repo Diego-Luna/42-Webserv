@@ -33,7 +33,7 @@ void	Req::parseFirstLine(void)
 	if (!_validVersion(line))
 		fatal("Invalid HTTP Request");
 	_querryString = _getQuerryString(line);
-	_isCGI = _checkCGI(line);
+	_isCGI = _checkCGI(_pathInfo);
 }
 
 string	Req::_getQuerryString(string &line)
@@ -51,12 +51,16 @@ string	Req::_getQuerryString(string &line)
 	return querryString;
 }
 
-bool	Req::_checkCGI(string &firstLine)
+		// for now only check files for .cgi extensions. Could Change to check for .py or
+		// which other script extensions we would need.
+bool	Req::_checkCGI(string &pathInfo)
 {
-	size_t pos	= firstLine.find(".cgi");
+	if (pathInfo == "")
+		return false;
+	size_t pos	= pathInfo.find(".cgi");
 	if (pos == string::npos)
 		return false;
-	size_t repeatCheck = firstLine.rfind(".cgi");
+	size_t repeatCheck = pathInfo.rfind(".cgi");
 	if (pos != repeatCheck)
 	{
 		fatal("Invalid HTTP Request");
@@ -106,7 +110,6 @@ size_t	 Req::_findExtensionEnd(string &line, const string &extension)
 		return extensionPos + extension.length();
 	return string::npos;
 }
-
 
 bool	Req::_validMethod(const string &line)
 {

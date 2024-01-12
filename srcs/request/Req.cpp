@@ -50,7 +50,7 @@ void	Req::_makeEnvCGI(void)
 	else if (_header.find("HTTP/1.1"))
 		env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_buildEncoded();
-	env["SCRIPT_NAME"] = _decodeURI(_fileName);
+	env["FILE_NAME"] = _decodeURI(_fileName);
 	env["PATH_INFO"] = _decodeURI(_pathInfo);
 	if (!_querryString.empty())
 		env["QUERRY_STRING"] = _decodeURI(_querryString);

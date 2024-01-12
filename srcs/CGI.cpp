@@ -6,6 +6,7 @@
 CGI::CGI(Req &req_) : req(req_), m_server() {
 	string responseBody = exec();
 
+					cout << "printing response body\n" << responseBody << endl;
 				// MAKE REPONSE CLASS AND SEND BODY, EVEN IF EMPTY
 }
 
@@ -13,12 +14,12 @@ CGI::~CGI() {}
 
 string CGI::exec() {
 		// which script to run
-	char *path =  strdup(req.env["SCRIPT_NAME"].c_str());			// must be freed
+	char *path =  strdup(req.env["PATH_INFO"].c_str());			// must be freed
 	char *args[] = {path, NULL};
 
-	FILE	*scriptOutput;
-	scriptOutput = tmpfile();
-	int		fdOut = fileno(scriptOutput);
+	FILE	*scriptOut = tmpfile();
+
+	long	fdOut = fileno(scriptOut);
 
 	pid_t pid = fork();
 	if (pid == -1) {
@@ -29,13 +30,16 @@ string CGI::exec() {
 			path = NULL;
 		}
 		req.set_status_code(500);
-	}
-	else if (pid == 0) {	// child process
+	} else if (pid == 0) {	// child process
 							std::cout << "Executing CGI script..." << std::endl;
+							// cout << "path: " << path << endl;
+							// cout << "arg[0]: " << args[0] << endl;
+
 		dup2(fdOut, STDOUT_FILENO);
+
 		execve(args[0], args, req.envCGIExecve);
 		std::cerr << "Error while trying to execute CGI script." << std::endl;
-		fclose(scriptOutput);
+				// fclose(scriptOutput);
 		req.set_status_code(500);
 		if (path)
 		{
@@ -63,14 +67,17 @@ string CGI::exec() {
 			string	responseBody;
 			char buffer[BUFFER_SIZE];
 			int	finishedReading = 1;
+			
+			lseek(fdOut, 0, SEEK_SET);
+			
 			while (finishedReading > 0)
 			{
 				finishedReading = read(fdOut, buffer, BUFFER_SIZE);
 				if (finishedReading > 0)
 					responseBody.append(buffer, finishedReading);
 			}
-									cout << "printing response body\n" << responseBody << endl;
-			
+
+			close(fdOut);
 			return responseBody;
 		}
 		else if (WIFSIGNALED(status))
@@ -107,6 +114,8 @@ string CGI::exec() {
 //     _env.push_back("HTTP_USER_AGENT=" + m_headerGet("USER-AGENT"));
 //     _env.push_back("HTTP_COOKIE=" + m_headerGet("COOKIE"));
 // }
+
+
 
 
 // // Member function to get the script

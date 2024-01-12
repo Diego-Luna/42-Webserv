@@ -38,7 +38,7 @@ private:
 	bool					_validMethod(const string &line);
 	bool					_validPath(string &line);
 	bool					_validVersion(string &line);
-	bool					_checkCGI(string &firstLine);
+	bool					_checkCGI(string &pathInfo);
 	size_t					_findExtensionEnd(string &line, const string &extension);
 	string					_getQuerryString(string &line);
 	
