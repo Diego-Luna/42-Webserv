@@ -13,22 +13,16 @@ CGI::CGI(Req &req_) : req(req_), m_server() {
 CGI::~CGI() {}
 
 string CGI::exec() {
-		// which script to run
-	char *path =  strdup(req.env["PATH_INFO"].c_str());			// must be freed
+	char *path =  strdup(req.env["PATH_INFO"].c_str());
 	char *args[] = {path, NULL};
 
 	FILE	*scriptOut = tmpfile();
-
 	long	fdOut = fileno(scriptOut);
 
 	pid_t pid = fork();
 	if (pid == -1) {
-        std::cout<< "Error while forking process." << std::endl;
-		if (path)
-		{
-			free(path);
-			path = NULL;
-		}
+		std::cout<< "Error while forking process." << std::endl;
+		delete [] path;
 		req.set_status_code(500);
 	} else if (pid == 0) {	// child process
 							std::cout << "Executing CGI script..." << std::endl;
@@ -36,24 +30,14 @@ string CGI::exec() {
 							// cout << "arg[0]: " << args[0] << endl;
 
 		dup2(fdOut, STDOUT_FILENO);
-
 		execve(args[0], args, req.envCGIExecve);
 		std::cerr << "Error while trying to execute CGI script." << std::endl;
 				// fclose(scriptOutput);
 		req.set_status_code(500);
-		if (path)
-		{
-			free(path);
-			path = NULL;
-		}
+		delete [] path;
 	}
 	int	status;
 	pid_t	terminatedProcess = 0;
-	if (path)
-	{
-		free(path);
-		path = NULL;
-	}
 	do {
 		terminatedProcess = waitpid(terminatedProcess, &status, 0);
 		if (terminatedProcess == -1) // error in the process
@@ -61,9 +45,9 @@ string CGI::exec() {
 			req.set_status_code(500);
 			return "";
 		}
-		if (WIFEXITED(status))
+		if (WIFEXITED(status))	// process exited normally
 		{
-			req.set_status_code(200);	// process exited normally
+			req.set_status_code(200);
 			string	responseBody;
 			char buffer[BUFFER_SIZE];
 			int	finishedReading = 1;
@@ -76,20 +60,19 @@ string CGI::exec() {
 				if (finishedReading > 0)
 					responseBody.append(buffer, finishedReading);
 			}
-
 			close(fdOut);
 			return responseBody;
 		}
-		else if (WIFSIGNALED(status))
+		else if (WIFSIGNALED(status))	// process interrupted by signal
 		{
-			req.set_status_code(500);	// process interrupted by signal
+			req.set_status_code(500);
 			return "";
 		}
 	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	return "";
 }
 
-
+  
 		// deprecated. Might have some useful ideas for environment variables that
 		// haven't been added just yet
 // void CGI::m_setEnv() {
