@@ -54,7 +54,7 @@ std::string CGI::m_httpRequestGet() {
 
 // Member function to get the path info
 std::string CGI::m_pathInfoGet() {
-
+    // Implement the m_pathInfoGet() function
     return "";
 }
 
