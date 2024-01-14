@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   uitlParsing.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 11:48:42 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/10/04 17:22:32 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2023/11/27 10:12:35 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,9 @@ std::string f_cut_space(std::string path, size_t start)
   size_t cut_end = 0;
   size_t cut_start = 0;
 
-  if (start < 0 || start > path.length())
-    throw std::exception();
+    // commented the two following lines due to multiple compilation errors in Linux
+  // if (index < 0 || index > this->v_servers.size())   // linux comp. flagged start < 0 as error.
+  //   throw std::exception();
     // throw formatWrong();
   for (size_t i = start; i < path.length(); i++)
   {

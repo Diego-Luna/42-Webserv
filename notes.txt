@@ -1,0 +1,25 @@
+questions for the meeting:
+
+Call structure
+	who calls Requests, it would be useful to have a 
+	reference to the server in the request Class, how best to do it?
+
+
+Steps to implement:
+
+	Environment creation -> mostly done.
+
+	testing execution: there seems to be things in there
+	but it's not been tested to check how well it is doing
+
+	handling redirection -> somewhat done, but I do think
+	we might have better ways to deal with it.
+
+	Grabbing output from CGI execution and reading into
+	a response class / dealing with the response.
+
+	Response class in cases without CGI, for simple GET / DELETE
+
+	Final Checks
+
+send which vars are eneded from server

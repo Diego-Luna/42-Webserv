@@ -1,6 +1,6 @@
 NAME = webserv
 CC = c++
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -g
+CFLAGS = -Wall -Wextra -Werror -g
 RM = rm -rf
 
 SRC_DIR = srcs/
@@ -28,6 +28,11 @@ run: re
 	@clear
 	@echo "\r\033[33mSERVER LAUNCHED!\033[0m         "
 	@./$(NAME)
+
+log: re
+	@clear
+	@echo "\r\033[33mSERVER LAUNCHED!\033[0m         "
+	@./$(NAME) >> log.txt
 
 debug: $(NAME)
 		lldb ./$(NAME) ConfigFiles/ok.config

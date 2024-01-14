@@ -1,0 +1,10 @@
+GET data/www/Pages/index.html/cgi/bin/pathInfoTest.cgi?querry=string&goes=here HTTP/1.1
+Host: www.example.com
+User-Agent: Your-User-Agent
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Connection: keep-alive
+Content-Type: /content type here/
+Content-Length: \content length here\
+
+this is the body text

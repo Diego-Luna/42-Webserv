@@ -6,13 +6,12 @@
 /*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/12/14 14:11:20 by diegofranci      ###   ########.fr       */
+/*   Updated: 2024/01/14 06:33:57 by diegofranci      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Includes/Parsing.hpp"
 #include "request/Req.hpp"
-
 
 std::vector<std::pair<std::string, std::string> > Req::mime;
 
@@ -50,12 +49,12 @@ int main(int argc, char const *argv[])
 		parsing.saveData("run default");
 		if (parsing.check_error())
 			return (1);
-		parsing.seeData();
+		parsing.seeData();					// commenting this line segfaults Req parsing for some reason
 		if (parsing.check_error())
 			return (1);
 	}
 
-	parsing.seeData();
+	// parsing.seeData();
 
 	Req::innitMime();
 
@@ -79,6 +78,28 @@ int main(int argc, char const *argv[])
   //   server.startListeningOnPorts(); // Inicia el servidor en sus puertos
 	// }
 
+	// testing req parsing
+	(void)argc;
+	(void)argv;
+	Location	testLocation;
+	Server		server;
+	string testString;
+	int	testFd = open("./mockHttpRequest.txt", O_RDONLY);
+	if (testFd < 0) {
+		cout << "count not open file" << endl;
+		exit(1);
+	}
+	ssize_t	bytesRead;
+	char	buffer[4096];
+	while ((bytesRead = read(testFd, buffer, 4096)) > 0) {
+		testString.append(buffer, bytesRead);
+	}
+						// printf("buffer: \n|%s|\n", buffer);
+						// printf("testFd: %d\n", testFd);
+						// cout << testString << endl;
+	cout << "calling Req\n";
+	Req			testReq(testString, testFd, testLocation);
+	// testReq.printReq();
 
 	return 0;
 }

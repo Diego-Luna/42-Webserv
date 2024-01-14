@@ -6,7 +6,7 @@
 /*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/21 14:09:20 by diegofranci      ###   ########.fr       */
+/*   Updated: 2024/01/14 06:34:43 by diegofranci      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -863,7 +863,8 @@ bool Parsing::check_error()
 
 Server &Parsing::get_ref_server(size_t index)
 {
-	if (index < 0 || index > this->v_servers.size())
+	// if (index < 0 || index > this->v_servers.size())  // linux comp. flagged index < 0 as error
+  if (index > this->v_servers.size())
 	{
 		throw std::invalid_argument("Index out of range");
 	}
