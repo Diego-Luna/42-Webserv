@@ -2,11 +2,13 @@
 // #include "../Includes/Parsing.hpp"
 
 #include "request/Req.hpp"
+#include "response/Response.hpp"
 #include "sys/wait.h"
 #include <cstdio>
 
 using std::string;
 class Req;
+class Response;
 
 #define BUFFER_SIZE 1024
 

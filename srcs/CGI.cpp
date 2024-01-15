@@ -7,14 +7,14 @@ CGI::CGI(Req &req_) : req(req_), m_server() {
 	string responseBody = exec();
 
 					cout << "printing response body\n" << responseBody << endl;
+	Response response(req, responseBody);
 				// MAKE REPONSE CLASS AND SEND BODY, EVEN IF EMPTY
 }
 
 CGI::~CGI() {}
 
 string CGI::exec() {
-	char *path =  strdup(req.env["PATH_INFO"].c_str());
-	char *args[] = {path, NULL};
+	char *args[] = {const_cast<char*>(req.env["PATH_INFO"].c_str()), NULL};
 
 	FILE	*scriptOut = tmpfile();
 	long	fdOut = fileno(scriptOut);
@@ -22,8 +22,7 @@ string CGI::exec() {
 	pid_t pid = fork();
 	if (pid == -1) {
 		std::cout<< "Error while forking process." << std::endl;
-		delete [] path;
-		req.set_status_code(500);
+		req.set_status_code(INTERNAL_SERVER_ERROR);
 	} else if (pid == 0) {	// child process
 							std::cout << "Executing CGI script..." << std::endl;
 							// cout << "path: " << path << endl;
@@ -33,8 +32,7 @@ string CGI::exec() {
 		execve(args[0], args, req.envCGIExecve);
 		std::cerr << "Error while trying to execute CGI script." << std::endl;
 				// fclose(scriptOutput);
-		req.set_status_code(500);
-		delete [] path;
+		req.set_status_code(INTERNAL_SERVER_ERROR);
 	}
 	int	status;
 	pid_t	terminatedProcess = 0;
@@ -42,12 +40,12 @@ string CGI::exec() {
 		terminatedProcess = waitpid(terminatedProcess, &status, 0);
 		if (terminatedProcess == -1) // error in the process
 		{
-			req.set_status_code(500);
+			req.set_status_code(INTERNAL_SERVER_ERROR);
 			return "";
 		}
 		if (WIFEXITED(status))	// process exited normally
 		{
-			req.set_status_code(200);
+			req.set_status_code(OK);
 			string	responseBody;
 			char buffer[BUFFER_SIZE];
 			int	finishedReading = 1;
@@ -65,7 +63,7 @@ string CGI::exec() {
 		}
 		else if (WIFSIGNALED(status))	// process interrupted by signal
 		{
-			req.set_status_code(500);
+			req.set_status_code(INTERNAL_SERVER_ERROR);
 			return "";
 		}
 	} while (!WIFEXITED(status) && !WIFSIGNALED(status));

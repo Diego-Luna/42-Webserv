@@ -31,6 +31,7 @@ private:
 	string					_querryString;
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
+	u_int16_t				status_code;
 
 	// HEADER PARSING
 	void					parseHeader(void);
@@ -66,7 +67,6 @@ private:
 	void 					header_creation(void);	// unable to test, more details inside
 	std::string 			cType( void );
 	std::string 			status_line;
-	u_int16_t				status_code;
 	void 					body_creation(void);
 
 	//fonc

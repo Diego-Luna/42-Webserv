@@ -11,6 +11,7 @@ private:
 	Response(Response &original);
 	Req	&_Req;
 	string	_responseBody;
+	string	makeHeader();
 	
 public:
 	Response(Req &Req_);
@@ -36,4 +37,11 @@ Response::Response(Req &Req_, string responseBody_)
 
 Response::~Response()
 {
+}
+
+string	Response::makeHeader()
+{
+	
+
+
 }
