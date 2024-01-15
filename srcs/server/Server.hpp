@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:14 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/12/14 11:24:38 by diegofranci      ###   ########.fr       */
+/*   Updated: 2024/01/15 13:29:42 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <iostream>
+#include <string>
 // 
 
 

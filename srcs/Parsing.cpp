@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/21 14:09:20 by diegofranci      ###   ########.fr       */
+/*   Updated: 2024/01/15 13:39:42 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -863,7 +863,7 @@ bool Parsing::check_error()
 
 Server &Parsing::get_ref_server(size_t index)
 {
-	if (index < 0 || index > this->v_servers.size())
+	if (index > this->v_servers.size())
 	{
 		throw std::invalid_argument("Index out of range");
 	}

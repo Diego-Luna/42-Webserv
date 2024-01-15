@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:11 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/10/03 19:40:47 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:38:48 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <poll.h>
+#include <algorithm>
 
 class Parsing
 {

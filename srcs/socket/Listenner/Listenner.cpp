@@ -19,7 +19,12 @@ void listenner::init(u_int32_t port, std::string host)
 	if (listen(this->fd_socket, SOMAXCONN) < 0)
 		fatal("listen");
 
-	memset(this->fds, 0, MAX_CLIENT);
+
+ // flagged as error for not multiplying maxclient by its element size
+	// memset(this->fds, 0, MAX_CLIENT);
+memset(this->fds, 0, MAX_CLIENT * sizeof(this->fds[0]));
+
+
 	this->fds[0].fd = this->getfd();
 	this->fds[0].events = POLLIN;
 	this->n_fd = 1;
@@ -74,7 +79,12 @@ void listenner::run()
 					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  buffer << std::endl;
 
 					try {
+							cout << "calling Request Class" << endl;
+
 						Req x(std::string(buffer), fds[i].fd, this->_location);
+						
+										// might be buggy because the current version doesnt use getHttpString
+						
 						if (send(fds[i].fd, x.getHttpString().c_str(), x.getHttpString().length(), 0) < 0)
 						{
 							continue; // même chose quen haut, pt erreur 500, a voir
