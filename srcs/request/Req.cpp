@@ -13,9 +13,12 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 		fatal ("failed to create request string stream");
 						cout << "calling parseHeader" << endl;
 	parseHeader();
+				cout << "made it past parseHeader in Req Contructor\n" << endl;
 	if (_isCGI)
 	{
 		CGI	Cgi(*this);
+	} else {
+		Response response(*this);
 	}
 }
 			// MISSING:operator=overload
@@ -38,17 +41,14 @@ void	Req::_makeEnvCGI(void)
 {
 	_populateEnvCGI(string("Host"));
 	_populateEnvCGI(string("User-Agent"));
-	_populateEnvCGI(string("Content-Type"));
+	// _populateEnvCGI(string("Content-Type"));	// only dealing with .html files for now
 	_populateEnvCGI(string("Content-Length"));
 	_populateEnvCGI(string("Accept"));
 	_populateEnvCGI(string("Accept-Language"));
 	_populateEnvCGI(string("Connection"));
-	env["REQUEST_METHOD"] = _method;
-	if (_header.find("HTTP/1.0"))
-		env["SERVER_PROTOCOL"] = "HTTP/1.0";
-	else if (_header.find("HTTP/1.1"))
-		env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	_buildEncoded();
+	env["CONTENT_TYPE"] = "text/html";
+	env["SERVER_PROTOCOL"] = _protocol;
 	env["FILE_NAME"] = _decodeURI(_fileName);
 	env["PATH_INFO"] = _decodeURI(_pathInfo);
 	if (!_querryString.empty())
@@ -187,25 +187,32 @@ void	Req::_validate()
 {
 		// checks for invalid characters
 	if (!_allValidCharsURI(_fileName))
-		fatal("invalid Character in Script Name");
+		fatal("invalid Character in File Name");
 	if (!_allValidCharsURI(_pathInfo))
 		fatal("invalid Character in Path Info");
 	if (!_allValidCharsURI(_querryString))
 		fatal("invalid Character in Querry String");
-						// cout << "filename: " << _fileName << endl;
+						cout << "filename: " << _fileName << endl;
 						// cout << "pathInfo: " << _pathInfo << endl;
 		// checks if files are accessible
 	if (access(_fileName.c_str(), F_OK) != 0)
+	{
+		cout << "filename not accessible" << endl;
+
 		fatal("file not found");
-	if (access(_pathInfo.c_str(), F_OK) != 0)
-		fatal("Path Info file not found");
+	}
+	if (_pathInfo != "")
+	{
+		if (access(_pathInfo.c_str(), F_OK) != 0)
+			fatal("Path Info file not found");
+	}
 		
 	// check version -> must have access to Server class.
 
 	// check content type / mime
 
 	// check port
-
+	set_status_code(OK);
 
 }
 

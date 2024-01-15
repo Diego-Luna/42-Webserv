@@ -2,6 +2,8 @@
 
 #include "../request/Req.hpp"
 #include <string>
+#include <fstream>
+#include <iostream>
 
 using std::string;
 

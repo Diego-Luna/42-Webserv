@@ -9,6 +9,8 @@
 #include <cstring>
 #include <string>
 
+#define PATH_TO_INDEX "data/www/Pages/index.html"
+
 using std::cout;
 using std::endl;
 using std::string;
@@ -29,6 +31,7 @@ private:
 	string					_http_Req;
 	string					_fileName;
 	string					_pathInfo;
+	string					_protocol;
 	string					_querryString;
 	std::istringstream		_ReqStream;
 	bool					_isCGI;

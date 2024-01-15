@@ -78,12 +78,22 @@ bool	Req::_validVersion(string &line)
 	if ((ver1 == string::npos && ver2 == string::npos) ||
 		(ver1 != string::npos && ver2 != string::npos))
 		return false;
-
+	if (ver1 != string::npos)
+		_protocol = "HTTP/1.1";
+	else
+		_protocol = "HTTP/1.0";
 	return true;
 }
 
 bool	Req::_validPath(string &line)
 {
+	if (line.compare(0, 6, "GET / ") == 0)
+	{
+					cout << "found initial page" << endl;
+		_fileName = PATH_TO_INDEX;
+		return true;
+	}
+
 	string::iterator it = line.begin() + line.find(' ') + 1;
 	size_t	extensionEnd = _findExtensionEnd(line, ".html");
 	if (extensionEnd == string::npos)

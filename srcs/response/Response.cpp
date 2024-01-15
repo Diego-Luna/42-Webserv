@@ -4,19 +4,16 @@
 Response::Response(Req &Req_)
  : _Req(Req_)
 {
-	if (_Req.get_status_code() != OK)
-	{
-					cout << "invalid request, returning to client" << endl;
 		_header = makeHeader();
-					cout << "header: " << _header << endl;
+					cout << "header:\n" << _header << endl;
 		int	bytesWritten = write(_Req._client.getfd(), _header.c_str(), _header.length());
 		if (bytesWritten == -1)
 		{
 			std::cerr << "error writting to socket" << endl;
 			// throw exception?
 		}
+					cout << "bytes written to client: " << bytesWritten << endl;
 
-	}
 	// _responseBody = "";
 }
 
@@ -39,11 +36,31 @@ string	Response::makeHeader()
 	header += _Req.env["SERVER_PROTOCOL"] + " ";
 	header += std::to_string(_Req.get_status_code()) + " ";
 	header += message_status_code(_Req.get_status_code()) + "\r\n";
-	header += "Content-Type: " + _Req.env["CONTENT_TYPE"] + "\r\n";
-	header += "Content Length: " + _Req.env["CONTENT_LENGTH"] + "\r\n\r\n";
 	if (_Req.getIsCGI())
 	{
+		header += "Content-Type: " + _Req.env["CONTENT_TYPE"] + "\r\n";
+		header += "Content-Length: " + _responseBody.length();
+		header += "\r\n";
 		header += _responseBody;
+		header += "\r\n";
+	} else {
+		std::fstream htmlFile(_Req.env["FILE_NAME"]);
+		if (!htmlFile.is_open())
+		{
+			std::cerr << "error opening file: " << _Req.env["FILE_NAME"] << endl;
+			return "";
+		}
+		string line;
+		while (std::getline(htmlFile, line))
+			_responseBody += line + "\r\n";
+		htmlFile.close();
+		header += "Content-Type: " + _Req.env["CONTENT_TYPE"] + "\r\n";
+		header += "Content-Length: " + _responseBody.length();
+		header += "\r\n";
+		header += _responseBody;
+		header += "\r\n";
+
+		return header;
 	}
 	return header;
 }
