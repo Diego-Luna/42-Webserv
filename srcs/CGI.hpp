@@ -5,6 +5,8 @@
 #include "response/Response.hpp"
 #include "sys/wait.h"
 #include <cstdio>
+#include <string>
+#include <iostream>
 
 using std::string;
 class Req;

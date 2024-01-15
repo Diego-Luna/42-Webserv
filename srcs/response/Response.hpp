@@ -1,8 +1,12 @@
 #pragma once
 
 #include "../request/Req.hpp"
+#include <string>
+
+using std::string;
 
 class	Req;
+
 
 class Response
 {
@@ -10,9 +14,11 @@ private:
 	Response();
 	Response(Response &original);
 	Req	&_Req;
-	string	_responseBody;
-	string	makeHeader();
-	
+
+	string			_responseBody;
+	string			makeHeader();
+	const string	message_status_code(u_int16_t code);
+
 public:
 	Response(Req &Req_);
 	Response(Req &Req_, string responseBody_);
@@ -20,28 +26,3 @@ public:
 	string	header;
 	
 };
-
-Response::Response(Req &Req_)
- : _Req(Req_)
-{
-	// _responseBody = ""; 
-	
-}
-
-Response::Response(Req &Req_, string responseBody_)
- : _Req(Req_), _responseBody(responseBody_)
-{
-	
-	
-}
-
-Response::~Response()
-{
-}
-
-string	Response::makeHeader()
-{
-	
-
-
-}

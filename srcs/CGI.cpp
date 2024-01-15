@@ -59,6 +59,7 @@ string CGI::exec() {
 					responseBody.append(buffer, finishedReading);
 			}
 			close(fdOut);
+			req.env["CONTENT_LENGTH"] = std::to_string(responseBody.length());
 			return responseBody;
 		}
 		else if (WIFSIGNALED(status))	// process interrupted by signal

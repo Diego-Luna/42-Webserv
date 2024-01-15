@@ -6,6 +6,7 @@
 #include "../CGI.hpp"
 #include <sstream>
 #include <cstring>
+#include <string>
 
 using std::cout;
 using std::endl;
@@ -77,22 +78,22 @@ private:
 	typedef u_int16_t 		(Req::*meth)(std::string &element);
 	meth 					methode;
 	// status line /
-	void 					status_line_creation(const std::string &line);
+
+	// void 					status_line_creation(const std::string &line);
 	// pt a supp
 	u_int16_t 				parsing_status_line(std::vector<std::string> status_line);
 	meth					find_methode(std::string &methode);
-	const std::string		message_status_code(u_int16_t code);
 
 public:
 	Req(std::string HTTP_Req, const int fd, Location &location);
 
 	std::map<string, string>	env;
 	char						**envCGIExecve;		// must be deleted by destructor
-	int							fds[2];
 
 		// GETTER / SETTER
 	string					getHttpString()const;
 	string					get_header()const;
+	bool					getIsCGI() const;
 	u_int16_t				get_status_code() const;
 	void 					set_status_code(u_int16_t statusCode_);
 

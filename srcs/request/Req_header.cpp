@@ -161,7 +161,6 @@ std::string Req::cType( void )
 	}
 	return (std::string("application/octet-stream"));
 }
-
 				// unable to test right now due to funcitons needind to be a socket and not just an fd
 				// I think this method is actually creating the response _header, as the request _header is 
 				// already given to use

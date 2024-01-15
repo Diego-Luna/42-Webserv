@@ -18,7 +18,6 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 		CGI	Cgi(*this);
 	}
 }
-
 			// MISSING:operator=overload
 
 Req::~Req()
@@ -245,6 +244,7 @@ u_int16_t Req::get_status_code() const
 void Req::set_status_code(u_int16_t statusCode_)
 {
 	this->status_code = statusCode_;
+				// cout << "status code set to " << status_code << endl;
 }
 
 std::string	Req::get_header()const
@@ -255,6 +255,11 @@ std::string	Req::get_header()const
 std::string	Req::getHttpString()const
 {
 	return this->_http_Req;
+}
+
+bool	Req::getIsCGI() const
+{
+	return this->_isCGI;
 }
 
 
