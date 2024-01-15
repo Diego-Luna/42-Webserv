@@ -62,7 +62,7 @@ private:
 /*
 	below this line: things that were here before but I dont understand
 	the functionallity of yet.
-	
+
 	Some of these seem to be better suited for Response, rather than Request
 */
 	void 					header_creation(void);	// unable to test, more details inside
