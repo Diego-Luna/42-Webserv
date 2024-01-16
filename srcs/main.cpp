@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diegofranciscolunalopez <diegofrancisco    +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/12/14 14:11:20 by diegofranci      ###   ########.fr       */
+/*   Updated: 2024/01/16 11:59:19 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ int main(int argc, char const *argv[])
         }
     }
 	}
+
+				cout << "back to main from get_listeners.run()" << endl;
 
 	// for (size_t i = 0; i < parsing.get_server_size(); i++) {
   //   Server &server = parsing.get_ref_server(i);

@@ -27,6 +27,7 @@ Response::Response(Req &Req_, string responseBody_)
 
 Response::~Response()
 {
+				cout << "response destructor called" << endl;
 }
 
 string	Response::makeHeader()

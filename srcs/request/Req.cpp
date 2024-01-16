@@ -25,12 +25,16 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 
 Req::~Req()
 {
-	size_t	mapSize = env.size();
-	for (size_t i = 0; i < mapSize; i++)
+							cout << "Req destructor called" << endl;
+	if (envCGIExecve)
 	{
-		delete[] envCGIExecve[i];
+		size_t	mapSize = env.size();
+		for (size_t i = 0; i < mapSize; i++)
+		{
+			delete[] envCGIExecve[i];
+		}
+		delete[] envCGIExecve;
 	}
-	delete[] envCGIExecve;
 }
 
 /**************************************************************************
@@ -187,24 +191,40 @@ void	Req::_validate()
 {
 		// checks for invalid characters
 	if (!_allValidCharsURI(_fileName))
-		fatal("invalid Character in File Name");
+	{
+		perror("invalid Character in File Name");
+		set_status_code(BAD_REQUEST);
+		return;
+	}
 	if (!_allValidCharsURI(_pathInfo))
-		fatal("invalid Character in Path Info");
+	{
+		perror("invalid Character in Path Info");
+		set_status_code(BAD_REQUEST);
+		return;
+	}
 	if (!_allValidCharsURI(_querryString))
-		fatal("invalid Character in Querry String");
+	{
+		perror("invalid Character in Querry String");
+		set_status_code(BAD_REQUEST);
+		return;
+	}
 						cout << "filename: " << _fileName << endl;
 						// cout << "pathInfo: " << _pathInfo << endl;
 		// checks if files are accessible
 	if (access(_fileName.c_str(), F_OK) != 0)
 	{
-		cout << "filename not accessible" << endl;
-
-		fatal("file not found");
+		std::cerr << "filename not accessible" << endl;
+		set_status_code(NOT_FOUND);
+		return;
 	}
 	if (_pathInfo != "")
 	{
 		if (access(_pathInfo.c_str(), F_OK) != 0)
-			fatal("Path Info file not found");
+		{
+			perror("Path Info file not found");
+			set_status_code(BAD_REQUEST);
+			return;
+		}
 	}
 		
 	// check version -> must have access to Server class.
