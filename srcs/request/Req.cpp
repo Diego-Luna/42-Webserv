@@ -6,6 +6,7 @@
 Req::Req(std::string HTTP_Req, const int fd, Location &location)
 	:_location(location), _http_Req(HTTP_Req), _client(fd)
 {
+	_error = false;
 	if (HTTP_Req.length() < 1)
 		fatal("Bad HTTP REQUEST");
 	_ReqStream.str(_http_Req);
@@ -14,7 +15,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 						cout << "calling parseHeader" << endl;
 	parseHeader();
 				cout << "made it past parseHeader in Req Contructor\n" << endl;
-	if (_isCGI)
+	if (_isCGI && _error == false)
 	{
 		CGI	Cgi(*this);
 	} else {
@@ -102,7 +103,10 @@ string	Req::_decodeURI(string str)
 		{
 			string hex = str.substr(it2 - str.begin(), 3);
 			if (hex != "%25")
-				fatal("Invalid header character");
+			{
+				set_status_code(BAD_REQUEST);
+				_error = true;
+			}
 			str.replace(it2 - str.begin(), 3, "%");
 		}
 		it2++;
@@ -194,18 +198,21 @@ void	Req::_validate()
 	{
 		perror("invalid Character in File Name");
 		set_status_code(BAD_REQUEST);
+		_error = true;
 		return;
 	}
 	if (!_allValidCharsURI(_pathInfo))
 	{
 		perror("invalid Character in Path Info");
 		set_status_code(BAD_REQUEST);
+		_error = true;
 		return;
 	}
 	if (!_allValidCharsURI(_querryString))
 	{
 		perror("invalid Character in Querry String");
 		set_status_code(BAD_REQUEST);
+		_error = true;
 		return;
 	}
 						cout << "filename: " << _fileName << endl;
@@ -215,6 +222,7 @@ void	Req::_validate()
 	{
 		std::cerr << "filename not accessible" << endl;
 		set_status_code(NOT_FOUND);
+		_error = true;
 		return;
 	}
 	if (_pathInfo != "")
@@ -223,6 +231,7 @@ void	Req::_validate()
 		{
 			perror("Path Info file not found");
 			set_status_code(BAD_REQUEST);
+			_error = true;
 			return;
 		}
 	}

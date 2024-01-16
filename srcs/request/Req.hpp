@@ -35,6 +35,7 @@ private:
 	string					_querryString;
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
+	bool					_error;
 	u_int16_t				status_code;
 
 	// HEADER PARSING

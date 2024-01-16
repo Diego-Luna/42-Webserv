@@ -13,9 +13,11 @@ void	Req::parseHeader(void)
 		_body += line + '\n';
 										// cout << "print header: \n\n" << _header << endl << endl;
 	parseFirstLine();
-	_makeEnvCGI();
-	_validate();
-	if (_isCGI)
+	if (_error == false)
+		_makeEnvCGI();
+	if (_error == false)
+		_validate();
+	if (_isCGI && _error == false)
 		_makeExecveEnv();
 }
 
@@ -27,13 +29,29 @@ void	Req::parseFirstLine(void)
 
 	std::getline(stream, line);
 	if (!_validMethod(line))
-		fatal("Invalid HTTP Request");
+	{
+		perror("Invalid HTTP Request");
+		set_status_code(BAD_REQUEST);
+		_error = true;
+		return;
+	}
 	if (!_validPath(line))
-		fatal("Invalid HTTP Request");
+	{
+		set_status_code(NOT_FOUND);
+		_error = true;
+		return;
+	}
 	if (!_validVersion(line))
-		fatal("Invalid HTTP Request");
-	_querryString = _getQuerryString(line);
-	_isCGI = _checkCGI(_pathInfo);
+	{
+		set_status_code(BAD_REQUEST);
+		_error = true;
+		return;
+	}
+	if (_error == false)
+	{
+		_querryString = _getQuerryString(line);
+		_isCGI = _checkCGI(_pathInfo);
+	}
 }
 
 string	Req::_getQuerryString(string &line)
@@ -63,7 +81,8 @@ bool	Req::_checkCGI(string &pathInfo)
 	size_t repeatCheck = pathInfo.rfind(".cgi");
 	if (pos != repeatCheck)
 	{
-		fatal("Invalid HTTP Request");
+		_error = true;
+		set_status_code(BAD_REQUEST);
 		return false;
 	}
 	return true;
@@ -93,18 +112,18 @@ bool	Req::_validPath(string &line)
 		_fileName = PATH_TO_INDEX;
 		return true;
 	}
-
 	string::iterator it = line.begin() + line.find(' ') + 1;
 	size_t	extensionEnd = _findExtensionEnd(line, ".html");
+	_fileName = "data/www/Pages";
 	if (extensionEnd == string::npos)
-	{
-		std::cerr << "invalid HTTP Request: resource path" << endl;
-		set_status_code(404);
-		Response(*this);
-	}
-	_fileName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
+		return false;
+
+				// INSERT CONDITIONS TO ACCEPT .CSS here.
+
+	_fileName += line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
 	it = line.begin() + extensionEnd;
-	if (*it == '/')
+
+	if (*it == '/')	// checks for PATH_INFO
 	{
 		it++;
 		while (*it != ' ' && it != line.end() && *it != '?')
