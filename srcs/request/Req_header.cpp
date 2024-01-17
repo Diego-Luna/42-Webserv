@@ -13,8 +13,7 @@ void	Req::parseHeader(void)
 		_body += line + '\n';
 										// cout << "print header: \n\n" << _header << endl << endl;
 	parseFirstLine();
-	if (_error == false)
-		_makeEnvCGI();
+	_makeEnv();
 	if (_error == false)
 		_validate();
 	if (_isCGI && _error == false)
@@ -106,20 +105,18 @@ bool	Req::_validVersion(string &line)
 
 bool	Req::_validPath(string &line)
 {
-	if (line.compare(0, 6, "GET / ") == 0)
+	if (line.compare(0, 6, "GET / ") == 0)	// checks for first index call.
 	{
-					cout << "found initial page" << endl;
 		_fileName = PATH_TO_INDEX;
 		return true;
 	}
-	string::iterator it = line.begin() + line.find(' ') + 1;
-	size_t	extensionEnd = _findExtensionEnd(line, ".html");
-	_fileName = "data/www/Pages";
+
+	size_t	extensionEnd = _findExtensionEnd(line);
 	if (extensionEnd == string::npos)
 		return false;
 
-				// INSERT CONDITIONS TO ACCEPT .CSS here.
-
+	_fileName = PATH_TO_ROOT;
+	string::iterator it = line.begin() + line.find(' ') + 1;
 	_fileName += line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
 	it = line.begin() + extensionEnd;
 
@@ -132,16 +129,24 @@ bool	Req::_validPath(string &line)
 			it++;
 		}
 	}
+
 	return true;
 }
 
-size_t	 Req::_findExtensionEnd(string &line, const string &extension)
+size_t	 Req::_findExtensionEnd(string &line)
 {
-	size_t	extensionPos;
-	extensionPos = line.find(extension);
-	if (extensionPos != string::npos)
-		return extensionPos + extension.length();
-	return string::npos;
+	std::vector<std::string>	allowedExtensions;
+	allowedExtensions.push_back(".html");
+	allowedExtensions.push_back(".css");
+	size_t	extensionEnd;
+	for (std::vector<string>::const_iterator it = allowedExtensions.begin();
+		it != allowedExtensions.end(); ++it) {
+			extensionEnd = line.find(*it);
+			if (extensionEnd != string::npos) {
+				return extensionEnd + it->length();
+			}
+		}
+	return std::string::npos;
 }
 
 bool	Req::_validMethod(const string &line)

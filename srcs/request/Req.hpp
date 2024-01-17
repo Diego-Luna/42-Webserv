@@ -10,6 +10,7 @@
 #include <string>
 
 #define PATH_TO_INDEX "data/www/Pages/index.html"
+#define PATH_TO_ROOT "data/www/Pages"
 
 using std::cout;
 using std::endl;
@@ -45,13 +46,13 @@ private:
 	bool					_validPath(string &line);
 	bool					_validVersion(string &line);
 	bool					_checkCGI(string &pathInfo);
-	size_t					_findExtensionEnd(string &line, const string &extension);
+	size_t					_findExtensionEnd(string &line);
 	string					_getQuerryString(string &line);
 	
 	// CGI AND ENV PREP	
 	string					_formatStringEnvCGI(string str);
-	void					_populateEnvCGI(string var);
-	void					_makeEnvCGI(void);
+	void					_populateEnv(string var);
+	void					_makeEnv(void);
 	void					_makeExecveEnv(void);
 	bool					_isValidVariable(string &var);
 	string					_decodeURI(string	str);

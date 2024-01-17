@@ -42,15 +42,15 @@ Req::~Req()
 		CGI PREP
 **************************************************************************/
 
-void	Req::_makeEnvCGI(void)
+void	Req::_makeEnv(void)
 {
-	_populateEnvCGI(string("Host"));
-	_populateEnvCGI(string("User-Agent"));
-	// _populateEnvCGI(string("Content-Type"));	// only dealing with .html files for now
-	_populateEnvCGI(string("Content-Length"));
-	_populateEnvCGI(string("Accept"));
-	_populateEnvCGI(string("Accept-Language"));
-	_populateEnvCGI(string("Connection"));
+	_populateEnv(string("Host"));
+	_populateEnv(string("User-Agent"));
+	// _populateEnv(string("Content-Type"));	// only dealing with .html files for now
+	_populateEnv(string("Content-Length"));
+	_populateEnv(string("Accept"));
+	_populateEnv(string("Accept-Language"));
+	_populateEnv(string("Connection"));
 	_buildEncoded();
 	env["CONTENT_TYPE"] = "text/html";
 	env["SERVER_PROTOCOL"] = _protocol;
@@ -132,7 +132,7 @@ void	Req::_makeExecveEnv()
 	}
 }
 
-void	Req::_populateEnvCGI(string var)
+void	Req::_populateEnv(string var)
 {
 	string				tmp;
 	string::iterator	it;

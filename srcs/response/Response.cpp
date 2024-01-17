@@ -23,6 +23,7 @@ Response::Response(Req &Req_, string responseBody_)
 	_header = makeHeader();
 
 			cout << "printing response header:\n" << header << endl;
+
 }
 
 Response::~Response()
@@ -40,11 +41,11 @@ string	Response::makeHeader()
 	if (_Req.getIsCGI())
 	{
 		header += "Content-Type: " + _Req.env["CONTENT_TYPE"] + "\r\n";
-		header += "Content-Length: " + _responseBody.length();
-		header += "\r\n";
+		header += "Content-Length: " + std::to_string(_responseBody.length());
+		header += "\r\n\r\n";
 		header += _responseBody;
 		header += "\r\n";
-	} else {
+	} else if (_Req.get_status_code() == OK) {
 		std::fstream htmlFile(_Req.env["FILE_NAME"]);
 		if (!htmlFile.is_open())
 		{
@@ -55,12 +56,12 @@ string	Response::makeHeader()
 		while (std::getline(htmlFile, line))
 			_responseBody += line + "\r\n";
 		htmlFile.close();
-		header += "Content-Type: " + _Req.env["CONTENT_TYPE"] + "\r\n";
-		header += "Content-Length: " + _responseBody.length();
+		header += "Content-Type: " + _Req.env["CONTENT_TYPE"];
 		header += "\r\n";
+		header += "Content-Length: " + std::to_string(_responseBody.length());
+		header += "\r\n\r\n";
 		header += _responseBody;
 		header += "\r\n";
-
 		return header;
 	}
 	return header;
