@@ -85,10 +85,10 @@ void listenner::run()
 						
 										// might be buggy because the current version doesnt use getHttpString
 						
-						if (send(fds[i].fd, x.getHttpString().c_str(), x.getHttpString().length(), 0) < 0)
-						{
-							continue; // même chose quen haut, pt erreur 500, a voir
-						}
+						// if (send(fds[i].fd, x.getHttpString().c_str(), x.getHttpString().length(), 0) < 0)
+						// {
+						// 	continue; // même chose quen haut, pt erreur 500, a voir
+						// }
 
 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}

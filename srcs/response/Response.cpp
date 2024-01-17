@@ -4,6 +4,7 @@
 Response::Response(Req &Req_)
  : _Req(Req_)
 {
+					cout << "Response constructor called" << endl;
 		_header = makeHeader();
 					cout << "header:\n" << _header << endl;
 		int	bytesWritten = write(_Req._client.getfd(), _header.c_str(), _header.length());

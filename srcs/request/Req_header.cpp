@@ -108,6 +108,7 @@ bool	Req::_validPath(string &line)
 	if (line.compare(0, 6, "GET / ") == 0)	// checks for first index call.
 	{
 		_fileName = PATH_TO_INDEX;
+		_extension = ".html";
 		return true;
 	}
 
@@ -143,6 +144,7 @@ size_t	 Req::_findExtensionEnd(string &line)
 		it != allowedExtensions.end(); ++it) {
 			extensionEnd = line.find(*it);
 			if (extensionEnd != string::npos) {
+				_extension = *it;
 				return extensionEnd + it->length();
 			}
 		}

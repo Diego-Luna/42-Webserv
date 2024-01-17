@@ -33,6 +33,7 @@ private:
 	string					_fileName;
 	string					_pathInfo;
 	string					_protocol;
+	string					_extension;
 	string					_querryString;
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
@@ -48,6 +49,7 @@ private:
 	bool					_checkCGI(string &pathInfo);
 	size_t					_findExtensionEnd(string &line);
 	string					_getQuerryString(string &line);
+	string					getContentType(string &extension);
 	
 	// CGI AND ENV PREP	
 	string					_formatStringEnvCGI(string str);
@@ -91,11 +93,12 @@ private:
 
 public:
 	Req(std::string HTTP_Req, const int fd, Location &location);
+	~Req					();
 	client					_client;
-
-
 	std::map<string, string>	env;
 	char						**envCGIExecve;		// must be deleted by destructor
+	static						std::vector<std::pair<std::string, std::string> > mime;
+	static void 				innitMime(void);
 
 		// GETTER / SETTER
 	string					getHttpString()const;
@@ -105,17 +108,7 @@ public:
 	void 					set_status_code(u_int16_t statusCode_);
 
 	void					printReq();
-			// what is mime?
-	/*
-		Multipurpose Internet Mail Extension
-		which files extensions are accepted by the webserver.
-				- why is this in the Request?
-				- should probably be in the Server, which should be accessible by the Request
-				CONTENT_TYPE?
-	*/
-	static					std::vector<std::pair<std::string, std::string> > mime;
-	static void 			innitMime(void);
-	~Req					();
+
 };
 
 /******************

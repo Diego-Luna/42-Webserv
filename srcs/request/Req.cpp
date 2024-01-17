@@ -7,6 +7,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 	:_location(location), _http_Req(HTTP_Req), _client(fd)
 {
 	_error = false;
+	envCGIExecve = NULL;
 	if (HTTP_Req.length() < 1)
 		fatal("Bad HTTP REQUEST");
 	_ReqStream.str(_http_Req);
@@ -52,7 +53,9 @@ void	Req::_makeEnv(void)
 	_populateEnv(string("Accept-Language"));
 	_populateEnv(string("Connection"));
 	_buildEncoded();
-	env["CONTENT_TYPE"] = "text/html";
+	env["CONTENT_TYPE"] = getContentType(_extension);
+	
+	
 	env["SERVER_PROTOCOL"] = _protocol;
 	env["FILE_NAME"] = _decodeURI(_fileName);
 	env["PATH_INFO"] = _decodeURI(_pathInfo);
@@ -60,6 +63,23 @@ void	Req::_makeEnv(void)
 		env["QUERRY_STRING"] = _decodeURI(_querryString);
 	//     _env.push_back("SERVER_PORT=" + std::to_string(m_server.get_ports()[0]));
 }
+
+string	Req::getContentType(string &extension)
+{
+							cout << "made it to get contentType" << endl;
+	for (std::vector<std::pair<string, string> >::iterator it = mime.begin(); it != mime.end(); it++)
+	{
+		if (extension == it->first)
+			return it->second;
+	}
+	set_status_code(BAD_REQUEST);
+	_error = true;
+					std::cerr << "couldn't find content type" << endl;
+	return "";
+}
+
+
+
 
 void	Req::_buildEncoded()
 {
