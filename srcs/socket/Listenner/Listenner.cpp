@@ -79,8 +79,6 @@ void listenner::run()
 					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  buffer << std::endl;
 
 					try {
-							cout << "calling Request Class" << endl;
-
 						Req x(std::string(buffer), fds[i].fd, this->_location);
 						
 										// might be buggy because the current version doesnt use getHttpString

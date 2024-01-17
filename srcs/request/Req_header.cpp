@@ -87,7 +87,7 @@ bool	Req::_checkCGI(string &pathInfo)
 }
 
 	// currently doesn't account for spaces. Request must contain
-	// exactly "HTTP/{VERSION}" or br considered invalid.
+	// exactly "HTTP/{VERSION}" or be considered invalid.
 bool	Req::_validVersion(string &line)
 {
 	size_t	ver1 = line.find("HTTP/1.1");
@@ -114,12 +114,13 @@ bool	Req::_validPath(string &line)
 	size_t	extensionEnd = _findExtensionEnd(line);
 	if (extensionEnd == string::npos)
 		return false;
-
+	if (line.at(extensionEnd) != ' ' && line.at(extensionEnd) != '/')
+		return false;
 	_fileName = PATH_TO_ROOT;
 	string::iterator it = line.begin() + line.find(' ') + 1;
 	_fileName += line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
+										//  cout << "filename:|" << _fileName << "|" << endl;
 	it = line.begin() + extensionEnd;
-
 	if (*it == '/')	// checks for PATH_INFO
 	{
 		it++;

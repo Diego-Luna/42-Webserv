@@ -5,6 +5,7 @@ Response::Response(Req &Req_)
  : _Req(Req_)
 {
 		_header = makeHeader();
+					cout << "writing header to client:\n" << _header << endl;
 		writeToClient();
 }
 
@@ -12,6 +13,7 @@ Response::Response(Req &Req_, string responseBody_)	// Used by CGI
  : _Req(Req_), _responseBody(responseBody_)
 {
 	_header = makeHeader();
+				cout << "writing header to client:\n" << _header << endl;
 	writeToClient();
 }
 
