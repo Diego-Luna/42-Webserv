@@ -4,32 +4,31 @@
 Response::Response(Req &Req_)
  : _Req(Req_)
 {
-					cout << "Response constructor called" << endl;
 		_header = makeHeader();
-					cout << "header:\n" << _header << endl;
-		int	bytesWritten = write(_Req._client.getfd(), _header.c_str(), _header.length());
+		writeToClient();
+}
+
+Response::Response(Req &Req_, string responseBody_)	// Used by CGI
+ : _Req(Req_), _responseBody(responseBody_)
+{
+	_header = makeHeader();
+	writeToClient();
+}
+
+Response::~Response()
+{
+				// cout << "response destructor called" << endl;
+}
+
+void	Response::writeToClient()
+{
+	int	bytesWritten = write(_Req._client.getfd(), _header.c_str(), _header.length());
 		if (bytesWritten == -1)
 		{
 			std::cerr << "error writting to socket" << endl;
 			// throw exception?
 		}
 					cout << "bytes written to client: " << bytesWritten << endl;
-
-	// _responseBody = "";
-}
-
-Response::Response(Req &Req_, string responseBody_)
- : _Req(Req_), _responseBody(responseBody_)
-{
-	_header = makeHeader();
-
-			cout << "printing response header:\n" << header << endl;
-
-}
-
-Response::~Response()
-{
-				cout << "response destructor called" << endl;
 }
 
 string	Response::makeHeader()
@@ -39,13 +38,15 @@ string	Response::makeHeader()
 	header += _Req.env["SERVER_PROTOCOL"] + " ";
 	header += std::to_string(_Req.get_status_code()) + " ";
 	header += message_status_code(_Req.get_status_code()) + "\r\n";
-	if (_Req.getIsCGI())
+
+	if (_Req.getIsCGI() && _Req.get_status_code() == OK)
 	{
 		header += "Content-Type: " + _Req.env["CONTENT_TYPE"] + "\r\n";
 		header += "Content-Length: " + std::to_string(_responseBody.length());
 		header += "\r\n\r\n";
 		header += _responseBody;
 		header += "\r\n";
+
 	} else if (_Req.get_status_code() == OK) {
 		std::fstream htmlFile(_Req.env["FILE_NAME"]);
 		if (!htmlFile.is_open())
@@ -65,6 +66,7 @@ string	Response::makeHeader()
 		header += "\r\n";
 		return header;
 	}
+
 	return header;
 }
 

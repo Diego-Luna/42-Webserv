@@ -13,9 +13,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 	_ReqStream.str(_http_Req);
 	if (!_ReqStream.good())
 		fatal ("failed to create request string stream");
-						cout << "calling parseHeader" << endl;
 	parseHeader();
-				cout << "made it past parseHeader in Req Contructor\n" << endl;
 	if (_isCGI && _error == false)
 	{
 		CGI	Cgi(*this);
@@ -27,7 +25,6 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 
 Req::~Req()
 {
-							cout << "Req destructor called" << endl;
 	if (envCGIExecve)
 	{
 		size_t	mapSize = env.size();
@@ -54,8 +51,6 @@ void	Req::_makeEnv(void)
 	_populateEnv(string("Connection"));
 	_buildEncoded();
 	env["CONTENT_TYPE"] = getContentType(_extension);
-	
-	
 	env["SERVER_PROTOCOL"] = _protocol;
 	env["FILE_NAME"] = _decodeURI(_fileName);
 	env["PATH_INFO"] = _decodeURI(_pathInfo);
@@ -66,7 +61,6 @@ void	Req::_makeEnv(void)
 
 string	Req::getContentType(string &extension)
 {
-							cout << "made it to get contentType" << endl;
 	for (std::vector<std::pair<string, string> >::iterator it = mime.begin(); it != mime.end(); it++)
 	{
 		if (extension == it->first)
@@ -74,7 +68,6 @@ string	Req::getContentType(string &extension)
 	}
 	set_status_code(BAD_REQUEST);
 	_error = true;
-					std::cerr << "couldn't find content type" << endl;
 	return "";
 }
 
@@ -145,7 +138,6 @@ void	Req::_makeExecveEnv()
 	while(it != env.end())
 	{
 		envCGIExecve[i] = new char[it->first.size() + it->second.size() + 4];	// +4 -> 3 for " = " + Null termination
-						// cout << "pre loop insinde _makeExecEnv" << endl;
 		std::strcpy(envCGIExecve[i], (it->first + " = " + it->second).c_str());
 		i++;
 		it++;
@@ -235,8 +227,6 @@ void	Req::_validate()
 		_error = true;
 		return;
 	}
-						cout << "filename: " << _fileName << endl;
-						// cout << "pathInfo: " << _pathInfo << endl;
 		// checks if files are accessible
 	if (access(_fileName.c_str(), F_OK) != 0)
 	{
@@ -272,7 +262,6 @@ bool	Req::_allValidCharsURI(string str)
 	{
 		if (!_isValidCharURI(static_cast<uint8_t>(*it)))
 		{
-							// cout << "invalid char: " << *it << endl;
 			return false;
 		}
 		
@@ -300,7 +289,6 @@ u_int16_t Req::get_status_code() const
 void Req::set_status_code(u_int16_t statusCode_)
 {
 	this->status_code = statusCode_;
-				// cout << "status code set to " << status_code << endl;
 }
 
 std::string	Req::get_header()const

@@ -19,6 +19,7 @@ private:
 	string			_responseBody;
 	string			_header;
 	string			makeHeader();
+	void			writeToClient();
 	const string	message_status_code(u_int16_t code);
 
 public:

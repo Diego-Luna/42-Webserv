@@ -29,7 +29,6 @@ void	Req::parseFirstLine(void)
 	std::getline(stream, line);
 	if (!_validMethod(line))
 	{
-		perror("Invalid HTTP Request");
 		set_status_code(BAD_REQUEST);
 		_error = true;
 		return;
@@ -186,6 +185,7 @@ bool	Req::_validMethod(const string &line)
 		UNKNOWN OR DEPRECATED
 **************************************************************************/
 
+		// likely the same function as getContenType
 std::string Req::cType( void )
 {
 	std::string tmp;
@@ -201,9 +201,7 @@ std::string Req::cType( void )
 	}
 	return (std::string("application/octet-stream"));
 }
-				// unable to test right now due to funcitons needind to be a socket and not just an fd
-				// I think this method is actually creating the response _header, as the request _header is 
-				// already given to use
+
 void Req::header_creation(void)
 {
 	this->_header = "Host: " + std::string(inet_ntoa(_client.getAddr().sin_addr)) + ":" + std::to_string(ntohs(_client.getAddr().sin_port)) + "\r\n";
@@ -216,8 +214,6 @@ void Req::header_creation(void)
 	// 				User-Agent
 	this->_header += "\r\n";
 }
-
-
 
 
 
