@@ -14,6 +14,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location)
 	if (!_ReqStream.good())
 		fatal ("failed to create request string stream");
 	parseHeader();
+	
 	if (_isCGI && _error == false)
 	{
 		CGI	Cgi(*this);
@@ -301,6 +302,11 @@ std::string	Req::getHttpString()const
 bool	Req::getIsCGI() const
 {
 	return this->_isCGI;
+}
+
+string	Req::getBody()const
+{
+	return this->_body;
 }
 
 

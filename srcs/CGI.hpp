@@ -21,7 +21,8 @@ class CGI {
 private:
 	CGI();
 	CGI(CGI &original);
-	string	writeBody(int fdOut);
+	string	makeBody(int fdOut);
+	
 
 public:
 	~CGI();

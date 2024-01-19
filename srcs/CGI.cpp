@@ -14,24 +14,44 @@ CGI::CGI(Req &req_) : req(req_), m_server() {
 CGI::~CGI() {}
 
 string CGI::exec() {
-	char *args[] = {const_cast<char*>(req.env["PATH_INFO"].c_str()), NULL};
+	char *args[] = {const_cast<char*>(req.env["FILE_NAME"].c_str()), NULL};
 
 	FILE	*scriptOut = tmpfile();
+	FILE	*scriptIn = tmpfile();
 	long	fdOut = fileno(scriptOut);
+	long	fdIn = fileno(scriptIn);
+
+						cout << "\nbody written to CGI INPUT: " << req.getBody() << endl;
+						cout << "body size: " << req.getBody().length() << endl;
+	int	writtentoInput = write(fdIn, req.getBody().c_str(), req.getBody().length());
+						cout << "\nbytes written to CGI input: " << writtentoInput << endl;
+
+	lseek(fdIn, 0 , SEEK_SET);
 
 	pid_t pid = fork();
+
 	if (pid == -1) {
+
 		std::cout<< "Error while forking process." << std::endl;
 		req.set_status_code(INTERNAL_SERVER_ERROR);
+		fclose(scriptIn);
+		fclose(scriptOut);
+
 	} else if (pid == 0) {	// child process
-							std::cout << "Executing CGI script..." << std::endl;
+
 		dup2(fdOut, STDOUT_FILENO);
+		dup2(fdIn, STDIN_FILENO);
+											cout << "\n EXECUTING CGI \n\n";
 		execve(args[0], args, req.envCGIExecve);
 		std::cerr << "Error while trying to execute CGI script." << std::endl;
 		close(fdOut);
+		fclose(scriptOut);
+		close(fdIn);
+		fclose(scriptIn);
 		req.set_status_code(INTERNAL_SERVER_ERROR);
 		return "";
 	}
+
 	int	status;
 	pid_t	terminatedProcess = 0;
 	do {
@@ -40,21 +60,34 @@ string CGI::exec() {
 		{
 			req.set_status_code(INTERNAL_SERVER_ERROR);
 			close(fdOut);
+			fclose(scriptOut);
+			close(fdIn);
+			fclose(scriptIn);
 			return "";
 		}
-		if (WIFEXITED(status))	// process exited normally
-			return (writeBody(fdOut));
+		if (WIFEXITED(status))  // process exited normally
+		{
+			string body = makeBody(fdOut);
+			close(fdOut);
+			fclose(scriptOut);
+			close(fdIn);
+			fclose(scriptIn);
+			Response response(req, body);
+		}	
 		else if (WIFSIGNALED(status))	// process interrupted by signal: technically not an error despite having same result
 		{
 			req.set_status_code(INTERNAL_SERVER_ERROR);
 			close(fdOut);
+			fclose(scriptOut);
+			close(fdIn);
+			fclose(scriptIn);
 			return "";
 		}
 	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	return "";
 }
 
-string	CGI::writeBody(int fdOut)
+string	CGI::makeBody(int fdOut)
 {
 	req.set_status_code(OK);
 	string	responseBody;

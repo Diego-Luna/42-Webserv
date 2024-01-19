@@ -97,7 +97,7 @@
 
         <div class="form-container">
             <h1>Registration Form</h1>
-            <form>
+            <!-- <form>
                 <input type="text" class="form-input" placeholder="First Name" required>
                 <input type="text" class="form-input" placeholder="Last Name" required>
                 <input type="text" class="form-input" placeholder="Login" required>
@@ -108,7 +108,21 @@
                 <input type="password" class="form-input" placeholder="Confirm Password" required>
                 
                 <button type="submit" class="form-submit">Submit</button>
-            </form>
+            </form> -->
+			<!-- ATTEMPT AT IMPLEMENTING CGI SCRIPT -->
+			<form action="submit.py" method="post">
+				<input type="text" name="first_name" class="form-input" placeholder="First Name" required>
+				<input type="text" name="last_name" class="form-input" placeholder="Last Name" required>
+				<input type="text" name="login" class="form-input" placeholder="Login" required>
+				<input type="email" name="email" class="form-input" placeholder="Email" required>
+				<input type="date" name="dob" class="form-input" placeholder="Date of Birth" required>
+				<input type="tel" name="phone" class="form-input" placeholder="Phone Number">
+				<input type="password" name="password" class="form-input" placeholder="Password" required>
+				<input type="password" name="confirm_password" class="form-input" placeholder="Confirm Password" required>
+
+				<button type="submit" class="form-submit">Submit</button>
+
+			</form>
         </div>
     </div>
 </body>

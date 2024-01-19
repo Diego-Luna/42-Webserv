@@ -56,7 +56,8 @@ string	Response::makeHeader()
 
 	if (_Req.getIsCGI() && _Req.get_status_code() == OK)
 	{
-		header += "Content-Type: " + _Req.env["CONTENT_TYPE"] + "\r\n";
+		header += "Content-Type: " "text/html";
+		header += "\r\n";
 		header += "Content-Length: " + std::to_string(_responseBody.length());
 		header += "\r\n\r\n";
 		header += _responseBody;

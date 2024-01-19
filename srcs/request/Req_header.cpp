@@ -7,13 +7,16 @@
 void	Req::parseHeader(void)
 {
 	string line;
-	while (std::getline(_ReqStream, line) && !line.empty())
+	while (std::getline(_ReqStream, line) && !line.empty() && (line.find_first_not_of(" \t\r\n") != string::npos))
 		_header += line + '\n';
+
 	while (std::getline(_ReqStream, line) && !line.empty())
 		_body += line + '\n';
 										// cout << "print header: \n\n" << _header << endl << endl;
+										// cout << "request body:|" << _body << "|" << endl;
 	parseFirstLine();
 	_makeEnv();
+
 	if (_error == false)
 		_validate();
 	if (_isCGI && _error == false)
@@ -48,7 +51,7 @@ void	Req::parseFirstLine(void)
 	if (_error == false)
 	{
 		_querryString = _getQuerryString(line);
-		_isCGI = _checkCGI(_pathInfo);
+		_isCGI = _checkCGI(_fileName);
 	}
 }
 
@@ -67,22 +70,25 @@ string	Req::_getQuerryString(string &line)
 	return querryString;
 }
 
-		// for now only check files for .cgi extensions. Could Change to check for .py or
+		// for now only check files for .py extensions. Could Change to check for .py or
 		// which other script extensions we would need.
-bool	Req::_checkCGI(string &pathInfo)
+		// possibly check if it is in the /CGI/bin folder
+bool	Req::_checkCGI(string &fileName)
 {
-	if (pathInfo == "")
+	if (fileName == "")
 		return false;
-	size_t pos	= pathInfo.find(".cgi");
+	size_t pos	= fileName.find(".py");
 	if (pos == string::npos)
 		return false;
-	size_t repeatCheck = pathInfo.rfind(".cgi");
+	size_t repeatCheck = fileName.rfind(".py");
 	if (pos != repeatCheck)
 	{
 		_error = true;
 		set_status_code(BAD_REQUEST);
 		return false;
 	}
+	if (_pathInfo != "")
+		_pathInfo = fileName;
 	return true;
 }
 
@@ -116,10 +122,13 @@ bool	Req::_validPath(string &line)
 		return false;
 	if (line.at(extensionEnd) != ' ' && line.at(extensionEnd) != '/')
 		return false;
-	_fileName = PATH_TO_ROOT;
+	if (_extension == ".py")
+		_fileName = PATH_TO_CGI;
+	else
+		_fileName = PATH_TO_ROOT;
 	string::iterator it = line.begin() + line.find(' ') + 1;
 	_fileName += line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
-										//  cout << "filename:|" << _fileName << "|" << endl;
+										 cout << "filename:|" << _fileName << "|" << endl;
 	it = line.begin() + extensionEnd;
 	if (*it == '/')	// checks for PATH_INFO
 	{
@@ -139,6 +148,7 @@ size_t	 Req::_findExtensionEnd(string &line)
 	std::vector<std::string>	allowedExtensions;
 	allowedExtensions.push_back(".html");
 	allowedExtensions.push_back(".css");
+	allowedExtensions.push_back(".py");
 	size_t	extensionEnd;
 	for (std::vector<string>::const_iterator it = allowedExtensions.begin();
 		it != allowedExtensions.end(); ++it) {

@@ -11,6 +11,7 @@
 
 #define PATH_TO_INDEX "data/www/Pages/index.html"
 #define PATH_TO_ROOT "data/www/Pages"
+#define PATH_TO_CGI "CGI/bin"
 #define POLL_INF_TIME -1
 
 using std::cout;
@@ -47,7 +48,7 @@ private:
 	bool					_validMethod(const string &line);
 	bool					_validPath(string &line);
 	bool					_validVersion(string &line);
-	bool					_checkCGI(string &pathInfo);
+	bool					_checkCGI(string &fileName);
 	size_t					_findExtensionEnd(string &line);
 	string					_getQuerryString(string &line);
 	string					getContentType(string &extension);
@@ -104,6 +105,7 @@ public:
 		// GETTER / SETTER
 	string					getHttpString()const;
 	string					get_header()const;
+	string					getBody()const;
 	bool					getIsCGI() const;
 	u_int16_t				get_status_code() const;
 	void 					set_status_code(u_int16_t statusCode_);
