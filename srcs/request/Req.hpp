@@ -11,6 +11,7 @@
 
 #define PATH_TO_INDEX "data/www/Pages/index.html"
 #define PATH_TO_ROOT "data/www/Pages"
+#define POLL_INF_TIME -1
 
 using std::cout;
 using std::endl;
@@ -73,7 +74,7 @@ private:
 	Some of these seem to be better suited for Response, rather than Request
 */
 	void 					header_creation(void);	// unable to test, more details inside
-	std::string 			cType( void );
+	std::string 			cType(void);
 	std::string 			status_line;
 	void 					body_creation(void);
 

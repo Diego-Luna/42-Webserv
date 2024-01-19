@@ -24,13 +24,26 @@ Response::~Response()
 
 void	Response::writeToClient()
 {
-	int	bytesWritten = write(_Req._client.getfd(), _header.c_str(), _header.length());
-		if (bytesWritten == -1)
-		{
-			std::cerr << "error writting to socket" << endl;
-			// throw exception?
+	struct	pollfd	pollContext;
+	pollContext.fd = _Req._client.getfd();
+	pollContext.events = POLLOUT;
+	int	pollReturn = poll(&pollContext, 1, POLL_INF_TIME);	// could possibly se time to a very high value so it wouldnt block?
+	
+	if (pollReturn > 0)
+	{
+		if (pollContext.revents & POLLOUT) {
+			int	bytesWritten = write(_Req._client.getfd(), _header.c_str(), _header.length());
+			if (bytesWritten == -1)
+			{
+				std::cerr << "error writting to socket" << endl;
+				// throw exception?
+			}
+						cout << "bytes written to client: " << bytesWritten << endl;
 		}
-					cout << "bytes written to client: " << bytesWritten << endl;
+	} else {
+		// poll error 
+		// throw exception?
+	}
 }
 
 string	Response::makeHeader()
@@ -68,7 +81,6 @@ string	Response::makeHeader()
 		header += "\r\n";
 		return header;
 	}
-
 	return header;
 }
 

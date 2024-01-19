@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <string>
 #include <iostream>
+#include <poll.h>
 
 using std::string;
 class Req;
@@ -20,6 +21,7 @@ class CGI {
 private:
 	CGI();
 	CGI(CGI &original);
+	string	writeBody(int fdOut);
 
 public:
 	~CGI();

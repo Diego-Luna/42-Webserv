@@ -25,14 +25,12 @@ string CGI::exec() {
 		req.set_status_code(INTERNAL_SERVER_ERROR);
 	} else if (pid == 0) {	// child process
 							std::cout << "Executing CGI script..." << std::endl;
-							// cout << "path: " << path << endl;
-							// cout << "arg[0]: " << args[0] << endl;
-
 		dup2(fdOut, STDOUT_FILENO);
 		execve(args[0], args, req.envCGIExecve);
 		std::cerr << "Error while trying to execute CGI script." << std::endl;
-				// fclose(scriptOutput);
+		close(fdOut);
 		req.set_status_code(INTERNAL_SERVER_ERROR);
+		return "";
 	}
 	int	status;
 	pid_t	terminatedProcess = 0;
@@ -41,37 +39,52 @@ string CGI::exec() {
 		if (terminatedProcess == -1) // error in the process
 		{
 			req.set_status_code(INTERNAL_SERVER_ERROR);
+			close(fdOut);
 			return "";
 		}
 		if (WIFEXITED(status))	// process exited normally
-		{
-			req.set_status_code(OK);
-			string	responseBody;
-			char buffer[BUFFER_SIZE];
-			int	finishedReading = 1;
-			
-			lseek(fdOut, 0, SEEK_SET);
-			
-			while (finishedReading > 0)
-			{
-				finishedReading = read(fdOut, buffer, BUFFER_SIZE);
-				if (finishedReading > 0)
-					responseBody.append(buffer, finishedReading);
-			}
-			close(fdOut);
-			req.env["CONTENT_LENGTH"] = std::to_string(responseBody.length());
-			return responseBody;
-		}
-		else if (WIFSIGNALED(status))	// process interrupted by signal
+			return (writeBody(fdOut));
+		else if (WIFSIGNALED(status))	// process interrupted by signal: technically not an error despite having same result
 		{
 			req.set_status_code(INTERNAL_SERVER_ERROR);
+			close(fdOut);
 			return "";
 		}
 	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	return "";
 }
 
-  
+string	CGI::writeBody(int fdOut)
+{
+	req.set_status_code(OK);
+	string	responseBody;
+	char buffer[BUFFER_SIZE];
+	int	finishedReading = 1;
+
+			// poll() setup
+	struct pollfd pollContext;
+	pollContext.fd = fdOut;
+	pollContext.events = POLLIN;
+	int	pollReturn = poll(&pollContext, 1, -1);
+	if (pollReturn == -1) {
+		req.set_status_code(INTERNAL_SERVER_ERROR);
+		close(fdOut);
+		return "";
+	}
+
+	lseek(fdOut, 0, SEEK_SET);
+	while (finishedReading > 0)
+	{
+		if (pollContext.revents & POLLIN)
+			finishedReading = read(fdOut, buffer, BUFFER_SIZE);
+		if (finishedReading > 0)
+			responseBody.append(buffer, finishedReading);
+	}
+	close(fdOut);
+	req.env["CONTENT_LENGTH"] = std::to_string(responseBody.length());
+	return responseBody;
+}
+
 		// deprecated. Might have some useful ideas for environment variables that
 		// haven't been added just yet
 // void CGI::m_setEnv() {
