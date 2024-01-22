@@ -113,6 +113,11 @@ bool	Req::_validPath(string &line)
 	if (line.compare(0, 6, "GET / ") == 0)	// checks for first index call.
 	{
 		_fileName = PATH_TO_INDEX;
+		// _fileName += _location.get_root();
+		// _fileName += _location.get_index();
+		
+			// cout << "filename: " << _fileName << endl;
+		
 		_extension = ".html";
 		return true;
 	}
@@ -125,7 +130,7 @@ bool	Req::_validPath(string &line)
 	if (_extension == ".py")
 		_fileName = PATH_TO_CGI;
 	else
-		_fileName = PATH_TO_ROOT;
+		_fileName = _location.get_root();
 	string::iterator it = line.begin() + line.find(' ') + 1;
 	_fileName += line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
 										 cout << "filename:|" << _fileName << "|" << endl;

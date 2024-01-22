@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/01/19 14:11:22 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/01/22 10:11:07 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
     for (size_t i = 0; i < parsing.get_server_size(); i++) {
         Server &server = parsing.get_ref_server(i);
         for (size_t j = 0; j < server.get_ports_size(); j++) {
-            server.get_listenners(j).run(); // Aquí se inicia el servidor en cada puerto
+			server.get_listenners(j).run(); // Aquí se inicia el servidor en cada puerto
         }
     }
 	}

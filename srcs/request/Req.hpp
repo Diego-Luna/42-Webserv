@@ -98,6 +98,7 @@ public:
 	~Req					();
 	client					_client;
 	std::map<string, string>	env;
+	string						responseString;
 	char						**envCGIExecve;		// must be deleted by destructor
 	static						std::vector<std::pair<std::string, std::string> > mime;
 	static void 				innitMime(void);

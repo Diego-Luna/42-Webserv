@@ -1,0 +1,19 @@
+for the meeting:
+
+
+			centralize poll() calls into a single one
+				maybe have it be carried through to the rest of 
+				the code? as in every class having a reference for
+				the poll struct?
+				how would that work with multiple server objects
+				
+				create a default error page
+						do we have it?
+						how to incorporate it into the routes?
+				
+				right now the root address is being hardcoded
+				how to retrieve it from server?
+				
+				
+				
+				

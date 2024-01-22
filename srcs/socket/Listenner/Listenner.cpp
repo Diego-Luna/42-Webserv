@@ -52,7 +52,7 @@ void listenner::run()
 	}
 	for (u_int16_t i = 0; i < this->n_fd; i++)
 	{
-		if (fds[i].revents & POLLIN)
+		if (fds[i].revents & POLLIN)	// I think we need to check read AND write according to the pdf
 		{
 			if (i == 0)
 			{
@@ -87,6 +87,21 @@ void listenner::run()
 						// {
 						// 	continue; // même chose quen haut, pt erreur 500, a voir
 						// }
+						
+								// Version using responseString from Req class -> populated at the end of Response
+									// currently segfaults when send is called
+						// 					cout << "sending to client" << endl;
+						// 					cout << x.responseString.c_str() << endl;
+						// 					cout << x.responseString.length() << endl;
+						// 					cout << fds[i].fd << endl;
+						// 					cout << x._client.getfd() << endl;
+						// ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
+						// if ( bytesSent< 0)
+						// {
+						// 	cout << "bytes sent to client: " << bytesSent << endl;
+						// 	continue; // même chose quen haut, pt erreur 500, a voir
+						// }
+						
 
 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}
@@ -98,3 +113,4 @@ void listenner::run()
 		}
 	}
 }
+
