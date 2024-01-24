@@ -133,7 +133,6 @@ bool	Req::_validPath(string &line)
 		_fileName = _location.get_root();
 	string::iterator it = line.begin() + line.find(' ') + 1;
 	_fileName += line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
-										 cout << "filename:|" << _fileName << "|" << endl;
 	it = line.begin() + extensionEnd;
 	if (*it == '/')	// checks for PATH_INFO
 	{

@@ -3,8 +3,8 @@
 /*************************************************************************
 		CANNONICAL FORM REQUIREMENTS
 **************************************************************************/
-Req::Req(std::string HTTP_Req, const int fd, Location &location)
-	:_location(location), _http_Req(HTTP_Req), _client(fd)
+Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &listenner_)
+	:_location(location), _http_Req(HTTP_Req), _client(fd), _listenner(listenner_)
 {
 	_error = false;
 	envCGIExecve = NULL;
@@ -243,15 +243,27 @@ void	Req::_validate()
 			return;
 		}
 	}
-		
-	// check version -> must have access to Server class.
-
-	// check content type / mime
-
-	// check port
+	if (_validPort(env["HOST"]) == false)
+	{
+		set_status_code(BAD_REQUEST);
+		_error = true;
+	}
 	set_status_code(OK);
 
 }
+
+bool	Req::_validPort(string host)
+{
+	size_t	digitPos = host.find_first_of("0123456789");
+	if (digitPos == string::npos)
+		return false;
+	string tmp = host.substr(digitPos);
+	if (std::stoi(tmp) == _listenner.portNumber)
+		return true;
+	else
+		return false;
+}
+
 
 bool	Req::_allValidCharsURI(string str)
 {
@@ -309,6 +321,10 @@ string	Req::getBody()const
 	return this->_body;
 }
 
+string	Req::getRoot()const
+{
+	return _location.get_root();
+}
 
 /**************************************************************************
 		PRINTING / TESTING

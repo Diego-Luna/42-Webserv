@@ -30,7 +30,7 @@ memset(this->fds, 0, MAX_CLIENT * sizeof(this->fds[0]));
 	this->n_fd = 1;
 }
 
-listenner::listenner(u_int32_t port, Location &location, std::string host) : _location(location)
+listenner::listenner(u_int32_t port, Location &location, std::string host) : portNumber(port), _location(location)
 {
 	std::cout << "host: " << host << " port :" <<  port << std::endl;
 	init(port, host);
@@ -79,28 +79,19 @@ void listenner::run()
 					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  buffer << std::endl;
 
 					try {
-						Req x(std::string(buffer), fds[i].fd, this->_location);
-						
-										// might be buggy because the current version doesnt use getHttpString
-						
-						// if (send(fds[i].fd, x.getHttpString().c_str(), x.getHttpString().length(), 0) < 0)
-						// {
-						// 	continue; // même chose quen haut, pt erreur 500, a voir
-						// }
-						
-								// Version using responseString from Req class -> populated at the end of Response
-									// currently segfaults when send is called
+						Req x(std::string(buffer), fds[i].fd, this->_location, *this);
+
 						// 					cout << "sending to client" << endl;
 						// 					cout << x.responseString.c_str() << endl;
 						// 					cout << x.responseString.length() << endl;
 						// 					cout << fds[i].fd << endl;
 						// 					cout << x._client.getfd() << endl;
-						// ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
-						// if ( bytesSent< 0)
-						// {
-						// 	cout << "bytes sent to client: " << bytesSent << endl;
-						// 	continue; // même chose quen haut, pt erreur 500, a voir
-						// }
+						ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
+						if ( bytesSent< 0)
+						{
+							cout << "bytes sent to client: " << bytesSent << endl;
+							continue; // même chose quen haut, pt erreur 500, a voir
+						}
 						
 
 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;

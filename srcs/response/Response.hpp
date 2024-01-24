@@ -20,8 +20,11 @@ private:
 	string			_responseBody;
 	string			_header;
 	string			makeHeader();
-	void			writeToClient();
+	// void			writeToClient();	// DEPRECATED
 	const string	message_status_code(u_int16_t code);
+	void			router(u_int16_t statusCode);
+	string			makeErrorHeader();
+	string			findErrorPage(u_int16_t statusCode);
 
 public:
 	Response(Req &Req_);

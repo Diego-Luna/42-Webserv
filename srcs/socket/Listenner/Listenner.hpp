@@ -14,6 +14,7 @@ public:
 	listenner();
 	// listenner(u_int32_t port, Location &location);
 	listenner(u_int32_t port, Location &location, std::string host);
+	int		portNumber;
 	~listenner();
 	void run(void);
 private:

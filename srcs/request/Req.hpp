@@ -28,6 +28,7 @@ private:
 
 	Location				&_location;
 	// Server					&_server;
+	string					_root;
 	string	 				_header;
 	string 					_body;
 	string					_method;
@@ -48,6 +49,7 @@ private:
 	bool					_validMethod(const string &line);
 	bool					_validPath(string &line);
 	bool					_validVersion(string &line);
+	bool					_validPort(string host);
 	bool					_checkCGI(string &fileName);
 	size_t					_findExtensionEnd(string &line);
 	string					_getQuerryString(string &line);
@@ -74,29 +76,30 @@ private:
 
 	Some of these seem to be better suited for Response, rather than Request
 */
-	void 					header_creation(void);	// unable to test, more details inside
-	std::string 			cType(void);
-	std::string 			status_line;
-	void 					body_creation(void);
+	// void 					header_creation(void);	// unable to test, more details inside
+	// std::string 			cType(void);
+	// std::string 			status_line;
+	// void 					body_creation(void);
 
-	//fonc
-	u_int16_t 				getFonc(std::string &element);
-	u_int16_t 				postFonc(std::string &element);
+	// //fonc
+	// u_int16_t 				getFonc(std::string &element);
+	// u_int16_t 				postFonc(std::string &element);
 	
-	// u_int16_t			methode;
-	typedef u_int16_t 		(Req::*meth)(std::string &element);
-	meth 					methode;
-	// status line /
+	// // u_int16_t			methode;
+	// typedef u_int16_t 		(Req::*meth)(std::string &element);
+	// meth 					methode;
+	// // status line /
 
-	// void 					status_line_creation(const std::string &line);
-	// pt a supp
-	u_int16_t 				parsing_status_line(std::vector<std::string> status_line);
-	meth					find_methode(std::string &methode);
+	// // void 					status_line_creation(const std::string &line);
+	// // pt a supp
+	// u_int16_t 				parsing_status_line(std::vector<std::string> status_line);
+	// meth					find_methode(std::string &methode);
 
 public:
-	Req(std::string HTTP_Req, const int fd, Location &location);
+	Req(std::string HTTP_Req, const int fd, Location &location, listenner &listenner_);
 	~Req					();
 	client					_client;
+	listenner				&_listenner;
 	std::map<string, string>	env;
 	string						responseString;
 	char						**envCGIExecve;		// must be deleted by destructor
@@ -106,6 +109,7 @@ public:
 		// GETTER / SETTER
 	string					getHttpString()const;
 	string					get_header()const;
+	string					getRoot()const;
 	string					getBody()const;
 	bool					getIsCGI() const;
 	u_int16_t				get_status_code() const;
