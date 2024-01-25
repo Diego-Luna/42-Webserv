@@ -7,6 +7,7 @@
 void	Req::parseHeader(void)
 {
 	string line;
+
 	while (std::getline(_ReqStream, line) && !line.empty() && (line.find_first_not_of(" \t\r\n") != string::npos))
 		_header += line + '\n';
 
@@ -15,6 +16,10 @@ void	Req::parseHeader(void)
 										// cout << "print header: \n\n" << _header << endl << endl;
 										// cout << "request body:|" << _body << "|" << endl;
 	parseFirstLine();
+
+	if (_isUpload == true && _error == false)
+		return;
+
 	_makeEnv();
 
 	if (_error == false)
@@ -48,6 +53,12 @@ void	Req::parseFirstLine(void)
 		_error = true;
 		return;
 	}
+
+
+	if (_isUpload == true && _error == false)
+		return;
+
+
 	if (_error == false)
 	{
 		_querryString = _getQuerryString(line);
@@ -119,6 +130,13 @@ bool	Req::_validPath(string &line)
 			// cout << "filename: " << _fileName << endl;
 		
 		_extension = ".html";
+		return true;
+	}
+
+	if (line.compare(0, 13, "POST /upload/") == 0)
+	{
+						cout << "FOUND UPLOAD, is it valid?" << endl;
+		_isUpload = true;
 		return true;
 	}
 

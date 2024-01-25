@@ -7,6 +7,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &list
 	:_location(location), _http_Req(HTTP_Req), _client(fd), _listenner(listenner_)
 {
 	_error = false;
+	_isUpload = false;
 	envCGIExecve = NULL;
 	if (HTTP_Req.length() < 1)
 		fatal("Bad HTTP REQUEST");
@@ -15,7 +16,13 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &list
 		fatal ("failed to create request string stream");
 	parseHeader();
 	
-	if (_isCGI && _error == false)
+	if (_isUpload == true && _error == false)
+	{
+						cout << "found a valid upload" << endl;
+						parseUpload();
+	}
+
+	else if (_isCGI && _error == false)
 	{
 		CGI	Cgi(*this);
 	} else {

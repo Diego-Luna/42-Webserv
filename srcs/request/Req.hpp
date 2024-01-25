@@ -6,12 +6,14 @@
 #include "../CGI.hpp"
 
 #include <sstream>
+#include <iostream>
 #include <cstring>
 #include <string>
 
 #define PATH_TO_INDEX "data/www/Pages/index.html"
 #define PATH_TO_ROOT "data/www/Pages"
 #define PATH_TO_CGI "CGI/bin"
+#define PATH_TO_UPLOAD "data/www/upload"
 #define POLL_INF_TIME -1
 
 using std::cout;
@@ -41,6 +43,7 @@ private:
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
 	bool					_error;
+	bool					_isUpload;
 	u_int16_t				status_code;
 
 	// HEADER PARSING
@@ -55,6 +58,14 @@ private:
 	string					_getQuerryString(string &line);
 	string					getContentType(string &extension);
 	
+	// UPLOAD MANAGEMENT
+	void					parseUpload(void);
+	string					findUploadFileName(string boundary);
+	string					findUploadBoundry(void);
+	void					stripQuotes(string &original);
+	string					findUploadBody(string boundary);
+	string					trimLine(string line);
+
 	// CGI AND ENV PREP	
 	string					_formatStringEnvCGI(string str);
 	void					_populateEnv(string var);
