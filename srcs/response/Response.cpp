@@ -76,12 +76,34 @@ string	Response::makeHeader()
 		header += _responseBody;
 		header += "\r\n";
 
+
+	} else if (_Req._isUpload && _Req.get_status_code() == OK) {
+		FILE	*uploadFile = fopen(_Req.env["FIL_NAME"].c_str(), "r");
+		if (uploadFile == NULL)
+		{
+			std::cerr << "error opening file: " << _Req.env["FILE_NAME"] << endl;
+			_Req.set_status_code(INTERNAL_SERVER_ERROR);
+			return makeErrorHeader();
+		}
+
+
+				cout << "out here so far" << endl;
+
+
+
+
+
+
+		header += "Content-Type: " + _Req.env["CONTENT_TYPE"];
+		header += "\r\n";
+
 	} else if (_Req.get_status_code() == OK) {
 		std::fstream htmlFile(_Req.env["FILE_NAME"]);
 		if (!htmlFile.is_open())
 		{
 			std::cerr << "error opening file: " << _Req.env["FILE_NAME"] << endl;
-			return "";
+			_Req.set_status_code(INTERNAL_SERVER_ERROR);
+			return makeErrorHeader();
 		}
 		string line;
 		while (std::getline(htmlFile, line))
@@ -95,6 +117,8 @@ string	Response::makeHeader()
 		header += "\r\n";
 		return header;
 	}
+
+
 	return header;
 }
 

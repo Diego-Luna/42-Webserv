@@ -13,7 +13,7 @@
 #define PATH_TO_INDEX "data/www/Pages/index.html"
 #define PATH_TO_ROOT "data/www/Pages"
 #define PATH_TO_CGI "CGI/bin"
-#define PATH_TO_UPLOAD "data/www/upload"
+#define PATH_TO_UPLOAD "data/www/upload/"
 #define POLL_INF_TIME -1
 
 using std::cout;
@@ -43,8 +43,10 @@ private:
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
 	bool					_error;
-	bool					_isUpload;
 	u_int16_t				status_code;
+
+	std::vector<string>		_uploadFiles; // fclose/delete the files at the end
+
 
 	// HEADER PARSING
 	void					parseHeader(void);
@@ -65,6 +67,7 @@ private:
 	void					stripQuotes(string &original);
 	string					findUploadBody(string boundary);
 	string					trimLine(string line);
+	void					createUploadFile();
 
 	// CGI AND ENV PREP	
 	string					_formatStringEnvCGI(string str);
@@ -123,6 +126,7 @@ public:
 	string					getRoot()const;
 	string					getBody()const;
 	bool					getIsCGI() const;
+	bool					_isUpload;
 	u_int16_t				get_status_code() const;
 	void 					set_status_code(u_int16_t statusCode_);
 

@@ -3,32 +3,53 @@
 void	Req::parseUpload(void)
 {
 								cout << "start of parsing upload" << endl;
-
-	// env["CONTENT_TYPE"] = "text/plain";
 	
 	string	boundary = findUploadBoundry();
 					cout << "boundary: |" << boundary << "|" << endl;
 
 					// cout << "boundary: |" << boundary << "|" << endl;
 
-	string	fileName;
-
 	if (_error == false)
-		fileName = findUploadFileName(boundary);
+		_fileName = findUploadFileName(boundary);
 
-					cout << "fileName: |" << fileName << "|" << endl;
+					cout << "fileName: |" << _fileName << "|" << endl;
 
 	if (_error == false)
 		_body = findUploadBody(boundary);
-	
 
-		// create file with filename.
-		// try writting straight to the socket. -> create header + body
-		// add .txt as acceptable extension
+					cout << "body: |" << _body << "|" << endl;
 
+	_populateEnv(string("Host"));
+	_populateEnv(string("User-Agent"));
+	_populateEnv(string("Content-Length"));
+	_populateEnv(string("Accept"));
+	_populateEnv(string("Accept-Language"));
+	_populateEnv(string("Connection"));
+	_buildEncoded();
+	env["CONTENT_TYPE"] = getContentType(_extension);
+	env["SERVER_PROTOCOL"] = _protocol;
+	env["FILE_NAME"] = _fileName;
 
+	set_status_code(OK);
 }
 
+void	Req::createUploadFile()
+{
+	FILE	*uploadFile = fopen(_fileName.c_str(), "w");
+
+	if (uploadFile == NULL)
+	{
+		std::cerr << "error. could not create file: " << _fileName << endl;
+
+		_error = true;
+		set_status_code(INTERNAL_SERVER_ERROR);
+		return;
+	}
+	_uploadFiles.push_back(_fileName);
+
+	fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
+	fclose(uploadFile);
+}
 
 	// picks up the stream from where findUploadFileName left off
 string	Req::findUploadBody(string boundary)
@@ -45,27 +66,22 @@ string	Req::findUploadBody(string boundary)
 	{
 		std::getline(_ReqStream, line);
 		line = trimLine(line);
-					cout << "first upload body loop: " << line << endl;
 	}
+					// cout << "after first loop: " << line << endl;
+					// cout << "boundary: |" << boundary << "|" << endl;
+					// cout << line.compare(0, boundary.length(), boundary) << endl;
 
-					cout << "after first loop: " << line << endl;
-
-					cout << "boundary: |" << boundary << "|" << endl;
-					cout << line.compare(0, boundary.length(), boundary) << endl;
-
-
+		// working, but could use some cleanup.
 	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
 	{
-
 		std::getline(_ReqStream, line);
-		if (line.compare(0, boundary.length(), boundary) == 0)
-			break;
 		line = trimLine(line);
+		if (line.compare(0, boundary.length(), boundary) == 0) {
+			body.pop_back();		// removes extraneous \n
+			break;
+		}
 		body += line + "\n";
 	}
-
-					// cout << "RETURNING BODY:\n" << body << endl;
-
 	return body;
 }
 
@@ -75,8 +91,6 @@ string	Req::trimLine(string line)
 		line.pop_back();
 	return line;
 }
-
-
 
 string	Req::findUploadBoundry(void)
 {
@@ -98,6 +112,7 @@ string	Req::findUploadBoundry(void)
 
 	return boundary;
 }
+		// KNOWN BUG: filename can't have a space in it.
 
 string	Req::findUploadFileName(string boundary)
 {
@@ -134,9 +149,7 @@ string	Req::findUploadFileName(string boundary)
 	}
 	fileName = trimLine(fileName);
 	stripQuotes(fileName);
-
-				cout << "filename after procesing: " << fileName << endl;
-
+	fileName = PATH_TO_UPLOAD + fileName;
 	return fileName;
 }
 

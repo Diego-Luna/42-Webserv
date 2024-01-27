@@ -20,6 +20,9 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &list
 	{
 						cout << "found a valid upload" << endl;
 						parseUpload();
+						createUploadFile();
+								cout << "post file creation" << endl;
+						Response response(*this);
 	}
 
 	else if (_isCGI && _error == false)

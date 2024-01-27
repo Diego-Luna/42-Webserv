@@ -17,6 +17,7 @@ void	Req::parseHeader(void)
 										// cout << "request body:|" << _body << "|" << endl;
 	parseFirstLine();
 
+
 	if (_isUpload == true && _error == false)
 		return;
 
@@ -53,12 +54,8 @@ void	Req::parseFirstLine(void)
 		_error = true;
 		return;
 	}
-
-
 	if (_isUpload == true && _error == false)
 		return;
-
-
 	if (_error == false)
 	{
 		_querryString = _getQuerryString(line);
@@ -171,6 +168,7 @@ size_t	 Req::_findExtensionEnd(string &line)
 	allowedExtensions.push_back(".html");
 	allowedExtensions.push_back(".css");
 	allowedExtensions.push_back(".py");
+	allowedExtensions.push_back(".txt");
 	size_t	extensionEnd;
 	for (std::vector<string>::const_iterator it = allowedExtensions.begin();
 		it != allowedExtensions.end(); ++it) {
