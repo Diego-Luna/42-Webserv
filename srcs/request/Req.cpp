@@ -22,6 +22,7 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &list
 						parseUpload();
 						createUploadFile();
 								cout << "post file creation" << endl;
+								cout << get_status_code() << endl;
 						Response response(*this);
 	}
 

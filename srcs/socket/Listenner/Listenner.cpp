@@ -81,8 +81,8 @@ void listenner::run()
 					try {
 						Req x(std::string(buffer), fds[i].fd, this->_location, *this);
 
-						// 					cout << "sending to client" << endl;
-						// 					cout << x.responseString.c_str() << endl;
+											// cout << "sending to client" << endl;
+											// cout << x.responseString.c_str() << endl;
 						// 					cout << x.responseString.length() << endl;
 						// 					cout << fds[i].fd << endl;
 						// 					cout << x._client.getfd() << endl;

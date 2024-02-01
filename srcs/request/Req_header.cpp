@@ -138,6 +138,10 @@ bool	Req::_validPath(string &line)
 	}
 
 	size_t	extensionEnd = _findExtensionEnd(line);
+
+							cout << "EXTENSIONEND: " << extensionEnd << endl;
+
+
 	if (extensionEnd == string::npos)
 		return false;
 	if (line.at(extensionEnd) != ' ' && line.at(extensionEnd) != '/')
@@ -162,22 +166,33 @@ bool	Req::_validPath(string &line)
 	return true;
 }
 
+	// refarctored to use mim instead of it's own vector
+	//	looks for the extension(mime.first) in line. sets _extension if found
+	// returns the position in line of the last charcter of extension.
 size_t	 Req::_findExtensionEnd(string &line)
 {
-	std::vector<std::string>	allowedExtensions;
-	allowedExtensions.push_back(".html");
-	allowedExtensions.push_back(".css");
-	allowedExtensions.push_back(".py");
-	allowedExtensions.push_back(".txt");
-	size_t	extensionEnd;
-	for (std::vector<string>::const_iterator it = allowedExtensions.begin();
-		it != allowedExtensions.end(); ++it) {
-			extensionEnd = line.find(*it);
-			if (extensionEnd != string::npos) {
-				_extension = *it;
-				return extensionEnd + it->length();
+	string	extension = "";
+	for(string::iterator it = line.begin(); it != line.end(); it++)
+	{
+		if (*it == '.')
+		{
+			while (*it != ' '){
+				extension += *it;
+				it++;
 			}
+			break;
 		}
+	}
+	std::vector<std::pair<std::string, std::string> >::iterator it = mime.begin();
+	while (it != mime.end())
+	{
+		if (it->first == extension)
+		{
+			_extension = it->first;
+			return line.find(_extension) + _extension.length();
+		}
+		it++;
+	}
 	return std::string::npos;
 }
 

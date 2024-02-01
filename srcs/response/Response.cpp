@@ -69,7 +69,7 @@ string	Response::makeHeader()
 
 	if (_Req.getIsCGI() && _Req.get_status_code() == OK)
 	{
-		header += "Content-Type: " "text/html";
+		header += "Content-Type: text/html";
 		header += "\r\n";
 		header += "Content-Length: " + std::to_string(_responseBody.length());
 		header += "\r\n\r\n";
@@ -78,24 +78,31 @@ string	Response::makeHeader()
 
 
 	} else if (_Req._isUpload && _Req.get_status_code() == OK) {
-		FILE	*uploadFile = fopen(_Req.env["FIL_NAME"].c_str(), "r");
-		if (uploadFile == NULL)
+		header += "Content-Type: " + _Req.env["CONTENT_TYPE"];
+		header += "\r\n";
+		std::fstream htmlFile("data/www/Pages/uploadSuccessful.html");
+		if (!htmlFile.is_open())
 		{
-			std::cerr << "error opening file: " << _Req.env["FILE_NAME"] << endl;
+			std::cerr << "error opening file: " << "data/www/Pages/uploadSuccessful.html" << endl;
 			_Req.set_status_code(INTERNAL_SERVER_ERROR);
 			return makeErrorHeader();
 		}
-
-
-				cout << "out here so far" << endl;
-
-
-
-
-
-
-		header += "Content-Type: " + _Req.env["CONTENT_TYPE"];
+		string line;
+		while (std::getline(htmlFile, line))
+			_responseBody += line + "\r\n";
+		htmlFile.close();
+		header += "Content-Type: text.html";
 		header += "\r\n";
+		header += "Content-Length: " + std::to_string(_responseBody.length());
+		header += "\r\n\r\n";
+		header += _responseBody;
+		header += "\r\n";
+
+								cout << "UPLOAD HEADER: |" << header << "|" << endl;
+
+		return header;
+
+
 
 	} else if (_Req.get_status_code() == OK) {
 		std::fstream htmlFile(_Req.env["FILE_NAME"]);

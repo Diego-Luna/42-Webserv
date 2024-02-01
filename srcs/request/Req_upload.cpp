@@ -28,7 +28,7 @@ void	Req::parseUpload(void)
 	_buildEncoded();
 	env["CONTENT_TYPE"] = getContentType(_extension);
 	env["SERVER_PROTOCOL"] = _protocol;
-	env["FILE_NAME"] = _fileName;
+	env["FILE_NAME"] = _fileName;	// might change it to uploadfilenam
 
 	set_status_code(OK);
 }
