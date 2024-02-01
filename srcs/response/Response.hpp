@@ -6,6 +6,8 @@
 #include <iostream>
 #include <poll.h>
 
+#define	UPLOAD_SUCCESS "data/www/Pages/uploadSuccessful.html"
+
 using std::string;
 
 class	Req;
@@ -20,16 +22,15 @@ private:
 	string			_responseBody;
 	string			_header;
 	string			makeHeader();
-	// void			writeToClient();	// DEPRECATED
 	const string	message_status_code(u_int16_t code);
 	void			router(u_int16_t statusCode);
 	string			makeErrorHeader();
 	string			findErrorPage(u_int16_t statusCode);
-
+	string			CGIHeader(string &header);
+	string			uploadHeader(string &header);
 public:
 	Response(Req &Req_);
 	Response(Req &Req_, string responseBody_);
 	~Response();
 	string	header;
-	
 };

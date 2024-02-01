@@ -13,10 +13,8 @@ void	Req::parseHeader(void)
 
 	while (std::getline(_ReqStream, line) && !line.empty())
 		_body += line + '\n';
-										// cout << "print header: \n\n" << _header << endl << endl;
-										// cout << "request body:|" << _body << "|" << endl;
-	parseFirstLine();
 
+	parseFirstLine();
 
 	if (_isUpload == true && _error == false)
 		return;
@@ -118,30 +116,20 @@ bool	Req::_validVersion(string &line)
 
 bool	Req::_validPath(string &line)
 {
-	if (line.compare(0, 6, "GET / ") == 0)	// checks for first index call.
+	if (line.compare(0, 6, "GET / ") == 0)	// checks for initial index call: "GET / HTTP:1.1"
 	{
 		_fileName = PATH_TO_INDEX;
-		// _fileName += _location.get_root();
-		// _fileName += _location.get_index();
-		
-			// cout << "filename: " << _fileName << endl;
-		
 		_extension = ".html";
 		return true;
 	}
 
 	if (line.compare(0, 13, "POST /upload/") == 0)
 	{
-						cout << "FOUND UPLOAD, is it valid?" << endl;
+						// cout << "FOUND UPLOAD, is it valid?" << endl;
 		_isUpload = true;
 		return true;
 	}
-
 	size_t	extensionEnd = _findExtensionEnd(line);
-
-							cout << "EXTENSIONEND: " << extensionEnd << endl;
-
-
 	if (extensionEnd == string::npos)
 		return false;
 	if (line.at(extensionEnd) != ' ' && line.at(extensionEnd) != '/')
@@ -226,20 +214,3 @@ bool	Req::_validMethod(const string &line)
 	else
 		return true;
 }
-
-// /**************************************************************************
-// 		UNKNOWN OR DEPRECATED
-// **************************************************************************/
-
-// void Req::header_creation(void)
-// {
-// 	this->_header = "Host: " + std::string(inet_ntoa(_client.getAddr().sin_addr)) + ":" + std::to_string(ntohs(_client.getAddr().sin_port)) + "\r\n";
-// 	if (this->methode == &Req::getFonc || this->status_code == 404 || this->status_code == 400)
-// 	{
-// 		this->_header += "Content-Type: " + cType() + "; charset=UTF-8\r\n"; // peut PEUT ËTRE causé un problme (utf-8 etc.)
-// 		this->_header += "Content-Length: " + std::to_string(this->_body.length()) + "\r\n";
-// 	}
-
-// 	// 				User-Agent
-// 	this->_header += "\r\n";
-// }
