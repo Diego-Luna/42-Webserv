@@ -124,7 +124,7 @@ string	Response::makeErrorHeader()
 
 	string errorPage = findErrorPage(_Req.get_status_code());
 
-				cout << "error page = " << errorPage << endl;
+				// cout << "error page = " << errorPage << endl;
 
 	std::fstream htmlFile(errorPage);
 		if (!htmlFile.is_open())
@@ -149,7 +149,7 @@ string	Response::findErrorPage(u_int16_t statusCode)
 {
 	string	errorRoot = _Req.getRoot() + "/ErrorPages/";
 	string	fileName;
-				cout << "error root: " << errorRoot << endl;
+				// cout << "error root: " << errorRoot << endl;
 	switch (statusCode)
 	{
 		case 204:

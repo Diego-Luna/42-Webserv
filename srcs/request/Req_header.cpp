@@ -116,6 +116,8 @@ bool	Req::_validVersion(string &line)
 
 bool	Req::_validPath(string &line)
 {
+
+							cout << "LINE IN _validpath\n|" << line << "|" << endl;
 	if (line.compare(0, 6, "GET / ") == 0)	// checks for initial index call: "GET / HTTP:1.1"
 	{
 		_fileName = PATH_TO_INDEX;
@@ -123,9 +125,9 @@ bool	Req::_validPath(string &line)
 		return true;
 	}
 
-	if (line.compare(0, 13, "POST /upload/") == 0)
+	if (line.compare(0, 27, "POST /uploadSuccessful.html") == 0)
 	{
-						// cout << "FOUND UPLOAD, is it valid?" << endl;
+						cout << "FOUND UPLOAD, is it valid?" << endl;
 		_isUpload = true;
 		return true;
 	}

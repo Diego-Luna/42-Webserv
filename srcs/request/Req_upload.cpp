@@ -50,6 +50,41 @@ void	Req::createUploadFile()
 	fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
 	fclose(uploadFile);
 }
+		// WORKING FOR TXT FILES -> NEW VERSION IN PROGRESS
+// 	// picks up the stream from where findUploadFileName left off
+// string	Req::findUploadBody(string boundary)
+// {
+// 	boundary = trimLine(boundary);
+// 	boundary = "--" + boundary + "--";
+
+// 	string line;
+// 	string body = "";
+	
+// 	std::getline(_ReqStream, line);
+// 	line = trimLine(line);
+// 	while (!line.empty())
+// 	{
+// 		std::getline(_ReqStream, line);
+// 		line = trimLine(line);
+// 	}
+// 					// cout << "after first loop: " << line << endl;
+// 					// cout << "boundary: |" << boundary << "|" << endl;
+// 					// cout << line.compare(0, boundary.length(), boundary) << endl;
+
+// 		// working, but could use some cleanup.
+// 	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
+// 	{
+// 		std::getline(_ReqStream, line);
+// 		line = trimLine(line);
+// 		if (line.compare(0, boundary.length(), boundary) == 0) {
+// 			body.pop_back();		// removes extraneous \n
+// 			break;
+// 		}
+// 		body += line + "\n";
+// 	}
+// 	return body;
+// }
+
 
 	// picks up the stream from where findUploadFileName left off
 string	Req::findUploadBody(string boundary)
@@ -58,8 +93,9 @@ string	Req::findUploadBody(string boundary)
 	boundary = "--" + boundary + "--";
 
 	string line;
-	string body = "";
+	// string body = "";
 	
+			// advances the line to the empty line between header and body
 	std::getline(_ReqStream, line);
 	line = trimLine(line);
 	while (!line.empty())
@@ -70,20 +106,40 @@ string	Req::findUploadBody(string boundary)
 					// cout << "after first loop: " << line << endl;
 					// cout << "boundary: |" << boundary << "|" << endl;
 					// cout << line.compare(0, boundary.length(), boundary) << endl;
+	std::vector<char> bodyVector;
 
-		// working, but could use some cleanup.
-	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
-	{
-		std::getline(_ReqStream, line);
-		line = trimLine(line);
-		if (line.compare(0, boundary.length(), boundary) == 0) {
-			body.pop_back();		// removes extraneous \n
-			break;
-		}
-		body += line + "\n";
-	}
+		// Calculate the size of the data
+	std::streampos current = _ReqStream.tellg(); 
+	_ReqStream.seekg(0, std::ios::end);
+	std::streampos fileSize = _ReqStream.tellg() - current;
+	_ReqStream.seekg(current, std::ios::beg);
+
+		// Resize the vector and read binary data from the original stream
+	bodyVector.resize(static_cast<size_t>(fileSize));
+	_ReqStream.read(&bodyVector[0], bodyVector.size());
+	string body(bodyVector.begin(), bodyVector.end());
+
+				// cout << "\n\nPRINTING UPLOAD BODY\n" << body << endl;
+
+
+	// 	// working, but could use some cleanup.
+	// while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
+	// {
+	// 	std::getline(_ReqStream, line);
+	// 	line = trimLine(line);
+	// 	if (line.compare(0, boundary.length(), boundary) == 0) {
+	// 		body.pop_back();		// removes extraneous \n
+	// 		break;
+	// 	}
+	// 	body += line + "\n";
+	// }
 	return body;
 }
+
+
+
+
+
 
 string	Req::trimLine(string line)
 {

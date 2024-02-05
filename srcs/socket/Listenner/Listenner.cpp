@@ -76,9 +76,10 @@ void listenner::run()
 				}
 				else
 				{
-					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  buffer << std::endl;
+					// std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  buffer << std::endl;
 
 					try {
+						std::vector<char> dataVector(buffer, buffer + res);
 						Req x(std::string(buffer), fds[i].fd, this->_location, *this);
 
 											// cout << "sending to client" << endl;

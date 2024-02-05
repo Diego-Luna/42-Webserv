@@ -6,15 +6,23 @@
 Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &listenner_)
 	:_location(location), _http_Req(HTTP_Req), _client(fd), _listenner(listenner_)
 {
+				// cout << "printing req string upload:\n" << HTTP_Req << endl;
 	_error = false;
 	_isUpload = false;
 	envCGIExecve = NULL;
 	if (HTTP_Req.length() < 1)
-		fatal("Bad HTTP REQUEST");
+	{
+		_error = true;
+		set_status_code(BAD_REQUEST);
+	}
 	_ReqStream.str(_http_Req);
 	if (!_ReqStream.good())
-		fatal ("failed to create request string stream");
-	parseHeader();
+		{
+		_error = true;
+		set_status_code(INTERNAL_SERVER_ERROR);
+	}
+	if (_error == false)
+		parseHeader();
 	
 	if (_isUpload == true && _error == false)
 	{
@@ -30,6 +38,8 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &list
 	{
 		CGI	Cgi(*this);
 	} else {
+
+					cout << "SENDING TO RESPONSE CLASS FROM REQ" << endl;
 		Response response(*this);
 	}
 }
