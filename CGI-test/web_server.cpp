@@ -6,15 +6,14 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <cstdlib>
-#include <cstdio> // Para fprintf
-#include <cstring> // Para strlen
-
+#include <cstdio> // For fprintf
+#include <cstring> // For strlen
 
 const int PORT = 8080;
 
-extern char **environ;  // Declaración de la variable environ
+extern char **environ;  // Declaration of the environ variable
 
-// Asumiendo que ya tienes el resto de las inclusiones y tu función executeCGI comienza aquí
+// Assuming you already have the rest of the includes and your executeCGI function starts here
 
 void executeCGI(const std::string& scriptPath, int clientSocket, const std::string& method, const std::string& postData) {
     int pfd[2], input_pfd[2];
@@ -33,19 +32,19 @@ void executeCGI(const std::string& scriptPath, int clientSocket, const std::stri
         return;
     }
 
-    if (pid == 0) { // Proceso hijo
-        close(pfd[0]); // Cerrar el extremo de lectura del pipe de salida
-        close(input_pfd[1]); // Cerrar el extremo de escritura del pipe de entrada
+    if (pid == 0) { // Child process
+        close(pfd[0]); // Close the reading end of the output pipe
+        close(input_pfd[1]); // Close the writing end of the input pipe
 
-        dup2(pfd[1], STDOUT_FILENO); // Duplicar el extremo de escritura del pipe de salida en stdout
-        dup2(input_pfd[0], STDIN_FILENO); // Duplicar el extremo de lectura del pipe de entrada en stdin
+        dup2(pfd[1], STDOUT_FILENO); // Duplicate the writing end of the output pipe to stdout
+        dup2(input_pfd[0], STDIN_FILENO); // Duplicate the reading end of the input pipe to stdin
 
-        close(pfd[1]); // Cerrar el duplicado
-        close(input_pfd[0]); // Cerrar el duplicado
+        close(pfd[1]); // Close the duplicate
+        close(input_pfd[0]); // Close the duplicate
 
         setenv("REQUEST_METHOD", method.c_str(), 1);
         if (method == "POST") {
-            // Establecer CONTENT_LENGTH como variable de entorno
+            // Set CONTENT_LENGTH as an environment variable
             std::string contentLengthStr = std::to_string(postData.length());
             setenv("CONTENT_LENGTH", contentLengthStr.c_str(), 1);
         }
@@ -55,18 +54,18 @@ void executeCGI(const std::string& scriptPath, int clientSocket, const std::stri
 
         perror("execve failed");
         exit(EXIT_FAILURE);
-    } else { // Proceso padre
-        close(pfd[1]); // Cerrar el extremo de escritura del pipe de salida
-        close(input_pfd[0]); // Cerrar el extremo de lectura del pipe de entrada
+    } else { // Parent process
+        close(pfd[1]); // Close the writing end of the output pipe
+        close(input_pfd[0]); // Close the reading end of the input pipe
 
-        // Si el método es POST, escribir los datos POST en el pipe de entrada
+        // If the method is POST, write the POST data into the input pipe
         if (method == "POST") {
             write(input_pfd[1], postData.c_str(), postData.length());
         }
 
-        close(input_pfd[1]); // Cerrar el extremo de escritura después de enviar los datos
+        close(input_pfd[1]); // Close the writing end after sending the data
 
-        // Leer la salida del script CGI del pipe de salida y enviarla al cliente
+        // Read the output from the CGI script from the output pipe and send it to the client
         char buffer[128];
         std::string result = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
         ssize_t bytes_read;
@@ -83,30 +82,29 @@ void executeCGI(const std::string& scriptPath, int clientSocket, const std::stri
 }
 
 void serveForm(int clientSocket) {
-    // Ruta al archivo HTML que quieres servir
+    // Path to the HTML file you want to serve
     std::string filePath = "./form.html";
 
-    // Abre el archivo en modo de lectura
+    // Open the file in reading mode
     std::ifstream fileStream(filePath, std::ios::binary);
 
     if(fileStream) {
-        // Lee el contenido del archivo
+        // Read the file's content
         std::string httpResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
         std::stringstream buffer;
         buffer << fileStream.rdbuf();
 
-        // Agrega el contenido del archivo a la respuesta HTTP
+        // Add the file content to the HTTP response
         httpResponse += buffer.str();
 
-        // Envía la respuesta al cliente
+        // Send the response to the client
         send(clientSocket, httpResponse.c_str(), httpResponse.length(), 0);
     } else {
-        // Si no se encuentra el archivo, envía una respuesta de error 404
+        // If the file is not found, send a 404 error response
         std::string errorResponse = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n<html><body><h1>404 Not Found</h1></body></html>";
         send(clientSocket, errorResponse.c_str(), errorResponse.length(), 0);
     }
 }
-
 
 void handleClient(int clientSocket) {
     char buffer[1024] = {0};
@@ -119,7 +117,7 @@ void handleClient(int clientSocket) {
 
     requestStream >> method >> url;
 
-    // Buscar el final de las cabeceras HTTP
+    // Search for the end of the HTTP headers
     std::string delimiter = "\r\n\r\n";
     size_t delimiterPos = request.find(delimiter);
     std::string postData;
@@ -137,7 +135,7 @@ void handleClient(int clientSocket) {
     else if (url == "/form.html")
         serveForm(clientSocket);
     else {
-        // Manejar otras rutas aquí...
+        // Handle other routes here...
     }
 
     close(clientSocket);
@@ -148,7 +146,7 @@ int main() {
     struct sockaddr_in address;
     int addrlen = sizeof(address);
 
-    // Crear socket
+    // Create socket
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
@@ -170,10 +168,10 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    std::cout << "Esperando conexiones en el puerto " << PORT << "..." << std::endl;
+    std::cout << "Waiting for connections on port " << PORT << "..." << std::endl;
 
     while (true) {
-        std::cout << "Esperando conexiones..." << std::endl;
+        std::cout << "Waiting for connections..." << std::endl;
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
             perror("accept");
             exit(EXIT_FAILURE);
@@ -183,7 +181,6 @@ int main() {
     }
 
     close(server_fd);
-
 
     return 0;
 }
