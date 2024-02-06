@@ -44,7 +44,7 @@ private:
 	bool					_isCGI;
 	bool					_error;
 	u_int16_t				status_code;
-
+	std::vector<char>		dataVector;
 	std::vector<string>		_uploadFiles; // fclose/delete the files at the end
 
 
@@ -68,6 +68,7 @@ private:
 	string					findUploadBody(string boundary);
 	string					trimLine(string line);
 	void					createUploadFile();
+	std::vector<char>		_bodyVector;
 
 	// CGI AND ENV PREP	
 	string					_formatStringEnvCGI(string str);
@@ -110,7 +111,7 @@ private:
 	// meth					find_methode(std::string &methode);
 
 public:
-	Req(std::string HTTP_Req, const int fd, Location &location, listenner &listenner_);
+	Req(std::vector<char> dataVector_, const int fd, Location &location, listenner &listenner_);
 	~Req					();
 	client					_client;
 	listenner				&_listenner;

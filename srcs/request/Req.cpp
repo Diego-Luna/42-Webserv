@@ -3,14 +3,15 @@
 /*************************************************************************
 		CANNONICAL FORM REQUIREMENTS
 **************************************************************************/
-Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &listenner_)
-	:_location(location), _http_Req(HTTP_Req), _client(fd), _listenner(listenner_)
+Req::Req(std::vector<char> dataVector_, const int fd, Location &location, listenner &listenner_)
+	: _location(location), dataVector(dataVector_), _client(fd), _listenner(listenner_)
 {
 				// cout << "printing req string upload:\n" << HTTP_Req << endl;
+	_http_Req = std::string(dataVector.begin(), dataVector.end());
 	_error = false;
 	_isUpload = false;
 	envCGIExecve = NULL;
-	if (HTTP_Req.length() < 1)
+	if (_http_Req.length() < 1)
 	{
 		_error = true;
 		set_status_code(BAD_REQUEST);
@@ -26,8 +27,9 @@ Req::Req(std::string HTTP_Req, const int fd, Location &location, listenner &list
 	
 	if (_isUpload == true && _error == false)
 	{
-						cout << "found a valid upload" << endl;
+								cout << "found a valid upload" << endl;
 						parseUpload();
+								cout << "past parse upload" << endl;
 						createUploadFile();
 								cout << "post file creation" << endl;
 								cout << get_status_code() << endl;

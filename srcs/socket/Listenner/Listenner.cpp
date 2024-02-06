@@ -80,13 +80,13 @@ void listenner::run()
 
 					try {
 						std::vector<char> dataVector(buffer, buffer + res);
-						Req x(std::string(buffer), fds[i].fd, this->_location, *this);
+						Req x(dataVector, fds[i].fd, this->_location, *this);
 
 											// cout << "sending to client" << endl;
 											// cout << x.responseString.c_str() << endl;
-						// 					cout << x.responseString.length() << endl;
-						// 					cout << fds[i].fd << endl;
-						// 					cout << x._client.getfd() << endl;
+											// cout << x.responseString.length() << endl;
+											// cout << fds[i].fd << endl;
+											// cout << x._client.getfd() << endl;
 						ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
 						if ( bytesSent< 0)
 						{
@@ -98,7 +98,7 @@ void listenner::run()
 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}
 					catch (std::exception &e) {
-						std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
+						// std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
 					}
 				}
 			}

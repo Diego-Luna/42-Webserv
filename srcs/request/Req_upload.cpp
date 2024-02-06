@@ -7,8 +7,6 @@ void	Req::parseUpload(void)
 	string	boundary = findUploadBoundry();
 					cout << "boundary: |" << boundary << "|" << endl;
 
-					// cout << "boundary: |" << boundary << "|" << endl;
-
 	if (_error == false)
 		_fileName = findUploadFileName(boundary);
 
@@ -17,7 +15,7 @@ void	Req::parseUpload(void)
 	if (_error == false)
 		_body = findUploadBody(boundary);
 
-					cout << "body: |" << _body << "|" << endl;
+					// cout << "body: |" << _body << "|" << endl;
 
 	_populateEnv(string("Host"));
 	_populateEnv(string("User-Agent"));
@@ -46,8 +44,12 @@ void	Req::createUploadFile()
 		return;
 	}
 	_uploadFiles.push_back(_fileName);
+							cout << "just before file creation\n\n" << endl;
+	// size_t bytesWritten = fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
+	size_t bytesWritten = fwrite(&_bodyVector[0], sizeof(char), _bodyVector.size(), uploadFile);
 
-	fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
+						cout << "just after file creation\n\n" << endl;
+						cout << "bytes written: " << bytesWritten << endl;
 	fclose(uploadFile);
 }
 		// WORKING FOR TXT FILES -> NEW VERSION IN PROGRESS
@@ -87,55 +89,54 @@ void	Req::createUploadFile()
 
 
 	// picks up the stream from where findUploadFileName left off
-string	Req::findUploadBody(string boundary)
+string Req::findUploadBody(string boundary)
 {
-	boundary = trimLine(boundary);
-	boundary = "--" + boundary + "--";
+    boundary = trimLine(boundary);
+    boundary = "--" + boundary;
+    boundary = boundary + "--";
 
-	string line;
-	// string body = "";
-	
-			// advances the line to the empty line between header and body
-	std::getline(_ReqStream, line);
-	line = trimLine(line);
-	while (!line.empty())
-	{
-		std::getline(_ReqStream, line);
-		line = trimLine(line);
-	}
-					// cout << "after first loop: " << line << endl;
-					// cout << "boundary: |" << boundary << "|" << endl;
-					// cout << line.compare(0, boundary.length(), boundary) << endl;
-	std::vector<char> bodyVector;
+   				 cout << "boundary:\n" << boundary << endl;
+    // advances to the start of the body
+	std::string tmpLine = "";
+	std::getline(_ReqStream, tmpLine);
+				// cout << " line pre loop: " << tmpLine << endl;
+	while (tmpLine != "")
+		std::getline(_ReqStream, tmpLine);
+				cout << " line post loop: " << tmpLine << endl;
+    size_t bodyStart = static_cast<size_t>(_ReqStream.tellg());
+  				  cout << "bodystart: " << bodyStart << endl;
 
-		// Calculate the size of the data
-	std::streampos current = _ReqStream.tellg(); 
-	_ReqStream.seekg(0, std::ios::end);
-	std::streampos fileSize = _ReqStream.tellg() - current;
-	_ReqStream.seekg(current, std::ios::beg);
+    // makes a new vector that starts from the point after the start boundary
+    std::vector<char> bodyVector(dataVector.begin() + bodyStart, dataVector.end());
 
-		// Resize the vector and read binary data from the original stream
-	bodyVector.resize(static_cast<size_t>(fileSize));
-	_ReqStream.read(&bodyVector[0], bodyVector.size());
-	string body(bodyVector.begin(), bodyVector.end());
+    // find the position of the boundary in the vector
+    std::vector<char>::iterator boundaryPos = std::search(bodyVector.begin(), bodyVector.end(), boundary.begin(), boundary.end());
 
-				// cout << "\n\nPRINTING UPLOAD BODY\n" << body << endl;
+						
 
+    // remove the boundary if found
+    if (boundaryPos != bodyVector.end())
+    {
+        bodyVector.erase(boundaryPos, boundaryPos + boundary.size());
+    }
 
-	// 	// working, but could use some cleanup.
-	// while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
-	// {
-	// 	std::getline(_ReqStream, line);
-	// 	line = trimLine(line);
-	// 	if (line.compare(0, boundary.length(), boundary) == 0) {
-	// 		body.pop_back();		// removes extraneous \n
-	// 		break;
-	// 	}
-	// 	body += line + "\n";
-	// }
-	return body;
+    // for (std::vector<char>::iterator it = bodyVector.begin(); it != bodyVector.end(); ++it)
+    // {
+    //     std::cout << *it;
+    // }
+    // std::cout << std::endl;
+
+							// cout << " just before setting _bodyvector" << endl;
+
+	_bodyVector = bodyVector;
+							// cout << dataVector.size() << " data vector size" << endl;
+							// cout << "header size " << _header.size() << endl;
+							// cout << _bodyVector.size() << " body vector size" << endl;
+
+    string body(bodyVector.begin(), bodyVector.end());
+							// cout << " just after setting _bodyector" << endl;
+    return body;
 }
-
 
 
 

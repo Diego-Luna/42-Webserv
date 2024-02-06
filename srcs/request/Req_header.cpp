@@ -117,7 +117,7 @@ bool	Req::_validVersion(string &line)
 bool	Req::_validPath(string &line)
 {
 
-							cout << "LINE IN _validpath\n|" << line << "|" << endl;
+							// cout << "LINE IN _validpath\n|" << line << "|" << endl;
 	if (line.compare(0, 6, "GET / ") == 0)	// checks for initial index call: "GET / HTTP:1.1"
 	{
 		_fileName = PATH_TO_INDEX;
