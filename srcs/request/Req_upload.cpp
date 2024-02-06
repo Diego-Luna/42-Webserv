@@ -50,8 +50,42 @@ void	Req::createUploadFile()
 	fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
 	fclose(uploadFile);
 }
-
+						// ORIGINAL VERSION - > WORKS FOR .txt
 	// picks up the stream from where findUploadFileName left off
+// string	Req::findUploadBody(string boundary)
+// {
+// 	boundary = trimLine(boundary);
+// 	boundary = "--" + boundary + "--";
+
+// 	string line;
+// 	string body = "";
+	
+// 	std::getline(_ReqStream, line);
+// 	line = trimLine(line);
+// 	while (!line.empty())
+// 	{
+// 		std::getline(_ReqStream, line);
+// 		line = trimLine(line);
+// 	}
+// 					// cout << "after first loop: " << line << endl;
+// 					// cout << "boundary: |" << boundary << "|" << endl;
+// 					// cout << line.compare(0, boundary.length(), boundary) << endl;
+
+// 		// working, but could use some cleanup.
+// 	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
+// 	{
+// 		std::getline(_ReqStream, line);
+// 		line = trimLine(line);
+// 		if (line.compare(0, boundary.length(), boundary) == 0) {
+// 			body.pop_back();		// removes extraneous \n
+// 			break;
+// 		}
+// 		body += line + "\n";
+// 	}
+// 	return body;
+// }
+
+// picks up the stream from where findUploadFileName left off
 string	Req::findUploadBody(string boundary)
 {
 	boundary = trimLine(boundary);
@@ -75,15 +109,23 @@ string	Req::findUploadBody(string boundary)
 	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
 	{
 		std::getline(_ReqStream, line);
-		line = trimLine(line);
+		// line = trimLine(line);
+		std::vector<char> completeLine;
+		for (string::iterator it = line.begin(); it != line.end(); it++)
+		{
+			completeLine.push_back(*it);
+		}
+
 		if (line.compare(0, boundary.length(), boundary) == 0) {
 			body.pop_back();		// removes extraneous \n
 			break;
 		}
+		
 		body += line + "\n";
 	}
 	return body;
 }
+
 
 string	Req::trimLine(string line)
 {
