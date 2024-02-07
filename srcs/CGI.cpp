@@ -14,77 +14,98 @@ CGI::CGI(Req &req_) : req(req_), m_server() {
 CGI::~CGI() {}
 
 string CGI::exec() {
-	char *args[] = {const_cast<char*>(req.env["FILE_NAME"].c_str()), NULL};
 
-	FILE	*scriptOut = tmpfile();
-	FILE	*scriptIn = tmpfile();
-	long	fdOut = fileno(scriptOut);
-	long	fdIn = fileno(scriptIn);
+	std::cout << "-> Diego -> req.envCGIExecve:{";
 
-						cout << "\nbody written to CGI INPUT: " << req.getBody() << endl;
-						cout << "body size: " << req.getBody().length() << endl;
-	int	writtentoInput = write(fdIn, req.getBody().c_str(), req.getBody().length());
-						cout << "\nbytes written to CGI input: " << writtentoInput << endl;
 
-	lseek(fdIn, 0 , SEEK_SET);
-
-	pid_t pid = fork();
-
-	if (pid == -1) {
-
-		std::cout<< "Error while forking process." << std::endl;
-		req.set_status_code(INTERNAL_SERVER_ERROR);
-		fclose(scriptIn);
-		fclose(scriptOut);
-
-	} else if (pid == 0) {	// child process
-
-		dup2(fdOut, STDOUT_FILENO);
-		dup2(fdIn, STDIN_FILENO);
-											cout << "\n EXECUTING CGI \n\n";
-		execve(args[0], args, req.envCGIExecve);
-		std::cerr << "Error while trying to execute CGI script." << std::endl;
-		close(fdOut);
-		fclose(scriptOut);
-		close(fdIn);
-		fclose(scriptIn);
-		req.set_status_code(INTERNAL_SERVER_ERROR);
-		return "";
+	size_t envCount = 0;
+	while (req.envCGIExecve[envCount])
+	{
+		std::cout << req.envCGIExecve[envCount] << "\n";
+		envCount++;
 	}
 
-	int	status;
-	pid_t	terminatedProcess = 0;
-	do {
-		terminatedProcess = waitpid(terminatedProcess, &status, 0);
-		if (terminatedProcess == -1) // error in the process
-		{
-			req.set_status_code(INTERNAL_SERVER_ERROR);
-			close(fdOut);
-			fclose(scriptOut);
-			close(fdIn);
-			fclose(scriptIn);
-			return "";
-		}
-		if (WIFEXITED(status))  // process exited normally
-		{
-			string body = makeBody(fdOut);
-			close(fdOut);
-			fclose(scriptOut);
-			close(fdIn);
-			fclose(scriptIn);
-			Response response(req, body);
-		}	
-		else if (WIFSIGNALED(status))	// process interrupted by signal: technically not an error despite having same result
-		{
-			req.set_status_code(INTERNAL_SERVER_ERROR);
-			close(fdOut);
-			fclose(scriptOut);
-			close(fdIn);
-			fclose(scriptIn);
-			return "";
-		}
-	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
-	return "";
+	char** newEnv = new char*[envCount + 2]; // +2 for DATA_CGI and NULL terminator
+
+	// Copy existing variables
+  for (size_t i = 0; i < envCount; ++i) {
+      newEnv[i] = new char[strlen(req.envCGIExecve[i]) + 1];
+      strcpy(newEnv[i], req.envCGIExecve[i]);
+  }
+
+	// Prepare DATA_CGI variable
+  string dataCGIValue = "DATA_CGI=" + req.getBody();
+  newEnv[envCount] = new char[dataCGIValue.length() + 1];
+  strcpy(newEnv[envCount], dataCGIValue.c_str());
+
+  // Null terminate the new environment array
+  newEnv[envCount + 1] = NULL;
+
+
+	std::cout << "}" << std::endl;
+
+	std::cout << "-> Diego -> req.getBody():{" << req.getBody() << "}" << std::endl;
+
+    int pfd[2], input_pfd[2];
+    if (pipe(pfd) == -1 || pipe(input_pfd) == -1) {
+        perror("pipe failed");
+        return "";
+    }
+
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork failed");
+        close(pfd[0]);
+        close(pfd[1]);
+        close(input_pfd[0]);
+        close(input_pfd[1]);
+        return "";
+    }
+
+    if (pid == 0) { // Child process
+        dup2(pfd[1], STDOUT_FILENO);
+        dup2(input_pfd[0], STDIN_FILENO);
+        close(pfd[0]); close(pfd[1]);
+        close(input_pfd[0]); close(input_pfd[1]);
+
+				const char* argv[] = { "python3", req.env["FILE_NAME"].c_str(), NULL };
+				execve("/usr/bin/python3", const_cast<char* const*>(argv), newEnv);
+
+        perror("execve failed");
+        exit(EXIT_FAILURE);
+    } else { // Parent process
+        close(pfd[1]);
+        close(input_pfd[0]);
+        close(input_pfd[1]);
+
+        // Handling the termination of the child process
+        int status;
+        waitpid(pid, &status, 0); // Simplify this with waitpid()
+
+				// In the parent process,
+    		for (size_t i = 0; i < envCount + 1; ++i) { // +1 to include DATA_CGI
+    		    delete[] newEnv[i]; // Free the individual strings
+    		}
+    		delete[] newEnv;
+
+        // Now, instead of manually reading output and forming the response,
+        // let's use the makeBody function to do that.
+        string body = makeBody(pfd[0]);
+        close(pfd[0]);
+
+        // Check if the child process exited normally
+        if (WIFEXITED(status)) {
+            // Response can be constructed with Req and body,
+            // and automatically sets the right headers and status.
+            Response response(req, body); // Adjust according to your Response class design
+            // responseString is a member of Req or wherever you need it
+            // req.responseString = response->constructResponse(); // This method should return the full HTTP response
+            return body; // Or return the full response as needed
+        } else {
+            req.set_status_code(INTERNAL_SERVER_ERROR);
+            return "";
+        }
+    }
 }
 
 string	CGI::makeBody(int fdOut)
