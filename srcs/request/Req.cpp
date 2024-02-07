@@ -3,11 +3,10 @@
 /*************************************************************************
 		CANNONICAL FORM REQUIREMENTS
 **************************************************************************/
-Req::Req(std::vector<char> dataVector_, const int fd, Location &location, listenner &listenner_)
-	: _location(location), dataVector(dataVector_), _client(fd), _listenner(listenner_)
+Req::Req(string httpRequest, const int fd, Location &location, listenner &listenner_)
+	: _location(location), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
 {
 				// cout << "printing req string upload:\n" << HTTP_Req << endl;
-	_http_Req = std::string(dataVector.begin(), dataVector.end());
 	_error = false;
 	_isUpload = false;
 	envCGIExecve = NULL;

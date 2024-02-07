@@ -44,7 +44,6 @@ private:
 	bool					_isCGI;
 	bool					_error;
 	u_int16_t				status_code;
-	std::vector<char>		dataVector;
 	std::vector<string>		_uploadFiles; // fclose/delete the files at the end
 
 
@@ -111,10 +110,10 @@ private:
 	// meth					find_methode(std::string &methode);
 
 public:
-	Req(std::vector<char> dataVector_, const int fd, Location &location, listenner &listenner_);
-	~Req					();
-	client					_client;
-	listenner				&_listenner;
+	Req(string httpRequest, const int fd, Location &location, listenner &listenner_);
+	~Req();
+	client						_client;
+	listenner					&_listenner;
 	std::map<string, string>	env;
 	string						responseString;
 	char						**envCGIExecve;		// must be deleted by destructor

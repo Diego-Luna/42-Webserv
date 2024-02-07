@@ -50,9 +50,12 @@ void listenner::run()
 	{
 		fatal("poll");
 	}
+
+					std::string receivedData;
+
 	for (u_int16_t i = 0; i < this->n_fd; i++)
 	{
-		if (fds[i].revents & POLLIN)	// I think we need to check read AND write according to the pdf
+		if (fds[i].revents & POLLIN || fds[i].revents & POLLOUT)	// I think we need to check read AND write according to the pdf
 		{
 			if (i == 0)
 			{
@@ -64,6 +67,7 @@ void listenner::run()
 			{
 				char buffer[0xffff];
 				int res = recv(fds[i].fd, buffer, 0xffff - 1, 0);
+				receivedData += buffer;
 				if (res < 0) // pt faire une erreur 500 ici si on spam :/
 				{
 					continue;
@@ -76,11 +80,48 @@ void listenner::run()
 				}
 				else
 				{
-					// std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  buffer << std::endl;
+					if (isChunked(receivedData) || isChunkTest(receivedData))
+					{
+										cout << " FOUND CHUNKED " << endl;
+						std::stringstream rawRequest(receivedData);
+						string line = "placeholder";
+						string unchunked = "";
+						while (std::getline(rawRequest, line) && line != "\r")
+						{
+							// cout << line << endl;
+							unchunked += line;
+							unchunked += "\n";
+						}
+							unchunked.pop_back();	// removes extraneous \n
+									cout << "SHOULD CONTAIN THE HEADER BUT NO BODY\n" << "|" << unchunked << "|" << endl;
+						/*
+							size_t length
+							do {
+								getline;
+								std::stringstream ss;
+								ss << std::hex << line;
+								ss >> length;
+								if (length == 0)
+									break;
+								getline;
+								unchunked.insert(length characters of line)
+
+
+							} while (rawRequest.eof() == false)
+
+
+
+						
+						*/
+
+
+
+					}
+
+					std::cout << RED << "[DEBUG] [RECV] : \n|" << RESET <<  receivedData << "|" << std::endl;
 
 					try {
-						std::vector<char> dataVector(buffer, buffer + res);
-						Req x(dataVector, fds[i].fd, this->_location, *this);
+						Req x(receivedData, fds[i].fd, this->_location, *this);
 
 											// cout << "sending to client" << endl;
 											// cout << x.responseString.c_str() << endl;
@@ -104,5 +145,23 @@ void listenner::run()
 			}
 		}
 	}
+}
+			// for testing purposes only
+bool	listenner::isChunkTest(const string &httpRequest) {
+	size_t pos = httpRequest.find("chunk test");
+	if (pos == string::npos)
+		return false;
+	else {
+				cout << " THIS IS A CHUNK TEST " << endl;
+		return true;
+	}
+}
+
+bool	listenner::isChunked(const string &httpRequest) {
+	size_t pos = httpRequest.find("Transfer-Encoding: chunked");
+	if (pos == string::npos)
+		return false;
+	else
+		return true;
 }
 
