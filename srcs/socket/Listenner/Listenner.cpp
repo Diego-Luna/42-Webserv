@@ -82,59 +82,19 @@ void listenner::run()
 				{
 					if (isChunked(receivedData) || isChunkTest(receivedData))
 					{
-										cout << " FOUND CHUNKED " << endl;
-						std::stringstream rawRequest(receivedData);
-						string line = "placeholder";
-						string unchunked = "";
-						while (std::getline(rawRequest, line) && line != "\r")
-						{
-							// cout << line << endl;
-							unchunked += line;
-							unchunked += "\n";
-						}
-							unchunked.pop_back();	// removes extraneous \n
-									cout << "SHOULD CONTAIN THE HEADER BUT NO BODY\n" << "|" << unchunked << "|" << endl;
-						/*
-							size_t length
-							do {
-								getline;
-								std::stringstream ss;
-								ss << std::hex << line;
-								ss >> length;
-								if (length == 0)
-									break;
-								getline;
-								unchunked.insert(length characters of line)
-
-
-							} while (rawRequest.eof() == false)
-
-
-
-						
-						*/
-
-
-
+						receivedData = unchunk(receivedData);
 					}
 
-					std::cout << RED << "[DEBUG] [RECV] : \n|" << RESET <<  receivedData << "|" << std::endl;
+					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  receivedData << std::endl;
 
 					try {
 						Req x(receivedData, fds[i].fd, this->_location, *this);
-
-											// cout << "sending to client" << endl;
-											// cout << x.responseString.c_str() << endl;
-											// cout << x.responseString.length() << endl;
-											// cout << fds[i].fd << endl;
-											// cout << x._client.getfd() << endl;
 						ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
 						if ( bytesSent< 0)
 						{
 							cout << "bytes sent to client: " << bytesSent << endl;
 							continue; // même chose quen haut, pt erreur 500, a voir
 						}
-						
 
 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}
@@ -146,6 +106,35 @@ void listenner::run()
 		}
 	}
 }
+
+string	listenner::unchunk(const string &receivedData) {
+	std::stringstream rawRequest(receivedData);
+	string line = "placeholder";
+	string unchunked = "";
+	while (std::getline(rawRequest, line) && line != "\r")
+	{
+		// cout << line << endl;
+		unchunked += line;
+		unchunked += "\r\n";
+	}
+	unchunked += "\r\n";
+	size_t length;
+	do {
+		std::getline(rawRequest, line);
+		trimLine(line);
+		std::stringstream ss;
+		ss << std::hex << line;
+		ss >> length;
+		if (length == 0)
+			break;
+		std::getline(rawRequest, line);
+		trimLine(line);
+		unchunked.append(line, 0, length); // appends length characters, counted from the start, to unchunked
+	} while (rawRequest.eof() == false);
+	unchunked += "\r\n";
+	return unchunked;
+}
+
 			// for testing purposes only
 bool	listenner::isChunkTest(const string &httpRequest) {
 	size_t pos = httpRequest.find("chunk test");
@@ -165,3 +154,9 @@ bool	listenner::isChunked(const string &httpRequest) {
 		return true;
 }
 
+string	listenner::trimLine(string &line)
+{
+	while (line.back() == '\n' || line.back() == '\r')
+		line.pop_back();
+	return line;
+}

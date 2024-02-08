@@ -33,6 +33,8 @@ private:
 		// chunk handling
 	bool	isChunked(const string &httpRequest);
 	bool	isChunkTest(const string &httpRequest);
+	string	unchunk(const string &receivedData);
+	string	trimLine(string &line);
 	std::vector<string> _chunks;
 
 };
