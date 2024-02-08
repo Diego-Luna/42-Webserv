@@ -113,7 +113,6 @@ string	listenner::unchunk(const string &receivedData) {
 	string unchunked = "";
 	while (std::getline(rawRequest, line) && line != "\r")
 	{
-		// cout << line << endl;
 		unchunked += line;
 		unchunked += "\r\n";
 	}

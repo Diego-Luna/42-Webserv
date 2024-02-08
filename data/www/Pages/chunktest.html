@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chunked Test</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav class="navbar">
@@ -19,37 +19,75 @@
         </div>
     </nav>
 
-<!-- Add Unchunk Test Button -->
-<button id="unchunkTestBtn" class="bg-green-500 text-white px-4 py-2 rounded">Unchunk Test</button>
+    <!-- Add explanation about chunked requests -->
+    <div class="my-8 ml-6">
+        <p class="text-lg">
+            What is a HTTP chunked request?<br><br>
+            It's a way to send data in in parts, rather than sending the entire data payload in a single request.<br>
+            This is useful when the data length is not known or the when we're dealing with large payloads such as:<br>
+                - Streaming data: data is sent as soon as it is available.<br>
+                - Large Files: helps avoid loading the entire file into memory before sending.<br><br>
 
-<script>
-    document.getElementById('unchunkTestBtn').addEventListener('click', function() {
-        // Prepare the chunked data
-        const chunkedData = "5\r\ndata \r\nA\r\nchunk test\r\n0\r\n\r\n";
+            You can identify a chunked request by checking the if variable: "Transfer-Encoding" is set to "chunked" in the HTTP header.<br><br>
 
-        // Perform an asynchronous POST request with fetch
-        fetch('/upload', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/octet-stream',
-                'Transfer-Encoding': 'chunked'
-            },
-            body: chunkedData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log('Response:', data);
-        })
-        .catch(error => {
-            console.error('Error during fetch:', error);
+            Chunked request follow the following format:<br>
+            
+            [chunksize in hexadecimal]<br>
+            [chunk body]<br>
+
+            repeating until the last chunk which will have length = 0
+            
+            This button simulates a chunked HTTP requests.<br>
+            It sends a request that follows the structure of a chunked request but is not a chunked request itself.<br>
+            It should be able to demonstrate how our server handles chunking.<br><br>
+
+            It will contain the following chunked body:<br><br>
+
+            5<br>
+            data <br>
+            A<br>
+            chunk test<br>
+            0<br><br>
+
+            The expected result is that the request arrives to be processed with the unchunked body:<br><br>
+            
+            data chunk test<br>
+
+
+        </p>
+    </div>
+
+    <!-- Add Unchunk Test Button -->
+    <button id="unchunkTestBtn" class="bg-green-500 text-white px-4 py-2 rounded my-4 ml-10">Unchunk Test</button>
+
+    <script>
+        document.getElementById('unchunkTestBtn').addEventListener('click', function() {
+            // Prepare the chunked data
+            const chunkedData = "5\r\ndata \r\nA\r\nchunk test\r\n0\r\n\r\n";
+
+            // Perform an asynchronous POST request with fetch
+            fetch('/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/octet-stream',
+                    'Transfer-Encoding': 'chunked'
+                },
+                body: chunkedData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Response:', data);
+            })
+            .catch(error => {
+                console.error('Error during fetch:', error);
+            });
         });
-    });
-</script>
+    </script>
 
 </body>
 </html>
