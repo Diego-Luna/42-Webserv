@@ -44,8 +44,6 @@ private:
 	bool					_isCGI;
 	bool					_error;
 	u_int16_t				status_code;
-	std::vector<string>		_uploadFiles; // fclose/delete the files at the end
-
 
 	// HEADER PARSING
 	void					parseHeader(void);
@@ -67,7 +65,6 @@ private:
 	string					findUploadBody(string boundary);
 	string					trimLine(string line);
 	void					createUploadFile();
-	std::vector<char>		_bodyVector;
 
 	// CGI AND ENV PREP	
 	string					_formatStringEnvCGI(string str);

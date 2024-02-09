@@ -89,6 +89,10 @@ void listenner::run()
 
 					try {
 						Req x(receivedData, fds[i].fd, this->_location, *this);
+
+												cout << "RESPONSE STRING\n" << x.responseString << endl;
+
+
 						ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
 						if ( bytesSent< 0)
 						{
@@ -96,10 +100,10 @@ void listenner::run()
 							continue; // même chose quen haut, pt erreur 500, a voir
 						}
 
-						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
+						std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}
 					catch (std::exception &e) {
-						// std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
+						std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
 					}
 				}
 			}

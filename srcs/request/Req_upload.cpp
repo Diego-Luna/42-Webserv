@@ -24,7 +24,7 @@ void	Req::parseUpload(void)
 	_populateEnv(string("Accept-Language"));
 	_populateEnv(string("Connection"));
 	_buildEncoded();
-	env["CONTENT_TYPE"] = getContentType(_extension);
+	env["CONTENT_TYPE"] = "text/plain";
 	env["SERVER_PROTOCOL"] = _protocol;
 	env["FILE_NAME"] = _fileName;	// might change it to uploadfilenam
 
@@ -38,16 +38,12 @@ void	Req::createUploadFile()
 	if (uploadFile == NULL)
 	{
 		std::cerr << "error. could not create file: " << _fileName << endl;
-
 		_error = true;
 		set_status_code(INTERNAL_SERVER_ERROR);
 		return;
 	}
-	_uploadFiles.push_back(_fileName);
 							cout << "just before file creation\n\n" << endl;
-	// size_t bytesWritten = fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
-	size_t bytesWritten = fwrite(&_bodyVector[0], sizeof(char), _bodyVector.size(), uploadFile);
-
+	size_t bytesWritten = fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
 						cout << "just after file creation\n\n" << endl;
 						cout << "bytes written: " << bytesWritten << endl;
 	fclose(uploadFile);
@@ -69,9 +65,9 @@ string	Req::findUploadBody(string boundary)
 		std::getline(_ReqStream, line);
 		line = trimLine(line);
 	}
-					// cout << "after first loop: " << line << endl;
-					// cout << "boundary: |" << boundary << "|" << endl;
-					// cout << line.compare(0, boundary.length(), boundary) << endl;
+					cout << "after first loop: " << line << endl;
+					cout << "boundary: |" << boundary << "|" << endl;
+					cout << line.compare(0, boundary.length(), boundary) << endl;
 
 		// working, but could use some cleanup.
 	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)

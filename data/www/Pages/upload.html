@@ -19,47 +19,11 @@
         </div>
     </nav>
     <form action="uploadSuccessful.html" method="post" enctype="multipart/form-data">
-        <label for="fileInput">Choose a .pdf, .png, or .txt file:</label>
-        <input type="file" id="fileInput" name="fileInput" accept=".txt, .pdf, .png">
+        <label for="fileInput">Choose a .txt file:</label>
+        <input type="file" id="fileInput" name="fileInput" accept=".txt">
         <br>
         <input type="submit" value="Upload" class="bg-blue-500 text-white px-4 py-2 rounded">
     </form>
-</form>
-
-<!-- Add Unchunk Test Button -->
-<button id="unchunkTestBtn" class="bg-green-500 text-white px-4 py-2 rounded">Unchunk Test</button>
-
-<script>
-    document.getElementById('unchunkTestBtn').addEventListener('click', function() {
-        // Prepare the chunked data
-        const chunkedData = "4\r\ndata\r\nA\r\nchunk test\r\n0\r\n\r\n";
-
-        // Perform an asynchronous POST request with fetch
-        fetch('/upload', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/octet-stream',
-                'Transfer-Encoding': 'chunked'
-            },
-            body: chunkedData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log('Response:', data);
-        })
-        .catch(error => {
-            console.error('Error during fetch:', error);
-        });
-    });
-</script>
-
-
-
 
 </body>
 </html>
