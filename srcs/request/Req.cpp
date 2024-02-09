@@ -23,24 +23,23 @@ Req::Req(string httpRequest, const int fd, Location &location, listenner &listen
 	}
 	if (_error == false)
 		parseHeader();
-	
+
 	if (_isUpload == true && _error == false)
 	{
-								cout << "found a valid upload" << endl;
-						parseUpload();
-								cout << "past parse upload" << endl;
-						createUploadFile();
-								cout << "post file creation" << endl;
-								cout << get_status_code() << endl;
-						Response response(*this);
+							// cout << "found a valid upload" << endl;
+		parseUpload();
+							// cout << "past parse upload" << endl;
+		if (_error == false)
+			createUploadFile();
+							// cout << "post file creation" << endl;
+							// cout << get_status_code() << endl;
+		Response response(*this);
+		return;
 	}
-
 	else if (_isCGI && _error == false)
 	{
 		CGI	Cgi(*this);
 	} else {
-
-					cout << "SENDING TO RESPONSE CLASS FROM REQ" << endl;
 		Response response(*this);
 	}
 }

@@ -43,16 +43,14 @@ listenner::listenner()
 
 listenner::~listenner()
 {}
-
+				// saving OG
 void listenner::run()
 {
 	if (poll(fds, this->n_fd, 100) < 0)
 	{
 		fatal("poll");
 	}
-
-					std::string receivedData;
-
+	std::string receivedData;
 	for (u_int16_t i = 0; i < this->n_fd; i++)
 	{
 		if (fds[i].revents & POLLIN || fds[i].revents & POLLOUT)	// I think we need to check read AND write according to the pdf
@@ -100,10 +98,10 @@ void listenner::run()
 							continue; // même chose quen haut, pt erreur 500, a voir
 						}
 
-						std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
+						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}
 					catch (std::exception &e) {
-						std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
+						// std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
 					}
 				}
 			}
@@ -151,6 +149,14 @@ bool	listenner::isChunkTest(const string &httpRequest) {
 
 bool	listenner::isChunked(const string &httpRequest) {
 	size_t pos = httpRequest.find("Transfer-Encoding: chunked");
+	if (pos == string::npos)
+		return false;
+	else
+		return true;
+}
+
+bool	listenner::isMulti(const string &httpRequest) {
+	size_t pos = httpRequest.find("Content-Type: multipart/form-data");
 	if (pos == string::npos)
 		return false;
 	else

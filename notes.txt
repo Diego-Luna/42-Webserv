@@ -1,48 +1,63 @@
+------------------------------------------------------
+------------------- default server -------------------
+------------------------------------------------------
+-> default server -> methods: GET
+------------------------------------------------------
+------------------- default server -------------------
+------------------------------------------------------
+------------------
 
-		// 				if (isChunked(string(buffer)))
-		// 				{
-		// 										cout << "found chunked" << endl;
-		// 				// {
-		// 				// 	if (!IS_FINISHED)
-		// 				// 		STORE x.responseString INTO A vector<char>
-		// 				// 	else
-		// 				// 		COMBINE THEM INTO A SINGLE REQUEST.
-		// 				// }
-								// }
-				
-				
-				
-				
-UPLOAD REQUEST SAMPLE
+ --- server> 
+Server name:42Server
+Server listen:8080
+Server listen:3000
+Server host:127.0.0.1
+Server root:data/www/Pages/
+Server index:index.html
+Server error_page:404 /ErrorPages/404notFound.html
+Server methods:GET
 
-POST /upload/ HTTP/1.1
+Location name:/error
+Location root:data/www/Pages
+Location index:index.html
+Location methods:GET
+Location methods:POST
+Location methods:DELETE
+Location autoindex:1
+
+Location name:/queso
+Location root:data/www/Pages
+Location index:index.html
+Location methods:GET
+Location methods:POST
+Location methods:DELETE
+Location autoindex:1
+
+------------------
+host: 127.0.0.1 port :8080
+host: 127.0.0.1 port :3000
+
+ this->_listenners.size: 2
+
+res = 886
+ RECEIVED DATA 
+GET /upload.html HTTP/1.1
 Host: localhost:8080
 Connection: keep-alive
-Content-Length: 255
 Cache-Control: max-age=0
-sec-ch-ua: "Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
 sec-ch-ua-mobile: ?0
-sec-ch-ua-platform: "Windows"
+sec-ch-ua-platform: "macOS"
 Upgrade-Insecure-Requests: 1
-Origin: http://localhost:8080
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundarya4KhNRZg877ZDix7
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
 Sec-Fetch-Site: same-origin
 Sec-Fetch-Mode: navigate
 Sec-Fetch-User: ?1
 Sec-Fetch-Dest: document
-Referer: http://localhost:8080/upload.html
+Referer: http://localhost:8080/index.html
 Accept-Encoding: gzip, deflate, br
 Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
-
-------WebKitFormBoundarya4KhNRZg877ZDix7
-Content-Disposition: form-data; name="fileInput"; filename="webservtest.txt"
-Content-Type: text/plain
-
-this is a text file for webserv
+Cookie: grafana_session=720019f6dc8ef1844896129520869f15; grafana_session_expiry=1707504527
 
 
-
-this is the last line.
-------WebKitFormBoundarya4KhNRZg877ZDix7--

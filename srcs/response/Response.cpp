@@ -62,6 +62,7 @@ string	Response::makeHeader()
 	header += _Req.env["SERVER_PROTOCOL"] + " ";
 	header += std::to_string(_Req.get_status_code()) + " ";
 	header += message_status_code(_Req.get_status_code()) + "\r\n";
+	header += "Connection: " + _Req.env["CONNECTION"];
 
 	if (_Req.getIsCGI() && _Req.get_status_code() == OK) {
 		header = CGIHeader(header);
