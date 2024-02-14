@@ -85,6 +85,6 @@ char **vecToChar(std::vector<std::string> &vec);
 
 /*  PROTORYPES    */
 bool	isChunked(const std::string &httpRequest);
-
+void	ft_bzero(void *s, size_t n);
 
 #endif
