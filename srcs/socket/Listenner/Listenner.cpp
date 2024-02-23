@@ -18,16 +18,27 @@ void listenner::init(u_int32_t port, std::string host)
 		fatal("bind");
 	if (listen(this->fd_socket, SOMAXCONN) < 0)
 		fatal("listen");
-
-
  // flagged as error for not multiplying maxclient by its element size
 	// memset(this->fds, 0, MAX_CLIENT);
-memset(this->fds, 0, MAX_CLIENT * sizeof(this->fds[0]));
-
-
+	memset(this->fds, 0, MAX_CLIENT * sizeof(this->fds[0]));
 	this->fds[0].fd = this->getfd();
 	this->fds[0].events = POLLIN | POLLOUT;
 	this->n_fd = 1;
+
+			// Set socket to non-blocking mode
+	for (u_int16_t i = 0; i < MAX_CLIENT; i++)
+	{
+		int flags = fcntl(fds[i].fd, F_GETFL, 0);
+		if (flags == -1) {
+			// Handle error
+			perror("fcntl");
+		} else {
+		if (fcntl(fds[i].fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+			// Handle error
+			perror("fcntl");
+			}
+		}
+	}
 }
 
 listenner::listenner(u_int32_t port, Location &location, std::string host) : portNumber(port), _location(location)
@@ -54,20 +65,8 @@ void listenner::run()
 	std::string receivedData;
 	for (u_int16_t i = 0; i < this->n_fd; i++)
 	{
-			    // Set socket to non-blocking mode
-		int flags = fcntl(fds[i].fd, F_GETFL, 0);
-		if (flags == -1) {
-			// Handle error
-			perror("fcntl");
-		} else {
-		if (fcntl(fds[i].fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-			// Handle error
-			perror("fcntl");
-		}
-
-
-	}
-		if (fds[i].revents & POLLIN || fds[i].revents & POLLOUT)	// I think we need to check read AND write according to the pdf
+		// if (fds[i].revents & POLLIN || fds[i].revents & POLLOUT)	// I think we need to check read AND write according to the pdf
+		if (fds[i].revents & (POLLIN | POLLOUT))
 		{
 			if (i == 0)
 			{
@@ -78,14 +77,13 @@ void listenner::run()
 			else
 			{
 				char buffer[BUFFER_SIZE];
+				memset(buffer, 0, BUFFER_SIZE); // Zero out the buffer before each recv call
 				int res;
-				while ((res = recv(fds[i].fd, buffer, sizeof(buffer), 0)) > 0) {
+				while ((res = recv(fds[i].fd, buffer, BUFFER_SIZE, 0)) > 0) {
 					receivedData.append(buffer, res);
 				}
-				// if (res < 0) // pt faire une erreur 500 ici si on spam :/
-				// {
-				// 	continue;
-				// }
+				if (receivedData.empty())	//	solves the false reload issue.
+					continue;
 				if (res == 0)
 				{
 					close(fds[i].fd);  // close est une fonction autorisée!
@@ -102,7 +100,7 @@ void listenner::run()
 					try {
 						Req x(receivedData, fds[i].fd, this->_location, *this);
 
-												// cout << "RESPONSE STRING\n" << x.responseString << endl;
+							// cout << "RESPONSE STRING\n" << x.responseString << endl;
 
 						ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
 						if ( bytesSent < 0)
@@ -110,7 +108,6 @@ void listenner::run()
 							cout << "bytes sent to client: " << bytesSent << endl;
 							continue; // même chose quen haut, pt erreur 500, a voir
 						}
-
 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}
 					catch (std::exception &e) {
@@ -121,81 +118,6 @@ void listenner::run()
 		}
 	}
 }
-
-
-
-
-					// if (isMulti(receivedData))
-					// {
-					// 	string boundary = 
-					// }
-					// if (res > 0)
-					// {
-					// 	continue;
-					// }
-
-				// saving OG
-// void listenner::run()
-// {
-// 	if (poll(fds, this->n_fd, 100) < 0)
-// 	{
-// 		fatal("poll");
-// 	}
-// 	std::string receivedData;
-// 	for (u_int16_t i = 0; i < this->n_fd; i++)
-// 	{
-// 		if (fds[i].revents & POLLIN || fds[i].revents & POLLOUT)	// I think we need to check read AND write according to the pdf
-// 		{
-// 			if (i == 0)
-// 			{
-// 				this->fds[this->n_fd].fd = client(*this).getfd();
-// 				this->fds[this->n_fd].events = POLLIN;
-// 				this->n_fd++;
-// 			}
-// 			else
-// 			{
-// 				char buffer[0xffff];
-// 				int res = recv(fds[i].fd, buffer, 0xffff - 1, 0);
-// 				receivedData.append(buffer, res);
-// 				if (res < 0) // pt faire une erreur 500 ici si on spam :/
-// 				{
-// 					continue;
-// 				}
-// 				else if (res == 0)
-// 				{
-// 					close(fds[i].fd);  // close est une fonction autorisée!
-// 					fds[i] = fds[n_fd - 1];
-// 					n_fd--;
-// 				}
-// 				else
-// 				{
-// 					if (isChunked(receivedData) || isChunkTest(receivedData))
-// 					{
-// 						receivedData = unchunk(receivedData);
-// 					}
-// 					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  receivedData << std::endl;
-// 					try {
-// 						Req x(receivedData, fds[i].fd, this->_location, *this);
-
-// 												// cout << "RESPONSE STRING\n" << x.responseString << endl;
-
-// 						ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
-// 						if ( bytesSent< 0)
-// 						{
-// 							cout << "bytes sent to client: " << bytesSent << endl;
-// 							continue; // même chose quen haut, pt erreur 500, a voir
-// 						}
-
-// 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
-// 					}
-// 					catch (std::exception &e) {
-// 						// std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
 
 string	listenner::unchunk(const string &receivedData) {
 	std::stringstream rawRequest(receivedData);
