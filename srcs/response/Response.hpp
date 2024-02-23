@@ -33,4 +33,6 @@ public:
 	Response(Req &Req_, string responseBody_);
 	~Response();
 	string	header;
+
+	void setBody(const std::string& body);
 };

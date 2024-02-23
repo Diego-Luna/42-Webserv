@@ -13,6 +13,7 @@ using std::string;
 
 # define MAX_CLIENT SOMAXCONN
 
+class Server;
 
 class listenner : public Csocket
 {
@@ -22,7 +23,8 @@ public:
 	listenner(u_int32_t port, Location &location, std::string host);
 	int		portNumber;
 	~listenner();
-	void run(void);
+	// void run(void);
+	void run(Server _server);
 private:
 	Location _location;
 	pollfd fds[MAX_CLIENT];

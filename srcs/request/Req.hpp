@@ -4,6 +4,8 @@
 #include "../../Includes/Utils.hpp"
 #include "../socket/Client/Client.hpp"
 #include "../CGI.hpp"
+#include "../response/Response.hpp" // Asegúrate de usar la ruta correcta al archivo de cabecera
+
 
 #include <sstream>
 #include <iostream>
@@ -21,6 +23,8 @@ using std::endl;
 using std::string;
 
 class CGI;
+class Response;
+
 
 class Req
 {
@@ -29,7 +33,7 @@ private:
 	Req(const Req &original);
 
 	Location				&_location;
-	// Server					&_server;
+	Server					_server;
 	string					_root;
 	string	 				_header;
 	string 					_body;
@@ -40,6 +44,7 @@ private:
 	string					_protocol;
 	string					_extension;
 	string					_querryString;
+	string					_data_file; // locations
 	std::istringstream		_ReqStream;
 	bool					_isCGI;
 	bool					_error;
@@ -81,6 +86,12 @@ private:
 	bool					_allValidCharsURI(string str);
 	bool					_isValidCharURI(uint8_t ch);
 
+	// Diego - location
+	// std::string _extractURL(const std::vector<char>& dataVector);
+	std::string _extractURL(std::string &dataVector);
+	bool _run_location(std::string name, Location &location);
+	// bool _run_location(std::string name, Location &location, Response &response);
+
 /*
 	below this line: things that were here before but I dont understand
 	the functionallity of yet.
@@ -107,6 +118,7 @@ private:
 	// meth					find_methode(std::string &methode);
 
 public:
+	Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_);
 	Req(string httpRequest, const int fd, Location &location, listenner &listenner_);
 	~Req();
 	client						_client;

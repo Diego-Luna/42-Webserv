@@ -56,7 +56,7 @@ listenner::~listenner()
 {}
 
 		// possibly the working new version as of FEB 14th. Loops and is able to deal with multiples recv() calls
-void listenner::run()
+void listenner::run(Server _server)
 {
 	if (poll(fds, this->n_fd, 100) < 0)
 	{
@@ -98,7 +98,8 @@ void listenner::run()
 					}
 					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  receivedData << std::endl;
 					try {
-						Req x(receivedData, fds[i].fd, this->_location, *this);
+						Req x(_server, receivedData, fds[i].fd, this->_location, *this);
+						// Req x(receivedData, fds[i].fd, this->_location, *this);
 
 							// cout << "RESPONSE STRING\n" << x.responseString << endl;
 

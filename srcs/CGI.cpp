@@ -68,8 +68,8 @@ string CGI::exec() {
         close(pfd[0]); close(pfd[1]);
         close(input_pfd[0]); close(input_pfd[1]);
 
-				const char* argv[] = { "python3", req.env["FILE_NAME"].c_str(), NULL };
-				execve("/usr/bin/python3", const_cast<char* const*>(argv), newEnv);
+		const char* argv[] = { "python3", req.env["FILE_NAME"].c_str(), NULL };
+		execve("/usr/bin/python3", const_cast<char* const*>(argv), newEnv);
 
         perror("execve failed");
         exit(EXIT_FAILURE);

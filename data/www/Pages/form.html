@@ -99,18 +99,6 @@
 
         <div class="form-container">
             <h1>Registration Form</h1>
-            <!-- <form>
-                <input type="text" class="form-input" placeholder="First Name" required>
-                <input type="text" class="form-input" placeholder="Last Name" required>
-                <input type="text" class="form-input" placeholder="Login" required>
-                <input type="email" class="form-input" placeholder="Email" required>
-                <input type="date" class="form-input" placeholder="Date of Birth" required>
-                <input type="tel" class="form-input" placeholder="Phone Number">
-                <input type="password" class="form-input" placeholder="Password" required>
-                <input type="password" class="form-input" placeholder="Confirm Password" required>
-                
-                <button type="submit" class="form-submit">Submit</button>
-            </form> -->
 			<!-- ATTEMPT AT IMPLEMENTING CGI SCRIPT -->
 			<form action="submit.py" method="post">
 				<input type="text" name="first_name" class="form-input" placeholder="First Name" required>
@@ -126,6 +114,42 @@
 
 			</form>
         </div>
+
+        <div class="form-container">
+            <h1>Delete Form</h1>
+            <script>
+                function sendDeleteRequest() {
+                    const url = 'delete.py';
+
+                    // Gets the value of the input
+                    const firstName = document.getElementById('delete_first_name').value;
+
+                    fetch(url, {
+                        method: 'DELETE', // HTTP
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ first_name: firstName }), // Data sent to the server
+                    })
+                    .then(response => response.text()) // we make sure to switch to text
+                    .then(data => {
+                        // Opens a new window or tab and displays the answer
+                        var newWindow = window.open('', '_blank');
+                        newWindow.document.write(data); // Type the answer in the new window
+                        newWindow.document.close(); // Closes the document to display the page.
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error); // Handles errors if they occur
+                    });
+                }
+            </script>
+            <form onsubmit="event.preventDefault(); sendDeleteRequest();">
+                <input type="text" id="delete_first_name" class="form-input" placeholder="First Name" required>
+                <button type="submit" class="form-submit">Delete</button>
+            </form>
+        </div>
+
+
     </div>
 </body>
 </html>
