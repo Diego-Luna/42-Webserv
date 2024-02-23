@@ -25,7 +25,7 @@ void listenner::init(u_int32_t port, std::string host)
 	this->fds[0].events = POLLIN | POLLOUT;
 	this->n_fd = 1;
 
-			// Set socket to non-blocking mode
+			// Sets socket to non-blocking mode
 	for (u_int16_t i = 0; i < MAX_CLIENT; i++)
 	{
 		int flags = fcntl(fds[i].fd, F_GETFL, 0);
@@ -55,7 +55,6 @@ listenner::listenner()
 listenner::~listenner()
 {}
 
-		// possibly the working new version as of FEB 14th. Loops and is able to deal with multiples recv() calls
 void listenner::run(Server _server)
 {
 	if (poll(fds, this->n_fd, 100) < 0)
@@ -93,23 +92,20 @@ void listenner::run(Server _server)
 				else
 				{
 					if (isChunked(receivedData) || isChunkTest(receivedData))
-					{
 						receivedData = unchunk(receivedData);
-					}
 					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  receivedData << std::endl;
 					try {
-						Req x(_server, receivedData, fds[i].fd, this->_location, *this);
-						// Req x(receivedData, fds[i].fd, this->_location, *this);
+						Req request(_server, receivedData, fds[i].fd, this->_location, *this);
 
-							// cout << "RESPONSE STRING\n" << x.responseString << endl;
+							// cout << "RESPONSE STRING\n" << request.responseString << endl;
 
-						ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
+						ssize_t bytesSent = send(fds[i].fd, request.responseString.c_str(), request.responseString.length(), 0);
 						if ( bytesSent < 0)
 						{
 							cout << "bytes sent to client: " << bytesSent << endl;
 							continue; // même chose quen haut, pt erreur 500, a voir
 						}
-						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
+						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  request.getHttpString() << std::endl;
 					}
 					catch (std::exception &e) {
 						// std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;

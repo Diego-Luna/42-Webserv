@@ -32,7 +32,7 @@ private:
 	// void init(u_int32_t port);
 	void init(u_int32_t port, std::string host);
 	
-		// chunk handling
+	// chunk handling
 	bool	isChunked(const string &httpRequest);
 	bool	isChunkTest(const string &httpRequest);
 	bool	isMulti(const string &httpRequest);

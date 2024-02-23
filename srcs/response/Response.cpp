@@ -15,10 +15,7 @@ Response::Response(Req &Req_, string responseBody_)	// Used by CGI
 	router(_Req.get_status_code());
 }
 
-Response::~Response()
-{
-				// cout << "response destructor called" << endl;
-}
+Response::~Response(){}
 
 string	Response::CGIHeader(string &header)
 {
@@ -55,8 +52,6 @@ string	Response::uploadHeader(string &header)
 	return header;
 }
 
-
-
 string	Response::makeHeader()
 {
 	string header = "";
@@ -70,11 +65,11 @@ string	Response::makeHeader()
 		header = CGIHeader(header);
 	}
 	else if (_Req._isUpload && _Req.get_status_code() == OK) {
-		cout <<  "................> if 2" << endl;
+		// cout <<  "................> if 2" << endl;
 		header = uploadHeader(header);
 	}
 	else if (_Req.get_status_code() == OK) {
-		cout <<  "................> if 3" << endl;
+		// cout <<  "................> if 3" << endl;
 
 		std::fstream htmlFile(_Req.env["FILE_NAME"]);
 		if (!htmlFile.is_open())
@@ -129,9 +124,6 @@ string	Response::makeErrorHeader()
 	header += message_status_code(_Req.get_status_code()) + "\r\n";
 
 	string errorPage = findErrorPage(_Req.get_status_code());
-
-				// cout << "error page = " << errorPage << endl;
-
 	std::fstream htmlFile(errorPage);
 		if (!htmlFile.is_open())
 		{
@@ -155,7 +147,6 @@ string	Response::findErrorPage(u_int16_t statusCode)
 {
 	string	errorRoot = _Req.getRoot() + "/ErrorPages/";
 	string	fileName;
-				// cout << "error root: " << errorRoot << endl;
 	switch (statusCode)
 	{
 		case 204:

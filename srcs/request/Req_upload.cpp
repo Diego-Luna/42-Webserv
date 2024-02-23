@@ -38,8 +38,13 @@ void	Req::createUploadFile()
 		return;
 	}
 	size_t bytesWritten = fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
-						cout << "just after file creation\n\n" << endl;
-						cout << "bytes written: " << bytesWritten << endl;
+	if (bytesWritten != _body.length())
+	{
+		std::cerr << "error. could not write all data to file: " << _fileName << endl;
+		_error = true;
+		set_status_code(INTERNAL_SERVER_ERROR);
+		return;
+	}
 	fclose(uploadFile);
 }
 		// WORKING FOR TXT FILES -> NEW VERSION IN PROGRESS
@@ -85,7 +90,7 @@ string	Req::findUploadBoundry(void)
 	string boundary = "boundary=";
 	if (_http_Req.find(boundary) == string::npos)
 	{
-								cout << "BOUNDARY NOT FOUND" << endl;
+		std::cerr << "Upload error: boundary not found" << endl;
 		_error = true;
 		set_status_code(BAD_REQUEST);
 		return "";
@@ -97,7 +102,6 @@ string	Req::findUploadBoundry(void)
 		boundary += *it;
 		it++;
 	}
-
 	return boundary;
 }
 		// KNOWN BUG: filename can't have a space in it.

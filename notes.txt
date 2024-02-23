@@ -17,7 +17,7 @@ Server index:index.html
 Server error_page:404 /ErrorPages/404notFound.html
 Server methods:GET
 
-Location name:/error
+Location name:/hello
 Location root:data/www/Pages
 Location index:index.html
 Location methods:GET
@@ -39,3 +39,481 @@ host: 127.0.0.1 port :3000
 
  this->_listenners.size: 2
 
+[31m[DEBUG] [RECV] : 
+[0mGET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/index.html]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mGET /style.css HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/style.css]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mGET /upload.html HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/upload.html]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mGET /style.css HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:8080/upload.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/style.css]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mGET /chunktest.html HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/upload.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/chunktest.html]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mGET /style.css HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:8080/chunktest.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/style.css]
+........> _Req.get_status_code[200}
+ THIS IS A CHUNK TEST 
+[31m[DEBUG] [RECV] : 
+[0mPOST /upload HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 30
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-platform: "macOS"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Content-Type: application/octet-stream
+Accept: */*
+Origin: http://localhost:8080
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://localhost:8080/chunktest.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+data chunk test
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = []
+........> _Req.get_status_code[400}
+ THIS IS A CHUNK TEST 
+[31m[DEBUG] [RECV] : 
+[0mPOST /upload HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 30
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-platform: "macOS"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Content-Type: application/octet-stream
+Accept: */*
+Origin: http://localhost:8080
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://localhost:8080/chunktest.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+data chunk test
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = []
+........> _Req.get_status_code[400}
+ THIS IS A CHUNK TEST 
+[31m[DEBUG] [RECV] : 
+[0mPOST /upload HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 30
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-platform: "macOS"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Content-Type: application/octet-stream
+Accept: */*
+Origin: http://localhost:8080
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://localhost:8080/chunktest.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+data chunk test
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = []
+........> _Req.get_status_code[400}
+ THIS IS A CHUNK TEST 
+[31m[DEBUG] [RECV] : 
+[0mPOST /upload HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 30
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-platform: "macOS"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Content-Type: application/octet-stream
+Accept: */*
+Origin: http://localhost:8080
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://localhost:8080/chunktest.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+data chunk test
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = []
+........> _Req.get_status_code[400}
+[31m[DEBUG] [RECV] : 
+[0mGET /team.html HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/chunktest.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/team.html]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mGET /chunktest.html HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/team.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/chunktest.html]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mGET /style.css HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+sec-ch-ua-platform: "macOS"
+Accept: text/css,*/*;q=0.1
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: style
+Referer: http://localhost:8080/chunktest.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/style.css]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mGET /form.html HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/chunktest.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+
+SENDING TO RESPONSE CLASS FROM REQ
++++> env[FILE_NAME] = [data/www/Pages/form.html]
+........> _Req.get_status_code[200}
+[31m[DEBUG] [RECV] : 
+[0mPOST /submit.py HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 113
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:8080
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/form.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+first_name=123&last_name=123&login=123&email=123%40123&dob=2024-02-02&phone=123&password=123&confirm_password=123
+-> Diego -> req.envCGIExecve:{ACCEPT = text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+ACCEPT_LANGUAGE = en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+CONNECTION = keep-alive
+CONTENT_LENGTH = 113
+CONTENT_TYPE = application/x-www-form-urlencoded
+FILE_NAME = CGI/bin/submit.py
+HOST = localhost:8080
+PATH_INFO = 
+SERVER_PROTOCOL = HTTP/1.1
+USER_AGENT = Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+}
+-> Diego -> req.getBody():{first_name=123&last_name=123&login=123&email=123%40123&dob=2024-02-02&phone=123&password=123&confirm_password=123
+}
+........> _Req.get_status_code[200}
+printing response body
+Content-type: text/plain
+
+Received form data from DATA_CGI:
+first_name = 123
+last_name = 123
+login = 123
+email = 123@123
+dob = 2024-02-02
+phone = 123
+password = 123
+confirm_password = 123
+
+Content-type: text/html
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit Result</title>
+</head>
+<body>
+    <h1>Form Submission Result Diego</h1>
+    <p>First Name: 123</p>
+    <p>Last Name: 123</p>
+    <p>Login: 123</p>
+    <p>Email: 123@123</p>
+    <p>Date of Birth: 2024-02-02</p>
+    <p>Password: 123</p>
+</body>
+</html>
+
+
+........> _Req.get_status_code[200}
+
+PRINTING REQUEST
+
+FULL http Req:
+POST /submit.py HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 113
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:8080
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/form.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+first_name=123&last_name=123&login=123&email=123%40123&dob=2024-02-02&phone=123&password=123&confirm_password=123
+
+header:
+POST /submit.py HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Content-Length: 113
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:8080
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:8080/form.html
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+Cookie: grafana_session=039b8579c801a602ac3ca60c947792ee; grafana_session_expiry=1707941107
+
+end of header
+body: first_name=123&last_name=123&login=123&email=123%40123&dob=2024-02-02&phone=123&password=123&confirm_password=123
+
+_fileName: CGI/bin/submit.py
+CGI: true
+
+printing env
+ACCEPT: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+ACCEPT_LANGUAGE: en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+CONNECTION: keep-alive
+CONTENT_LENGTH: 515
+CONTENT_TYPE: application/x-www-form-urlencoded
+FILE_NAME: CGI/bin/submit.py
+HOST: localhost:8080
+PATH_INFO: 
+SERVER_PROTOCOL: HTTP/1.1
+USER_AGENT: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+
+printing char** CGIenv
+ACCEPT = text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+ACCEPT_LANGUAGE = en-CA,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,en-GB;q=0.6,en-US;q=0.5
+CONNECTION = keep-alive
+CONTENT_LENGTH = 113
+CONTENT_TYPE = application/x-www-form-urlencoded
+FILE_NAME = CGI/bin/submit.py
+HOST = localhost:8080
+PATH_INFO = 
+SERVER_PROTOCOL = HTTP/1.1
+USER_AGENT = Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+END OF PRINT

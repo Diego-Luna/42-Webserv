@@ -6,15 +6,6 @@
 Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
 	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
 {
-	cout<< "<> hello " <<endl;
-	cout<< "==> _server = [" << _server.get_location_size() << "]"  <<endl;
-	// cout<< "==> _server = [" << _server.get_location(0).get_name() << "]"  <<endl;
-	// cout<< "==> _server = [" << _server.get_location(1).get_name() << "]"  <<endl;
-}
-
-Req::Req(string httpRequest, const int fd, Location &location, listenner &listenner_)
-	: _location(location), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
-{
 	_error = false;
 	_isUpload = false;
 	envCGIExecve = NULL;
@@ -60,8 +51,6 @@ Req::Req(string httpRequest, const int fd, Location &location, listenner &listen
 			Response response(*this, this->_data_file);
 		// 	// cout << "++> this->_data_file = [" << this->_data_file << "]" << endl;
 		}
-
-
 	}
 }
 			// MISSING:operator=overload
