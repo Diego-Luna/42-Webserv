@@ -76,11 +76,13 @@ void listenner::run()
 				}
 				else
 				{
-					// std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  buffer << std::endl;
+					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  buffer << std::endl;
 
 					try {
 						std::vector<char> dataVector(buffer, buffer + res);
 						Req x(dataVector, fds[i].fd, this->_location, *this);
+
+						std::cout << RED << "[x.responseString] : \n" << x.responseString << std::endl;
 
 											// cout << "sending to client" << endl;
 											// cout << x.responseString.c_str() << endl;
@@ -88,12 +90,13 @@ void listenner::run()
 											// cout << fds[i].fd << endl;
 											// cout << x._client.getfd() << endl;
 						ssize_t bytesSent = send(fds[i].fd, x.responseString.c_str(), x.responseString.length(), 0);
+
+						std::cout << " ===> bytesSent:" << bytesSent << endl;
 						if ( bytesSent< 0)
 						{
 							cout << "bytes sent to client: " << bytesSent << endl;
 							continue; // même chose quen haut, pt erreur 500, a voir
 						}
-						
 
 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  x.getHttpString() << std::endl;
 					}

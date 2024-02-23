@@ -24,7 +24,8 @@ Req::Req(std::vector<char> dataVector_, const int fd, Location &location, listen
 	}
 	if (_error == false)
 		parseHeader();
-	
+
+	cout << "--> _isCGI:" << _isCGI << endl;
 	if (_isUpload == true && _error == false)
 	{
 								cout << "found a valid upload" << endl;
@@ -42,7 +43,18 @@ Req::Req(std::vector<char> dataVector_, const int fd, Location &location, listen
 	} else {
 
 					cout << "SENDING TO RESPONSE CLASS FROM REQ" << endl;
-		Response response(*this);
+					cout << "+++> env[FILE_NAME] = [" << env["FILE_NAME"] << "]" << endl;
+
+		if (_run_location(_extractURL(dataVector_),location) == false){
+			Response response(*this);
+		}else{
+			status_code = 200;
+			cout << "++> env[FILE_NAME] = [" << env["FILE_NAME"] << "]" << endl;
+			Response response(*this, this->_data_file);
+			// cout << "++> this->_data_file = [" << this->_data_file << "]" << endl;
+		}
+
+
 	}
 }
 			// MISSING:operator=overload
@@ -380,4 +392,64 @@ void	Req::printReq() {
 	else
 		cout << "NO CGI" << endl;
 	cout << "END OF PRINT" << endl;
+}
+
+/**************************************************************************
+		Locacion
+**************************************************************************/
+
+std::string Req::_extractURL(const std::vector<char>& dataVector) {
+    // Convertir el vector de caracteres a un string
+    std::string data(dataVector.begin(), dataVector.end());
+    
+    // Buscar el inicio de la petición GET
+    size_t start = data.find("GET ");
+    if (start == std::string::npos) {
+        return ""; // No se encontró la petición GET
+    }
+    start += 4; // Ajustar para omitir "GET "
+    
+    // Buscar el final de la URL (espacio antes de HTTP)
+    size_t end = data.find(" ", start);
+    if (end == std::string::npos) {
+        return ""; // No se encontró el final de la URL
+    }
+    
+    // Extraer la URL
+    std::string url = data.substr(start, end - start);
+    
+    return url;
+}
+
+std::string readFileContents(const std::string& filePath) {
+    std::ifstream file(filePath);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
+
+// bool Req::_run_location(std::string name, Location &location, Response &response){
+bool Req::_run_location(std::string name, Location &location){
+	if(location.get_name() == name) {
+
+		std::string filePath = location.get_root() + "/" + location.get_index();
+		env["FILE_NAME"] = filePath;
+		env["SERVER_PROTOCOL"] = "HTTP/1.1";
+
+		std::ifstream file(filePath);
+    if (!file.is_open()) {
+        return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nFile not found.";
+    }
+
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+
+		_data_file = content;
+
+
+		// cout << "++> htmlContent = [" << htmlContent << "]" << endl;
+		// cout << "++> env[FILE_NAME] = [" << env["FILE_NAME"] << "]" << endl;
+		return true;
+  }
+	return false;
 }

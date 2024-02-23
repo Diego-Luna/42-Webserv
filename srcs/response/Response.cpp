@@ -4,12 +4,14 @@
 Response::Response(Req &Req_)
  : _Req(Req_)
 {
+	cout << "........> _Req.get_status_code["<< _Req.get_status_code() << '}' << endl;
 	router(_Req.get_status_code());
 }
 
 Response::Response(Req &Req_, string responseBody_)	// Used by CGI
  : _Req(Req_), _responseBody(responseBody_)
 {
+	cout << "........> _Req.get_status_code["<< _Req.get_status_code() << '}' << endl;
 	router(_Req.get_status_code());
 }
 
@@ -67,9 +69,12 @@ string	Response::makeHeader()
 		header = CGIHeader(header);
 	}
 	else if (_Req._isUpload && _Req.get_status_code() == OK) {
+		cout <<  "................> if 2" << endl;
 		header = uploadHeader(header);
 	}
 	else if (_Req.get_status_code() == OK) {
+		cout <<  "................> if 3" << endl;
+
 		std::fstream htmlFile(_Req.env["FILE_NAME"]);
 		if (!htmlFile.is_open())
 		{
@@ -186,5 +191,9 @@ const std::string Response::message_status_code(u_int16_t code)
 	if (code == NOT_FOUND)
 		return (MESSAGE_NOT_FOUND);
 	else
-		return (MESSAGE_INTERNAL_SERVER_ERROR);	
+		return (MESSAGE_INTERNAL_SERVER_ERROR);
+}
+
+void Response::setBody(const std::string& body) {
+    _responseBody = body;
 }
