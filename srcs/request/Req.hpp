@@ -33,7 +33,7 @@ private:
 	Req(const Req &original);
 
 	Location				&_location;
-	// Server					&_server;
+	Server					_server;
 	string					_root;
 	string	 				_header;
 	string 					_body;
@@ -49,9 +49,6 @@ private:
 	bool					_isCGI;
 	bool					_error;
 	u_int16_t				status_code;
-	std::vector<char>		dataVector;
-	std::vector<string>		_uploadFiles; // fclose/delete the files at the end
-
 
 	// HEADER PARSING
 	void					parseHeader(void);
@@ -73,7 +70,6 @@ private:
 	string					findUploadBody(string boundary);
 	string					trimLine(string line);
 	void					createUploadFile();
-	std::vector<char>		_bodyVector;
 
 	// CGI AND ENV PREP	
 	string					_formatStringEnvCGI(string str);
@@ -91,7 +87,8 @@ private:
 	bool					_isValidCharURI(uint8_t ch);
 
 	// Diego - location
-	std::string _extractURL(const std::vector<char>& dataVector);
+	// std::string _extractURL(const std::vector<char>& dataVector);
+	std::string _extractURL(std::string &dataVector);
 	bool _run_location(std::string name, Location &location);
 	// bool _run_location(std::string name, Location &location, Response &response);
 
@@ -121,10 +118,11 @@ private:
 	// meth					find_methode(std::string &methode);
 
 public:
-	Req(std::vector<char> dataVector_, const int fd, Location &location, listenner &listenner_);
-	~Req					();
-	client					_client;
-	listenner				&_listenner;
+	Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_);
+	Req(string httpRequest, const int fd, Location &location, listenner &listenner_);
+	~Req();
+	client						_client;
+	listenner					&_listenner;
 	std::map<string, string>	env;
 	string						responseString;
 	char						**envCGIExecve;		// must be deleted by destructor

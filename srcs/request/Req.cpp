@@ -3,11 +3,19 @@
 /*************************************************************************
 		CANNONICAL FORM REQUIREMENTS
 **************************************************************************/
-Req::Req(std::vector<char> dataVector_, const int fd, Location &location, listenner &listenner_)
-	: _location(location), dataVector(dataVector_), _client(fd), _listenner(listenner_)
+Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
+	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
+{
+	cout<< "<> hello " <<endl;
+	cout<< "==> _server = [" << _server.get_location_size() << "]"  <<endl;
+	// cout<< "==> _server = [" << _server.get_location(0).get_name() << "]"  <<endl;
+	// cout<< "==> _server = [" << _server.get_location(1).get_name() << "]"  <<endl;
+}
+
+Req::Req(string httpRequest, const int fd, Location &location, listenner &listenner_)
+	: _location(location), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
 {
 				// cout << "printing req string upload:\n" << HTTP_Req << endl;
-	_http_Req = std::string(dataVector.begin(), dataVector.end());
 	_error = false;
 	_isUpload = false;
 	envCGIExecve = NULL;
@@ -25,18 +33,18 @@ Req::Req(std::vector<char> dataVector_, const int fd, Location &location, listen
 	if (_error == false)
 		parseHeader();
 
-	cout << "--> _isCGI:" << _isCGI << endl;
 	if (_isUpload == true && _error == false)
 	{
-								cout << "found a valid upload" << endl;
-						parseUpload();
-								cout << "past parse upload" << endl;
-						createUploadFile();
-								cout << "post file creation" << endl;
-								cout << get_status_code() << endl;
-						Response response(*this);
+							// cout << "found a valid upload" << endl;
+		parseUpload();
+							// cout << "past parse upload" << endl;
+		if (_error == false)
+			createUploadFile();
+							// cout << "post file creation" << endl;
+							// cout << get_status_code() << endl;
+		Response response(*this);
+		return;
 	}
-
 	else if (_isCGI && _error == false)
 	{
 		CGI	Cgi(*this);
@@ -45,13 +53,13 @@ Req::Req(std::vector<char> dataVector_, const int fd, Location &location, listen
 					cout << "SENDING TO RESPONSE CLASS FROM REQ" << endl;
 					cout << "+++> env[FILE_NAME] = [" << env["FILE_NAME"] << "]" << endl;
 
-		if (_run_location(_extractURL(dataVector_),location) == false){
+		if (_run_location(_extractURL(httpRequest),location) == false){
 			Response response(*this);
 		}else{
 			status_code = 200;
 			cout << "++> env[FILE_NAME] = [" << env["FILE_NAME"] << "]" << endl;
 			Response response(*this, this->_data_file);
-			// cout << "++> this->_data_file = [" << this->_data_file << "]" << endl;
+		// 	// cout << "++> this->_data_file = [" << this->_data_file << "]" << endl;
 		}
 
 
@@ -63,6 +71,7 @@ Req::~Req()
 {
 	if (envCGIExecve)
 	{
+		printReq();
 		size_t	mapSize = env.size();
 		for (size_t i = 0; i < mapSize; i++)
 		{
@@ -398,7 +407,8 @@ void	Req::printReq() {
 		Locacion
 **************************************************************************/
 
-std::string Req::_extractURL(const std::vector<char>& dataVector) {
+// std::string Req::_extractURL(const std::vector<char>& dataVector) {
+std::string Req::_extractURL(std::string &dataVector) {
     // Convertir el vector de caracteres a un string
     std::string data(dataVector.begin(), dataVector.end());
     

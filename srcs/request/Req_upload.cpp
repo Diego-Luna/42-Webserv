@@ -2,21 +2,14 @@
 
 void	Req::parseUpload(void)
 {
-								cout << "start of parsing upload" << endl;
-	
 	string	boundary = findUploadBoundry();
 					cout << "boundary: |" << boundary << "|" << endl;
-
 	if (_error == false)
 		_fileName = findUploadFileName(boundary);
-
 					cout << "fileName: |" << _fileName << "|" << endl;
-
 	if (_error == false)
 		_body = findUploadBody(boundary);
-
-					// cout << "body: |" << _body << "|" << endl;
-
+					cout << "body: |" << _body << "|" << endl;
 	_populateEnv(string("Host"));
 	_populateEnv(string("User-Agent"));
 	_populateEnv(string("Content-Length"));
@@ -24,11 +17,13 @@ void	Req::parseUpload(void)
 	_populateEnv(string("Accept-Language"));
 	_populateEnv(string("Connection"));
 	_buildEncoded();
-	env["CONTENT_TYPE"] = getContentType(_extension);
+	env["CONTENT_TYPE"] = "text/plain";
 	env["SERVER_PROTOCOL"] = _protocol;
 	env["FILE_NAME"] = _fileName;	// might change it to uploadfilenam
-
-	set_status_code(OK);
+	if (_error == false)
+	{
+		set_status_code(OK);
+	}
 }
 
 void	Req::createUploadFile()
@@ -38,109 +33,45 @@ void	Req::createUploadFile()
 	if (uploadFile == NULL)
 	{
 		std::cerr << "error. could not create file: " << _fileName << endl;
-
 		_error = true;
 		set_status_code(INTERNAL_SERVER_ERROR);
 		return;
 	}
-	_uploadFiles.push_back(_fileName);
-							cout << "just before file creation\n\n" << endl;
-	// size_t bytesWritten = fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
-	size_t bytesWritten = fwrite(&_bodyVector[0], sizeof(char), _bodyVector.size(), uploadFile);
-
+	size_t bytesWritten = fwrite(_body.c_str(), sizeof(char), _body.length(), uploadFile);
 						cout << "just after file creation\n\n" << endl;
 						cout << "bytes written: " << bytesWritten << endl;
 	fclose(uploadFile);
 }
 		// WORKING FOR TXT FILES -> NEW VERSION IN PROGRESS
-// 	// picks up the stream from where findUploadFileName left off
-// string	Req::findUploadBody(string boundary)
-// {
-// 	boundary = trimLine(boundary);
-// 	boundary = "--" + boundary + "--";
-
-// 	string line;
-// 	string body = "";
-	
-// 	std::getline(_ReqStream, line);
-// 	line = trimLine(line);
-// 	while (!line.empty())
-// 	{
-// 		std::getline(_ReqStream, line);
-// 		line = trimLine(line);
-// 	}
-// 					// cout << "after first loop: " << line << endl;
-// 					// cout << "boundary: |" << boundary << "|" << endl;
-// 					// cout << line.compare(0, boundary.length(), boundary) << endl;
-
-// 		// working, but could use some cleanup.
-// 	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
-// 	{
-// 		std::getline(_ReqStream, line);
-// 		line = trimLine(line);
-// 		if (line.compare(0, boundary.length(), boundary) == 0) {
-// 			body.pop_back();		// removes extraneous \n
-// 			break;
-// 		}
-// 		body += line + "\n";
-// 	}
-// 	return body;
-// }
-
-
 	// picks up the stream from where findUploadFileName left off
-string Req::findUploadBody(string boundary)
+string	Req::findUploadBody(string boundary)
 {
-    boundary = trimLine(boundary);
-    boundary = "--" + boundary;
-    boundary = boundary + "--";
+	boundary = trimLine(boundary);
+	boundary = "--" + boundary + "--";
 
-   				 cout << "boundary:\n" << boundary << endl;
-    // advances to the start of the body
-	std::string tmpLine = "";
-	std::getline(_ReqStream, tmpLine);
-				// cout << " line pre loop: " << tmpLine << endl;
-	while (tmpLine != "")
-		std::getline(_ReqStream, tmpLine);
-				cout << " line post loop: " << tmpLine << endl;
-    size_t bodyStart = static_cast<size_t>(_ReqStream.tellg());
-  				  cout << "bodystart: " << bodyStart << endl;
-
-    // makes a new vector that starts from the point after the start boundary
-    std::vector<char> bodyVector(dataVector.begin() + bodyStart, dataVector.end());
-
-    // find the position of the boundary in the vector
-    std::vector<char>::iterator boundaryPos = std::search(bodyVector.begin(), bodyVector.end(), boundary.begin(), boundary.end());
-
-						
-
-    // remove the boundary if found
-    if (boundaryPos != bodyVector.end())
-    {
-        bodyVector.erase(boundaryPos, boundaryPos + boundary.size());
-    }
-
-    // for (std::vector<char>::iterator it = bodyVector.begin(); it != bodyVector.end(); ++it)
-    // {
-    //     std::cout << *it;
-    // }
-    // std::cout << std::endl;
-
-							// cout << " just before setting _bodyvector" << endl;
-
-	_bodyVector = bodyVector;
-							// cout << dataVector.size() << " data vector size" << endl;
-							// cout << "header size " << _header.size() << endl;
-							// cout << _bodyVector.size() << " body vector size" << endl;
-
-    string body(bodyVector.begin(), bodyVector.end());
-							// cout << " just after setting _bodyector" << endl;
-    return body;
+	string line;
+	string body = "";
+	
+	std::getline(_ReqStream, line);
+	line = trimLine(line);
+	while (!line.empty())
+	{
+		std::getline(_ReqStream, line);
+		line = trimLine(line);
+	}
+		// working, but could use some cleanup.
+	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
+	{
+		std::getline(_ReqStream, line);
+		line = trimLine(line);
+		if (line.compare(0, boundary.length(), boundary) == 0) {
+			body.pop_back();		// removes extraneous \n
+			break;
+		}
+		body += line + "\n";
+	}
+	return body;
 }
-
-
-
-
 
 string	Req::trimLine(string line)
 {
@@ -154,7 +85,7 @@ string	Req::findUploadBoundry(void)
 	string boundary = "boundary=";
 	if (_http_Req.find(boundary) == string::npos)
 	{
-								cout << "BOUNDRY NOT FOUND" << endl;
+								cout << "BOUNDARY NOT FOUND" << endl;
 		_error = true;
 		set_status_code(BAD_REQUEST);
 		return "";
@@ -185,10 +116,8 @@ string	Req::findUploadFileName(string boundary)
 	std::getline(_ReqStream, line);
 	while (!line.empty() && line.compare(0, boundary.length(), boundary) != 0)
 		std::getline(_ReqStream, line);
-	std::getline(_ReqStream, line);
 
-				cout << "line after boundary?\n" << line << endl;
-	
+	std::getline(_ReqStream, line);
 	string	tmp = "Content-Disposition:";
 	while (!line.empty() && line.compare(0, tmp.length(), tmp) != 0)
 		std::getline(_ReqStream, line);
