@@ -89,7 +89,8 @@ private:
 	// Diego - location
 	// std::string _extractURL(const std::vector<char>& dataVector);
 	std::string _extractURL(std::string &dataVector);
-	bool _run_location(std::string name, Location &location);
+	bool _run_location(std::string name, std::string httpRequest);
+	// bool _run_location(std::string name, Location &location);
 	// bool _run_location(std::string name, Location &location, Response &response);
 
 /*
@@ -119,7 +120,7 @@ private:
 
 public:
 	Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_);
-	Req(string httpRequest, const int fd, Location &location, listenner &listenner_);
+	// Req(string httpRequest, const int fd, Location &location, listenner &listenner_);
 	~Req();
 	client						_client;
 	listenner					&_listenner;

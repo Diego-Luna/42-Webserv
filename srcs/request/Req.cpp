@@ -3,17 +3,17 @@
 /*************************************************************************
 		CANNONICAL FORM REQUIREMENTS
 **************************************************************************/
-Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
-	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
-{
-	cout<< "<> hello " <<endl;
-	cout<< "==> _server = [" << _server.get_location_size() << "]"  <<endl;
+// Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
+// 	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
+// {
+	// cout<< "<> hello " <<endl;
+	// cout<< "==> _server = [" << _server.get_location_size() << "]"  <<endl;
 	// cout<< "==> _server = [" << _server.get_location(0).get_name() << "]"  <<endl;
 	// cout<< "==> _server = [" << _server.get_location(1).get_name() << "]"  <<endl;
-}
+// }
 
-Req::Req(string httpRequest, const int fd, Location &location, listenner &listenner_)
-	: _location(location), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
+Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
+	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
 {
 				// cout << "printing req string upload:\n" << HTTP_Req << endl;
 	_error = false;
@@ -51,15 +51,12 @@ Req::Req(string httpRequest, const int fd, Location &location, listenner &listen
 	} else {
 
 					cout << "SENDING TO RESPONSE CLASS FROM REQ" << endl;
-					cout << "+++> env[FILE_NAME] = [" << env["FILE_NAME"] << "]" << endl;
 
-		if (_run_location(_extractURL(httpRequest),location) == false){
+		if (_run_location(_extractURL(httpRequest), httpRequest) == false){
 			Response response(*this);
 		}else{
 			status_code = 200;
-			cout << "++> env[FILE_NAME] = [" << env["FILE_NAME"] << "]" << endl;
 			Response response(*this, this->_data_file);
-		// 	// cout << "++> this->_data_file = [" << this->_data_file << "]" << endl;
 		}
 
 
@@ -190,7 +187,7 @@ void	Req::_populateEnv(string var)
 {
 	string				tmp;
 	string::iterator	it;
-	
+
 	if (!_isValidVariable(var))
 		return;
 	size_t pos = _header.find(var) + var.length() + 2; // +2 -> accounts for the ": "
@@ -318,7 +315,7 @@ bool	Req::_allValidCharsURI(string str)
 		{
 			return false;
 		}
-		
+
 		it++;
 	}
 	return true;
@@ -374,7 +371,7 @@ string	Req::getRoot()const
 		PRINTING / TESTING
 **************************************************************************/
 void	Req::printReq() {
-	
+
 	cout << "\nPRINTING REQUEST\n" << endl;
 	cout << "FULL http Req:\n";
 	cout << _http_Req << endl << endl;
@@ -409,57 +406,73 @@ void	Req::printReq() {
 
 // std::string Req::_extractURL(const std::vector<char>& dataVector) {
 std::string Req::_extractURL(std::string &dataVector) {
-    // Convertir el vector de caracteres a un string
-    std::string data(dataVector.begin(), dataVector.end());
-    
-    // Buscar el inicio de la petición GET
-    size_t start = data.find("GET ");
-    if (start == std::string::npos) {
-        return ""; // No se encontró la petición GET
-    }
-    start += 4; // Ajustar para omitir "GET "
-    
-    // Buscar el final de la URL (espacio antes de HTTP)
-    size_t end = data.find(" ", start);
-    if (end == std::string::npos) {
-        return ""; // No se encontró el final de la URL
-    }
-    
-    // Extraer la URL
-    std::string url = data.substr(start, end - start);
-    
-    return url;
+  // Convertir el vector de caracteres a un string
+  std::string data(dataVector.begin(), dataVector.end());
+
+  // Buscar el inicio de la petición GET
+  size_t start = data.find("GET ");
+  if (start == std::string::npos) {
+      return ""; // No se encontró la petición GET
+  }
+  start += 4; // Ajustar para omitir "GET "
+
+  // Buscar el final de la URL (espacio antes de HTTP)
+  size_t end = data.find(" ", start);
+  if (end == std::string::npos) {
+      return ""; // No se encontró el final de la URL
+  }
+
+  // Extraer la URL
+  std::string url = data.substr(start, end - start);
+
+  return url;
 }
 
 std::string readFileContents(const std::string& filePath) {
-    std::ifstream file(filePath);
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
+  std::ifstream file(filePath);
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  return buffer.str();
 }
 
-// bool Req::_run_location(std::string name, Location &location, Response &response){
-bool Req::_run_location(std::string name, Location &location){
-	if(location.get_name() == name) {
+bool Req::_run_location(std::string name, std::string httpRequest){
 
-		std::string filePath = location.get_root() + "/" + location.get_index();
-		env["FILE_NAME"] = filePath;
-		env["SERVER_PROTOCOL"] = "HTTP/1.1";
+	size_t posicionEspacio = httpRequest.find(' ');
+	std::string method_http;
 
-		std::ifstream file(filePath);
-    if (!file.is_open()) {
-        return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nFile not found.";
-    }
-
-    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    file.close();
-
-		_data_file = content;
-
-
-		// cout << "++> htmlContent = [" << htmlContent << "]" << endl;
-		// cout << "++> env[FILE_NAME] = [" << env["FILE_NAME"] << "]" << endl;
-		return true;
+  if (posicionEspacio != std::string::npos) {
+      method_http = httpRequest.substr(0, posicionEspacio);
+  } else {
+      return false;
   }
-	return false;
+
+	for (size_t i = 0; i < _server.get_location_size(); i++) {
+		if (_server.get_location(i).get_name() == name) {
+
+			bool find_method_http = false;
+			for (size_t ii = 0; ii < _server.get_location(i).get_methods_size(); ii++)
+			{
+				if (method_http == _server.get_location(i).get_methods(ii))
+					find_method_http = true;
+			}
+			if (!find_method_http)
+				return false;
+
+			std::string filePath = _server.get_location(i).get_root() + "/" + _server.get_location(i).get_index();
+			env["FILE_NAME"] = filePath;
+			env["SERVER_PROTOCOL"] = "HTTP/1.1";
+
+			std::ifstream file(filePath);
+    	if (!file.is_open()) {
+    	  return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nFile not found.";
+			}
+
+			std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+			file.close();
+
+			_data_file = content;
+			return true;
+    }
+  }
+  return false;
 }
