@@ -88,7 +88,34 @@ private:
 	// Diego - location
 	// std::string _extractURL(const std::vector<char>& dataVector);
 	std::string _extractURL(std::string &dataVector);
-	bool _run_location(std::string name, Location &location);
+	bool _run_location(std::string name, std::string httpRequest);
+	// bool _run_location(std::string name, Location &location);
+	// bool _run_location(std::string name, Location &location, Response &response);
+
+/*
+	below this line: things that were here before but I dont understand
+	the functionallity of yet.
+
+	Some of these seem to be better suited for Response, rather than Request
+*/
+	// void 					header_creation(void);	// unable to test, more details inside
+	// std::string 			cType(void);
+	// std::string 			status_line;
+	// void 					body_creation(void);
+
+	// //fonc
+	// u_int16_t 				getFonc(std::string &element);
+	// u_int16_t 				postFonc(std::string &element);
+	
+	// // u_int16_t			methode;
+	// typedef u_int16_t 		(Req::*meth)(std::string &element);
+	// meth 					methode;
+	// // status line /
+
+	// // void 					status_line_creation(const std::string &line);
+	// // pt a supp
+	// u_int16_t 				parsing_status_line(std::vector<std::string> status_line);
+	// meth					find_methode(std::string &methode);
 
 public:
 	Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_);
