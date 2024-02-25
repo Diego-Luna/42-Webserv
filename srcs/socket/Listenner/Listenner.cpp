@@ -88,7 +88,12 @@ void listenner::run(Server _server)
 				{
 					if (isChunked(receivedData) || isChunkTest(receivedData))
 						receivedData = unchunk(receivedData);
-					std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  receivedData << std::endl;
+					if (isChunkTest(receivedData)) {
+						cout << "printing unchunked data" << endl;
+						cout << receivedData << endl;
+						continue;
+					}
+					// std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  receivedData << std::endl;
 					try {
 						Req request(_server, receivedData, fds[i].fd, this->_location, *this);
 
@@ -143,7 +148,6 @@ bool	listenner::isChunkTest(const string &httpRequest) {
 	if (pos == string::npos)
 		return false;
 	else {
-				cout << " THIS IS A CHUNK TEST " << endl;
 		return true;
 	}
 }

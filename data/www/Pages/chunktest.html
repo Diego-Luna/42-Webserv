@@ -30,14 +30,14 @@
 
             You can identify a chunked request by checking the if variable: "Transfer-Encoding" is set to "chunked" in the HTTP header.<br><br>
 
-            Chunked request follow the following format:<br>
+            Chunked request follow the following format:<br><br>
             
             [chunksize in hexadecimal]<br>
-            [chunk body]<br>
+            [chunk body]<br><br>
 
-            repeating until the last chunk which will have length = 0
+            Repeating until the last chunk which will have length = 0<br>
             
-            This button simulates a chunked HTTP requests.<br>
+            The button bellow simulates a chunked HTTP requests.<br>
             It sends a request that follows the structure of a chunked request but is not a chunked request itself.<br>
             It should be able to demonstrate how our server handles chunking.<br><br>
 
@@ -49,10 +49,12 @@
             chunk test<br>
             0<br><br>
 
-            The expected result is that the request arrives to be processed with the unchunked body:<br><br>
+            The expected result is that the request is unchunked before being processed.<br>
+            So the body should become:<br><br>
             
             data chunk test<br>
 
+            <br> When you press this button it should display the full HTTP request with the unchunked data printed in your terminal<br>
 
         </p>
     </div>
