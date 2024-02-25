@@ -19,17 +19,15 @@ class listenner : public Csocket
 {
 public:
 	listenner();
-	// listenner(u_int32_t port, Location &location);
 	listenner(u_int32_t port, Location &location, std::string host);
 	int		portNumber;
 	~listenner();
-	// void run(void);
 	void run(Server _server);
+	void internalError(int clientFd);
 private:
 	Location _location;
 	pollfd fds[MAX_CLIENT];
 	u_int32_t n_fd;
-	// void init(u_int32_t port);
 	void init(u_int32_t port, std::string host);
 	
 	// chunk handling
@@ -41,6 +39,5 @@ private:
 	std::vector<string> _chunks;
 
 };
-
 
 #endif

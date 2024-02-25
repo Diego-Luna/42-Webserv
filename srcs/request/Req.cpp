@@ -34,13 +34,9 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 
 	if (_isUpload == true && _error == false)
 	{
-							// cout << "found a valid upload" << endl;
 		parseUpload();
-							// cout << "past parse upload" << endl;
 		if (_error == false)
 			createUploadFile();
-							// cout << "post file creation" << endl;
-							// cout << get_status_code() << endl;
 		Response response(*this);
 		return;
 	}
@@ -48,18 +44,14 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 	{
 		CGI	Cgi(*this);
 	} else {
-
-					cout << "SENDING TO RESPONSE CLASS FROM REQ" << endl;
-
 		if (_run_location(_extractURL(httpRequest), httpRequest) == false){
 			Response response(*this);
-		}else{
+		} else {
 			status_code = 200;
 			Response response(*this, this->_data_file);
 		}
 	}
 }
-			// MISSING:operator=overload
 
 Req::~Req()
 {
@@ -94,7 +86,6 @@ void	Req::_makeEnv(void)
 	env["PATH_INFO"] = _decodeURI(_pathInfo);
 	if (!_querryString.empty())
 		env["QUERRY_STRING"] = _decodeURI(_querryString);
-	//     _env.push_back("SERVER_PORT=" + std::to_string(m_server.get_ports()[0]));
 }
 
 string	Req::getContentType(string &extension)

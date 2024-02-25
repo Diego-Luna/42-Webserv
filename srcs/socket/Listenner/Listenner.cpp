@@ -12,33 +12,16 @@ void listenner::init(u_int32_t port, std::string host)
 		fatal("setsockopt");
 	this->addr.sin_family = AF_INET;
 	this->addr.sin_port = htons(port);
-	// this->addr.sin_addr.s_addr = INADDR_ANY;
 	this->addr.sin_addr.s_addr = inet_addr(host.c_str());
 	if (bind(this->fd_socket, (struct sockaddr *)&this->addr, this->addr_size) < 0)
 		fatal("bind");
 	if (listen(this->fd_socket, SOMAXCONN) < 0)
 		fatal("listen");
- // flagged as error for not multiplying maxclient by its element size
-	// memset(this->fds, 0, MAX_CLIENT);
 	memset(this->fds, 0, MAX_CLIENT * sizeof(this->fds[0]));
 	this->fds[0].fd = this->getfd();
 	this->fds[0].events = POLLIN | POLLOUT;
 	this->n_fd = 1;
 
-			// Sets socket to non-blocking mode
-	for (u_int16_t i = 0; i < MAX_CLIENT; i++)
-	{
-		int flags = fcntl(fds[i].fd, F_GETFL, 0);
-		if (flags == -1) {
-			// Handle error
-			perror("fcntl");
-		} else {
-		if (fcntl(fds[i].fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-			// Handle error
-			perror("fcntl");
-			}
-		}
-	}
 }
 
 listenner::listenner(u_int32_t port, Location &location, std::string host) : portNumber(port), _location(location)
@@ -64,7 +47,19 @@ void listenner::run(Server _server)
 	std::string receivedData;
 	for (u_int16_t i = 0; i < this->n_fd; i++)
 	{
-		// if (fds[i].revents & POLLIN || fds[i].revents & POLLOUT)	// I think we need to check read AND write according to the pdf
+
+		int flags = fcntl(fds[i].fd, F_GETFL, 0);
+		if (flags == -1) {
+			std::cerr << "fcntl" << endl;
+			internalError(fds[i].fd);
+			continue;
+		} else {
+			if (fcntl(fds[i].fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+				std::cerr << "fcntl" << endl;
+				internalError(fds[i].fd);
+				continue;
+			}
+		}
 		if (fds[i].revents & (POLLIN | POLLOUT))
 		{
 			if (i == 0)
@@ -76,7 +71,7 @@ void listenner::run(Server _server)
 			else
 			{
 				char buffer[BUFFER_SIZE];
-				memset(buffer, 0, BUFFER_SIZE); // Zero out the buffer before each recv call
+				memset(buffer, 0, BUFFER_SIZE);
 				int res;
 				while ((res = recv(fds[i].fd, buffer, BUFFER_SIZE, 0)) > 0) {
 					receivedData.append(buffer, res);
@@ -85,7 +80,7 @@ void listenner::run(Server _server)
 					continue;
 				if (res == 0)
 				{
-					close(fds[i].fd);  // close est une fonction autorisée!
+					close(fds[i].fd);
 					fds[i] = fds[n_fd - 1];
 					n_fd--;
 				}
@@ -97,13 +92,12 @@ void listenner::run(Server _server)
 					try {
 						Req request(_server, receivedData, fds[i].fd, this->_location, *this);
 
-							// cout << "RESPONSE STRING\n" << request.responseString << endl;
-
 						ssize_t bytesSent = send(fds[i].fd, request.responseString.c_str(), request.responseString.length(), 0);
 						if ( bytesSent < 0)
 						{
 							cout << "bytes sent to client: " << bytesSent << endl;
-							continue; // même chose quen haut, pt erreur 500, a voir
+							internalError(fds[i].fd);
+							continue; 
 						}
 						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  request.getHttpString() << std::endl;
 					}
@@ -175,4 +169,25 @@ string	listenner::trimLine(string &line)
 	while (line.back() == '\n' || line.back() == '\r')
 		line.pop_back();
 	return line;
+}
+
+// redirects to error 500 page.
+void	listenner::internalError(int clientFd) {
+	string header = "";
+
+	header += "HTTP/1.1 500 Internal Server Error";
+
+	std::fstream htmlFile("data/www/Pages/ErrorPages/500internalServerError.html");
+	string line;
+	string responseBody;
+	while (std::getline(htmlFile, line))
+		responseBody += line + "\r\n";
+	htmlFile.close();
+	header += "Content-Type: " "text/html";
+	header += "\r\n";
+	header += "Content-Length: " + responseBody.length();
+	header += "\r\n\r\n";
+	header += responseBody;
+	header += "\r\n";
+	send(clientFd, header.c_str(), header.length(), 0);
 }

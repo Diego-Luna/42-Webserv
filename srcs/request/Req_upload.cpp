@@ -3,13 +3,10 @@
 void	Req::parseUpload(void)
 {
 	string	boundary = findUploadBoundry();
-					cout << "boundary: |" << boundary << "|" << endl;
 	if (_error == false)
 		_fileName = findUploadFileName(boundary);
-					cout << "fileName: |" << _fileName << "|" << endl;
 	if (_error == false)
 		_body = findUploadBody(boundary);
-					cout << "body: |" << _body << "|" << endl;
 	_populateEnv(string("Host"));
 	_populateEnv(string("User-Agent"));
 	_populateEnv(string("Content-Length"));
