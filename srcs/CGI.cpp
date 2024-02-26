@@ -6,7 +6,7 @@
 CGI::CGI(Req &req_) : req(req_), m_server() {
 	string responseBody = exec();
 
-					cout << "printing response body\n" << responseBody << endl;
+					cout << "\n\nprinting response body\n" << responseBody << endl;
 	Response response(req, responseBody);
 		// MAKE REPONSE CLASS AND SEND BODY, EVEN IF EMPTY
 }
@@ -15,9 +15,7 @@ CGI::~CGI() {}
 
 string CGI::exec() {
 
-	std::cout << "-> Diego -> req.envCGIExecve:{";
-
-
+	// std::cout << "-> Diego -> req.envCGIExecve:{";
 	size_t envCount = 0;
 	while (req.envCGIExecve[envCount])
 	{
@@ -42,9 +40,9 @@ string CGI::exec() {
   newEnv[envCount + 1] = NULL;
 
 
-	std::cout << "}" << std::endl;
+	// std::cout << "}" << std::endl;
 
-	std::cout << "-> Diego -> req.getBody():{" << req.getBody() << "}" << std::endl;
+	// std::cout << "-> Diego -> req.getBody():{" << req.getBody() << "}" << std::endl;
 
     int pfd[2], input_pfd[2];
     if (pipe(pfd) == -1 || pipe(input_pfd) == -1) {
@@ -97,7 +95,7 @@ string CGI::exec() {
         if (WIFEXITED(status)) {
             // Response can be constructed with Req and body,
             // and automatically sets the right headers and status.
-            Response response(req, body); // Adjust according to your Response class design
+            // Response response(req, body); // Adjust according to your Response class design
             // responseString is a member of Req or wherever you need it
             // req.responseString = response->constructResponse(); // This method should return the full HTTP response
             return body; // Or return the full response as needed

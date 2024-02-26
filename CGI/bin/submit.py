@@ -13,29 +13,44 @@ def get_form_value(field_name):
     return form_data.get(field_name, [""])[0]
 
 # Print received form data
-print("Content-type: text/plain\n")
-print("Received form data from DATA_CGI:")
-for key, value in form_data.items():
-    print(f"{key} = {value[0]}")
+# print("Content-type: text/plain\n")
+# print("Received form data from DATA_CGI:")
+# for key, value in form_data.items():
+#     print(f"{key} = {value[0]}")
 
 #HTML template
-html_template = """
-<!DOCTYPE html>
+html_template = """<!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="style.css">
+
 </head>
 <body>
-    <h1>Form Submission Result Diego</h1>
-    <p>First Name: {first_name}</p>
-    <p>Last Name: {last_name}</p>
-    <p>Login: {login}</p>
-    <p>Email: {email}</p>
-    <p>Date of Birth: {dob}</p>
-    <p>Password: {password}</p>
+    <nav class="navbar">
+        <a href="#" class="navbar-logo">42-Webserver</a>
+        <div class="navbar-links">
+            <a href="index.html" class="navbar-link">Home</a>
+            <a href="form.html" class="navbar-link">CGI</a>
+            <a href="team.html" class="navbar-link">Team</a>
+            <a href="upload.html" class="navbar-link">Upload</a>
+            <a href="chunktest.html" class="navbar-link">Chunked Test</a>
+        </div>
+    </nav>
+    <div class="mx-auto text-center">
+        <h1 class="mt-5">Form Submission Result</h1>
+        <p class="mt-3"><strong>First Name:</strong> {first_name}</p>
+        <p><strong>Last Name:</strong> {last_name}</p>
+        <p><strong>Login:</strong> {login}</p>
+        <p><strong>Email:</strong> {email}</p>
+        <p><strong>Date of Birth:</strong> {dob}</p>
+        <p><strong>Password:</strong> {password}</p>
+    </div>
 </body>
-</html>
-"""
+</html>"""
 
 # Get form data from DATA_CGI
 first_name = get_form_value("first_name")
@@ -56,5 +71,5 @@ response_html = html_template.format(
 )
 
 # Ensure to switch to HTML content type before printing HTML
-print("Content-type: text/html\n")
+# print("Content-type: text/html\r\n")
 print(response_html)

@@ -22,6 +22,8 @@ string	Response::CGIHeader(string &header)
 		// header += "Content-Length: " + std::to_string(_responseBody.length()); // OG, dropped due to conflict with c98
 		header += "Content-Length: ";
 		header += size_tToString(_responseBody.length());
+		// header += "\r\n";
+		// header += "Referer: http://localhost:3000/form.html";
 		header += "\r\n\r\n";
 		header += _responseBody;
 		header += "\r\n";
@@ -60,7 +62,7 @@ string	Response::makeHeader()
 
 	header += _Req.env["SERVER_PROTOCOL"] + " ";
 	// header += std::to_string(_Req.get_status_code()) + " ";
-	header += size_tToString(_Req.get_status_code());
+	header += size_tToString(_Req.get_status_code()) + " ";
 	header += message_status_code(_Req.get_status_code()) + "\r\n";
 	header += "Connection: " + _Req.env["CONNECTION"];
 

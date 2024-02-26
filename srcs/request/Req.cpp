@@ -57,7 +57,7 @@ Req::~Req()
 {
 	if (envCGIExecve)
 	{
-		printReq();
+		// printReq();
 		size_t	mapSize = env.size();
 		for (size_t i = 0; i < mapSize; i++)
 		{
