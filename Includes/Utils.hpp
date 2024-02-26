@@ -40,6 +40,7 @@
 #include <fstream>
 #include <vector>
 #include <utility>
+#include <sstream>
 
 
 #endif
@@ -83,8 +84,7 @@ std::vector<std::string> split(const std::string &input, char c);
 void fatal(const char *msg);
 char **vecToChar(std::vector<std::string> &vec);
 
-/*  PROTORYPES    */
-bool	isChunked(const std::string &httpRequest);
-void	ft_bzero(void *s, size_t n);
+/*  PROTOTYPES    */
+std::string size_tToString(size_t number);
 
 #endif

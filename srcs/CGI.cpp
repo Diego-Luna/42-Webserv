@@ -135,6 +135,8 @@ string	CGI::makeBody(int fdOut)
 			responseBody.append(buffer, finishedReading);
 	}
 	close(fdOut);
-	req.env["CONTENT_LENGTH"] = std::to_string(responseBody.length());
+        // changed to comply with c++98
+	// req.env["CONTENT_LENGTH"] = std::to_string(responseBody.length());
+    req.env["CONTENT_LENGTH"] = size_tToString(responseBody.length());
 	return responseBody;
 }

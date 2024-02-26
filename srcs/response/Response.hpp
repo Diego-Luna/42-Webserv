@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../request/Req.hpp"
+#include "../../Includes/Utils.hpp"
 #include <string>
 #include <fstream>
 #include <iostream>

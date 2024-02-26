@@ -67,7 +67,8 @@ string	Req::findUploadBody(string boundary)
 		std::getline(_ReqStream, line);
 		line = trimLine(line);
 		if (line.compare(0, boundary.length(), boundary) == 0) {
-			body.pop_back();		// removes extraneous \n
+			// body.pop_back();		// removes extraneous \n
+			body.erase(body.size() -1);
 			break;
 		}
 		body += line + "\n";
@@ -75,12 +76,21 @@ string	Req::findUploadBody(string boundary)
 	return body;
 }
 
-string	Req::trimLine(string line)
+std::string Req::trimLine(std::string line)
 {
-	while (line.back() == '\n' || line.back() == '\r')
-		line.pop_back();
+	while (!line.empty() && (line.at(line.size() - 1) == '\n' || line.at(line.size() - 1) == '\r'))
+	{
+		line.erase(line.size() - 1);
+	}
 	return line;
 }
+		// changed to comply with c++98
+// string	Req::trimLine(string line)
+// {
+// 	while (line.back() == '\n' || line.back() == '\r')
+// 		line.pop_back();
+// 	return line;
+// }
 
 string	Req::findUploadBoundry(void)
 {
@@ -140,11 +150,24 @@ string	Req::findUploadFileName(string boundary)
 	return fileName;
 }
 
-void	Req::stripQuotes(string &original)
+void Req::stripQuotes(string &original)
 {
-	if (original.front() == '"')
+	if (!original.empty() && original[0] == '"')
+	{
 		original.erase(0, 1);
-	if (original.back() == '"')
-		original.pop_back();
-	return;
+	}
+
+	if (!original.empty() && original[original.size() - 1] == '"')
+	{
+		original.erase(original.size() - 1);
+	}
 }
+		// changed to comply with c++ 98
+// void	Req::stripQuotes(string &original)
+// {
+// 	if (original.front() == '"')
+// 		original.erase(0, 1);
+// 	if (original.back() == '"')
+// 		original.pop_back();
+// 	return;
+// }

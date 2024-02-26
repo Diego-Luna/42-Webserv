@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/01/15 13:39:42 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/02/25 19:10:50 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ bool Parsing::checkData(std::string dataUrl){
     if (dataUrl.empty() == true)
       return false;
 
-    std::ifstream archivo(dataUrl);
+    std::ifstream archivo(dataUrl.c_str());
     std::string line;
 
     // check the ".config"
@@ -106,7 +106,7 @@ bool Parsing::checkData(std::string dataUrl){
 
 bool Parsing::f_is_file(std::string path)
 {
-  std::ifstream archivo(path);
+  std::ifstream archivo(path.c_str());
 
   size_t point = path.find_last_of(".");
   size_t found;
@@ -140,7 +140,7 @@ void Parsing::saveData(std::string dataUrl)
     return;
   try
   {
-    std::ifstream archivo(dataUrl);
+    std::ifstream archivo(dataUrl.c_str());
     (dataUrl.length() == 0 || dataUrl.empty() == true) ? throw formatWrong() : true;
     if (f_is_file(dataUrl) == false)
     {
@@ -296,7 +296,13 @@ void Parsing::saveData(std::string dataUrl)
               {
                 throw formatWrong();
               }
-              s_tem->set_body_size(std::stoll( f_cut_space(line, line.find("body_size") + 10)));
+              // changed to comply with c++ 98
+              // s_tem->set_body_size(std::stoll( f_cut_space(line, line.find("body_size") + 10)));
+              std::istringstream iss(f_cut_space(line, line.find("body_size") + 10));
+              long long bodySize = 0;
+              s_tem->set_body_size(bodySize);
+
+              
               server_body_size = true;
             }
             if (line.find("root") != std::string::npos)
@@ -708,18 +714,24 @@ void    Parsing::f_save_default(){
 
     if (server_save.get_name().length() == 0 && print_run_default(&default_mode, 0))
     {
-      std::cout << "-> default server -> name: Server" << std::to_string(i) << std::endl;
-      server_save.set_name("Server" + std::to_string(i));
+      // std::cout << "-> default server -> name: Server" << std::to_string(i) << std::endl;
+      std::cout << "-> default server -> name: Server" << size_tToString(i) << std::endl;
+      // server_save.set_name("Server" + std::to_string(i));
+      server_save.set_name("Server" + size_tToString(i));
     }
     if (server_save.get_ports_size() == 0 && print_run_default(&default_mode, 0))
     {
-      std::cout << "-> default server -> ports: 8" << std::to_string(i) << std::endl;
-      server_save.set_new_port("8" + std::to_string(i));
+      // std::cout << "-> default server -> ports: 8" << std::to_string(i) << std::endl;
+      std::cout << "-> default server -> ports: 8" << size_tToString(i) << std::endl;
+      // server_save.set_new_port("8" + std::to_string(i));
+      server_save.set_new_port("8" + size_tToString(i));
     }
     if (server_save.get_host().length() == 0 && print_run_default(&default_mode, 0))
     {
-      std::cout << "-> default server -> host: 8" << std::to_string(i) << std::endl;
-      server_save.set_host("8" + std::to_string(i));
+      // std::cout << "-> default server -> host: 8" << std::to_string(i) << std::endl;
+      std::cout << "-> default server -> host: 8" << size_tToString(i) << std::endl;
+      // server_save.set_host("8" + std::to_string(i));
+      server_save.set_host("8" + size_tToString(i));
     }
     if (server_save.get_root().length() == 0 && print_run_default(&default_mode, 0))
     {

@@ -287,10 +287,11 @@ bool	Req::_validPort(string host)
 	if (digitPos == string::npos)
 		return false;
 	string tmp = host.substr(digitPos);
-	if (std::stoi(tmp) == _listenner.portNumber)
+	if (std::atoi(tmp.c_str()) == _listenner.portNumber)
 		return true;
 	else
 		return false;
+	return false;
 }
 
 
@@ -417,7 +418,7 @@ std::string Req::_extractURL(std::string &dataVector) {
 }
 
 std::string readFileContents(const std::string& filePath) {
-  std::ifstream file(filePath);
+  std::ifstream file(filePath.c_str());
   std::stringstream buffer;
   buffer << file.rdbuf();
   return buffer.str();
@@ -450,7 +451,7 @@ bool Req::_run_location(std::string name, std::string httpRequest){
 			env["FILE_NAME"] = filePath;
 			env["SERVER_PROTOCOL"] = "HTTP/1.1";
 
-			std::ifstream file(filePath);
+			std::ifstream file(filePath.c_str());
     	if (!file.is_open()) {
     	  return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nFile not found.";
 			}

@@ -168,12 +168,25 @@ bool	listenner::isMulti(const string &httpRequest) {
 		return true;
 }
 
-string	listenner::trimLine(string &line)
+
+string listenner::trimLine(string& line)
 {
-	while (line.back() == '\n' || line.back() == '\r')
-		line.pop_back();
-	return line;
+    while (!line.empty() && (line[line.size() - 1] == '\n' || line[line.size() - 1] == '\r'))
+    {
+        line.erase(line.size() - 1);
+    }
+    return line;
 }
+
+
+
+	// changed to comply with c++ 98
+// string	listenner::trimLine(string &line)
+// {
+// 	while (line.back() == '\n' || line.back() == '\r')
+// 		line.pop_back();
+// 	return line;
+// }
 
 // redirects to error 500 page.
 void	listenner::internalError(int clientFd) {
