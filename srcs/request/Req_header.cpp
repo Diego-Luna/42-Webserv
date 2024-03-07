@@ -48,7 +48,7 @@ void	Req::parseFirstLine(void)
 	}
 	if (!_validVersion(line))
 	{
-		set_status_code(BAD_REQUEST);
+		set_status_code(HTTP_VERSION_NOT_SUPPORTED);
 		_error = true;
 		return;
 	}

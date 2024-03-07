@@ -191,6 +191,8 @@ const std::string Response::message_status_code(u_int16_t code)
 		return (MESSAGE_UNAUTHORIZED);
 	if (code == NOT_FOUND)
 		return (MESSAGE_NOT_FOUND);
+	if (code == HTTP_VERSION_NOT_SUPPORTED)
+		return (MESSAGE_VERS_NOT_SUPPORTED);
 	else
 		return (MESSAGE_INTERNAL_SERVER_ERROR);
 }

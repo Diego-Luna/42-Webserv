@@ -205,7 +205,8 @@ void	listenner::internalError(int clientFd) {
 	htmlFile.close();
 	header += "Content-Type: " "text/html";
 	header += "\r\n";
-	header += "Content-Length: " + responseBody.length();
+	header += "Content-Length: ";
+	header +=  size_tToString(responseBody.length());
 	header += "\r\n\r\n";
 	header += responseBody;
 	header += "\r\n";
