@@ -1,0 +1,3 @@
+in CGI -> cannot have a poll call in there
+
+check response status codes:

@@ -58,6 +58,7 @@
 # define MESSAGE_NOT_FOUND 					"Not Found"
 # define MESSAGE_INTERNAL_SERVER_ERROR		"Internal Server Error"
 # define MESSAGE_VERS_NOT_SUPPORTED			"HTTP Version Not Supported"
+# define MESSAGE_UNSUPPORTED_MEDIA			"Unsupported Media Type"
 
 enum		status_code
 {
@@ -68,6 +69,7 @@ enum		status_code
 	NOT_MODIFIED = 304,
 	BAD_REQUEST = 400,
 	UNAUTHORIZED = 401,
+	UNSUPPORTED_MEDIA = 415,
 	NOT_FOUND = 404,
 	INTERNAL_SERVER_ERROR = 500,
 	HTTP_VERSION_NOT_SUPPORTED = 505

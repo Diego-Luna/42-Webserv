@@ -90,16 +90,19 @@ void	Req::_makeEnv(void)
 
 string	Req::getContentType(string &extension)
 {
+	if (extension.empty())
+		return "";
 	for (std::vector<std::pair<string, string> >::iterator it = mime.begin(); it != mime.end(); it++)
 	{
 		if (extension == it->first)
 			return it->second;
 	}
-	set_status_code(BAD_REQUEST);
+	// if extesion exists and it's not on MIME, 404 gets overuled by 415
+	set_status_code(UNSUPPORTED_MEDIA);
 	_error = true;
+
 	return "";
 }
-
 
 void	Req::_buildEncoded()
 {
@@ -211,7 +214,6 @@ bool	Req::_isValidVariable(string &var)
 	return true;
 }
 
-
 string	Req::_formatStringEnvCGI(string str)
 {
 	string::iterator	it = str.begin();
@@ -293,7 +295,6 @@ bool	Req::_validPort(string host)
 		return false;
 	return false;
 }
-
 
 bool	Req::_allValidCharsURI(string str)
 {
