@@ -40,15 +40,15 @@ void	Req::parseFirstLine(void)
 		_error = true;
 		return;
 	}
-	if (!_validPath(line))
-	{
-		set_status_code(NOT_FOUND);
-		_error = true;
-		return;
-	}
 	if (!_validVersion(line))
 	{
 		set_status_code(HTTP_VERSION_NOT_SUPPORTED);
+		_error = true;
+		return;
+	}
+	if (!_validPath(line))
+	{
+		set_status_code(NOT_FOUND);
 		_error = true;
 		return;
 	}
@@ -124,10 +124,7 @@ bool	Req::_validPath(string &line)
 		_extension = ".html";
 		return true;
 	}
-
-	if (line.compare(0, 27, "POST /uploadSuccessful.html") == 0)
-	{
-						cout << "FOUND UPLOAD, is it valid?" << endl;
+	if (line.compare(0, 27, "POST /uploadSuccessful.html") == 0){
 		_isUpload = true;
 		return true;
 	}
@@ -161,26 +158,27 @@ bool	Req::_validPath(string &line)
 	// returns the position in line of the last charcter of extension.
 size_t	 Req::_findExtensionEnd(string &line)
 {
-	string	extension = "";
-	for(string::iterator it = line.begin(); it != line.end(); it++)
-	{
-		if (*it == '.')
-		{
-			while (*it != ' '){
-				extension += *it;
-				it++;
+	size_t firstSpace = line.find(' ');
+	// Check if a space was found
+	if (firstSpace != std::string::npos) {
+		// Start the iterator at the position after the first space
+		for (std::string::iterator it = line.begin() + firstSpace + 1; it != line.end(); ++it) {
+			if (*it == ' ')
+				break;
+			if (*it == '.') {
+				while (it != line.end() && *it != ' ') {
+					_extension += *it;
+					++it;
+				}
+				break;
 			}
-			break;
 		}
 	}
 	std::vector<std::pair<std::string, std::string> >::iterator it = mime.begin();
 	while (it != mime.end())
 	{
-		if (it->first == extension)
-		{
-			_extension = it->first;
+		if (it->first == _extension)
 			return line.find(_extension) + _extension.length();
-		}
 		it++;
 	}
 	return std::string::npos;
