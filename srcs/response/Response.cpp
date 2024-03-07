@@ -19,11 +19,8 @@ string	Response::CGIHeader(string &header)
 {
 		header += "Content-Type: text/html";
 		header += "\r\n";
-		// header += "Content-Length: " + std::to_string(_responseBody.length()); // OG, dropped due to conflict with c98
 		header += "Content-Length: ";
 		header += size_tToString(_responseBody.length());
-		// header += "\r\n";
-		// header += "Referer: http://localhost:3000/form.html";
 		header += "\r\n\r\n";
 		header += _responseBody;
 		header += "\r\n";
@@ -47,7 +44,6 @@ string	Response::uploadHeader(string &header)
 	htmlFile.close();
 	header += "Content-Type: text/html";
 	header += "\r\n";
-	// header += "Content-Length: " + std::to_string(_responseBody.length());
 	header += "Content-Length: ";
 	header += size_tToString(_responseBody.length());
 	header += "\r\n\r\n";
@@ -61,7 +57,6 @@ string	Response::makeHeader()
 	string header = "";
 
 	header += _Req.env["SERVER_PROTOCOL"] + " ";
-	// header += std::to_string(_Req.get_status_code()) + " ";
 	header += size_tToString(_Req.get_status_code()) + " ";
 	header += message_status_code(_Req.get_status_code()) + "\r\n";
 	header += "Connection: " + _Req.env["CONNECTION"];
@@ -70,7 +65,6 @@ string	Response::makeHeader()
 		header = CGIHeader(header);
 	}
 	else if (_Req._isUpload && _Req.get_status_code() == OK) {
-		// cout <<  "................> if 2" << endl;
 		header = uploadHeader(header);
 	}
 	else if (_Req.get_status_code() == OK) {
@@ -88,7 +82,6 @@ string	Response::makeHeader()
 		htmlFile.close();
 		header += "Content-Type: " + _Req.env["CONTENT_TYPE"];
 		header += "\r\n";
-		// header += "Content-Length: " + std::to_string(_responseBody.length());
 		header += "Content-Length: ";
 		header += size_tToString(_responseBody.length());
 		header += "\r\n\r\n";
@@ -126,10 +119,8 @@ string	Response::makeErrorHeader()
 	string header = "";
 
 	header += _Req.env["SERVER_PROTOCOL"] + " ";
-	// header += std::to_string(_Req.get_status_code()) + " ";
 	header += size_tToString(_Req.get_status_code());
 	header += " ";
-	// header += message_status_code(_Req.get_status_code()) + "\r\n";
 	header += message_status_code(_Req.get_status_code()) + "\r\n";
 	string errorPage = findErrorPage(_Req.get_status_code());
 	std::fstream htmlFile(errorPage.c_str());
@@ -144,7 +135,6 @@ string	Response::makeErrorHeader()
 		htmlFile.close();
 		header += "Content-Type: " "text/html";
 		header += "\r\n";
-		// header += "Content-Length: " + std::to_string(_responseBody.length());
 		header += "Content-Length: ";
 		header += size_tToString(_responseBody.length());
 		header += "\r\n\r\n";

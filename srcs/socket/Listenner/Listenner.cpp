@@ -97,7 +97,7 @@ void listenner::run(Server _server)
 					try {
 						Req request(_server, receivedData, fds[i].fd, this->_location, *this);
 
-										std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  request.responseString << std::endl;
+										std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  request.responseString << std::endl;
 
 
 						ssize_t bytesSent = send(fds[i].fd, request.responseString.c_str(), request.responseString.length(), 0);
@@ -139,6 +139,7 @@ string	listenner::unchunk(const string &receivedData) {
 		std::getline(rawRequest, line);
 		trimLine(line);
 		unchunked.append(line, 0, length); // appends length characters, counted from the start, to unchunked
+				cout << "INSIDE UNCHUNCKED" << unchunked << endl;
 	} while (rawRequest.eof() == false);
 	unchunked += "\r\n";
 	return unchunked;
@@ -170,7 +171,6 @@ bool	listenner::isMulti(const string &httpRequest) {
 		return true;
 }
 
-
 string listenner::trimLine(string& line)
 {
     while (!line.empty() && (line[line.size() - 1] == '\n' || line[line.size() - 1] == '\r'))
@@ -180,17 +180,6 @@ string listenner::trimLine(string& line)
     return line;
 }
 
-
-
-	// changed to comply with c++ 98
-// string	listenner::trimLine(string &line)
-// {
-// 	while (line.back() == '\n' || line.back() == '\r')
-// 		line.pop_back();
-// 	return line;
-// }
-
-// redirects to error 500 page.
 void	listenner::internalError(int clientFd) {
 	string header = "";
 

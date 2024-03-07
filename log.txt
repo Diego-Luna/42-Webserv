@@ -1,0 +1,161 @@
+------------------------------------------------------
+------------------- default server -------------------
+------------------------------------------------------
+-> default server -> methods: GET
+------------------------------------------------------
+------------------- default server -------------------
+------------------------------------------------------
+------------------
+
+ --- server> 
+Server name:42Server
+Server listen:8080
+Server listen:3000
+Server host:127.0.0.1
+Server root:data/www/Pages/
+Server index:index.html
+Server error_page:404 /ErrorPages/404notFound.html
+Server methods:GET
+
+Location name:/hello
+Location root:data/www/Pages
+Location index:index.html
+Location methods:POST
+Location methods:DELETE
+Location autoindex:1
+
+Location name:/queso
+Location root:data/www/Pages
+Location index:form.html
+Location methods:GET
+Location methods:POST
+Location methods:DELETE
+Location autoindex:1
+
+Location name:/salut
+Location root:data/www/Pages
+Location index:team.html
+Location methods:GET
+Location autoindex:1
+
+------------------
+host: 127.0.0.1 port :8080
+host: 127.0.0.1 port :3000
+
+ this->_listenners.size: 2
+
+INSIDE UNCHUNCKEDPOST /submit.py HTTP/1.1
+Host: localhost:8080
+User-Agent: python-requests/2.31.0
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: keep-alive
+Transfer-Encoding: chunked
+Content-Length: 27
+
+Hello
+INSIDE UNCHUNCKEDPOST /submit.py HTTP/1.1
+Host: localhost:8080
+User-Agent: python-requests/2.31.0
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: keep-alive
+Transfer-Encoding: chunked
+Content-Length: 27
+
+Hello, Worl
+[31m[DEBUG] [RECV] : 
+[0mPOST /submit.py HTTP/1.1
+Host: localhost:8080
+User-Agent: python-requests/2.31.0
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: keep-alive
+Transfer-Encoding: chunked
+Content-Length: 27
+
+Hello, Worl
+
+CONNECTION = keep-alive
+CONTENT_LENGTH = 27
+CONTENT_TYPE = application/x-www-form-urlencoded
+FILE_NAME = CGI/bin/submit.py
+HOST = localhost:8080
+PATH_INFO = 
+SERVER_PROTOCOL = HTTP/1.1
+USER_AGENT = python-requests/2.31.0
+
+
+printing response body
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="navbar-logo">42-Webserver</a>
+        <div class="navbar-links">
+            <a href="index.html" class="navbar-link">Home</a>
+            <a href="form.html" class="navbar-link">CGI</a>
+            <a href="team.html" class="navbar-link">Team</a>
+            <a href="upload.html" class="navbar-link">Upload</a>
+            <a href="chunktest.html" class="navbar-link">Chunked Test</a>
+        </div>
+    </nav>
+    <div class="mx-auto text-center">
+        <h1 class="mt-5">Form Submission Result</h1>
+        <p class="mt-3"><strong>First Name:</strong> </p>
+        <p><strong>Last Name:</strong> </p>
+        <p><strong>Login:</strong> </p>
+        <p><strong>Email:</strong> </p>
+        <p><strong>Date of Birth:</strong> </p>
+        <p><strong>Password:</strong> </p>
+    </div>
+</body>
+</html>
+
+[31m[DEBUG] [SEND] : 
+[0mHTTP/1.1 200 OK
+Connection: keep-aliveContent-Type: text/html
+Content-Length: 1184
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="navbar-logo">42-Webserver</a>
+        <div class="navbar-links">
+            <a href="index.html" class="navbar-link">Home</a>
+            <a href="form.html" class="navbar-link">CGI</a>
+            <a href="team.html" class="navbar-link">Team</a>
+            <a href="upload.html" class="navbar-link">Upload</a>
+            <a href="chunktest.html" class="navbar-link">Chunked Test</a>
+        </div>
+    </nav>
+    <div class="mx-auto text-center">
+        <h1 class="mt-5">Form Submission Result</h1>
+        <p class="mt-3"><strong>First Name:</strong> </p>
+        <p><strong>Last Name:</strong> </p>
+        <p><strong>Login:</strong> </p>
+        <p><strong>Email:</strong> </p>
+        <p><strong>Date of Birth:</strong> </p>
+        <p><strong>Password:</strong> </p>
+    </div>
+</body>
+</html>
+
+

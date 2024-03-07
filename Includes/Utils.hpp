@@ -42,9 +42,7 @@
 #include <utility>
 #include <sstream>
 
-
 #endif
-
 
 #define DEFAULT_PORT 8080	
 
