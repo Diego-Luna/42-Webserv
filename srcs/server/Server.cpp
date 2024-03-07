@@ -222,13 +222,15 @@ void Server::initPorts(void)
 
   for (size_t i = 0; i < this->_ports.size(); i++)
   {
-	    listenner tmp = listenner(std::stoi(this->_ports[i]), this->v_locations.at(0));     // std::soit not compatiable with c++98
+        // changed to comply with c++98 Feb 25
+	    // listenner tmp = listenner(std::stoi(this->_ports[i]), this->v_locations.at(0), get_host());
+      listenner tmp = listenner(std::atoi(this->_ports[i].c_str()), this->v_locations.at(0), get_host());
 
       // location is weird
-      
+
 	    this->_listenners.push_back(tmp);
   }
-  std::cout << this->_listenners.size() << std::endl;
+  std::cout << "\n this->_listenners.size: " << this->_listenners.size() << "\n" << std::endl;
 }
 
 size_t Server::get_listenners_size()
@@ -240,4 +242,45 @@ size_t Server::get_listenners_size()
 std::vector<std::string>& Server::get_ports_ref()
 {
     return _ports;
+}
+
+void Server::startListeningOnPorts() {
+     for (size_t i = 0; i < _ports.size(); ++i) {
+        const std::string& port_str = _ports[i];
+        // changed to comply with c++98 Feb 25
+        // int port = std::stoi(port_str);
+        int port = std::atoi(port_str.c_str());
+        int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+        if (server_fd == -1) {
+            std::cerr << "Error creating socket" << std::endl;
+            continue;
+        }
+
+        sockaddr_in address;
+        address.sin_family = AF_INET;
+        address.sin_addr.s_addr = inet_addr(_host.c_str()); // Usa el host configurado
+        address.sin_port = htons(port);
+
+        // Enlazar el socket
+        if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+            std::cerr << "Error binding the socket on the port: " << port << std::endl;
+            close(server_fd);
+            continue; // Procesar el siguiente puerto
+        }
+
+        // Escuchar en el socket
+        if (listen(server_fd, 10) < 0) { // 10 es el número máximo de conexiones pendientes
+            std::cerr << "Error listening on port: " << port << std::endl;
+            close(server_fd);
+            continue; // Procesar el siguiente puerto
+        }
+
+        std::cout << "Server listening on " << _host << ":" << port << std::endl;
+
+        // Aquí puedes agregar lógica para manejar las conexiones entrantes
+        // ...
+        
+        // No olvides cerrar el socket cuando hayas terminado
+        close(server_fd);
+    }
 }

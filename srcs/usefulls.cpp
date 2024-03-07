@@ -23,3 +23,9 @@ std::vector<std::string> split(const std::string &input, char c)
     }
     return (words);
 }
+
+std::string size_tToString(size_t number) {
+    std::stringstream convertedNumber;
+    convertedNumber << number;
+    return convertedNumber.str();
+}

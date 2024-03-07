@@ -7,15 +7,23 @@
 void	Req::parseHeader(void)
 {
 	string line;
-	while (std::getline(_ReqStream, line) && !line.empty())
+
+	while (std::getline(_ReqStream, line) && !line.empty() && (line.find_first_not_of(" \t\r\n") != string::npos))
 		_header += line + '\n';
+
 	while (std::getline(_ReqStream, line) && !line.empty())
 		_body += line + '\n';
-										// cout << "print header: \n\n" << _header << endl << endl;
+
 	parseFirstLine();
-	_makeEnvCGI();
-	_validate();
-	if (_isCGI)
+
+	if (_isUpload == true && _error == false)
+		return;
+
+	_makeEnv();
+
+	if (_error == false)
+		_validate();
+	if (_isCGI && _error == false)
 		_makeExecveEnv();
 }
 
@@ -27,13 +35,30 @@ void	Req::parseFirstLine(void)
 
 	std::getline(stream, line);
 	if (!_validMethod(line))
-		fatal("Invalid HTTP Request");
+	{
+		set_status_code(BAD_REQUEST);
+		_error = true;
+		return;
+	}
 	if (!_validPath(line))
-		fatal("Invalid HTTP Request");
+	{
+		set_status_code(NOT_FOUND);
+		_error = true;
+		return;
+	}
 	if (!_validVersion(line))
-		fatal("Invalid HTTP Request");
-	_querryString = _getQuerryString(line);
-	_isCGI = _checkCGI(_pathInfo);
+	{
+		set_status_code(HTTP_VERSION_NOT_SUPPORTED);
+		_error = true;
+		return;
+	}
+	if (_isUpload == true && _error == false)
+		return;
+	if (_error == false)
+	{
+		_querryString = _getQuerryString(line);
+		_isCGI = _checkCGI(_fileName);
+	}
 }
 
 string	Req::_getQuerryString(string &line)
@@ -51,26 +76,30 @@ string	Req::_getQuerryString(string &line)
 	return querryString;
 }
 
-		// for now only check files for .cgi extensions. Could Change to check for .py or
+		// for now only check files for .py extensions. Could Change to check for .py or
 		// which other script extensions we would need.
-bool	Req::_checkCGI(string &pathInfo)
+		// possibly check if it is in the /CGI/bin folder
+bool	Req::_checkCGI(string &fileName)
 {
-	if (pathInfo == "")
+	if (fileName == "")
 		return false;
-	size_t pos	= pathInfo.find(".cgi");
+	size_t pos	= fileName.find(".py");
 	if (pos == string::npos)
 		return false;
-	size_t repeatCheck = pathInfo.rfind(".cgi");
+	size_t repeatCheck = fileName.rfind(".py");
 	if (pos != repeatCheck)
 	{
-		fatal("Invalid HTTP Request");
+		_error = true;
+		set_status_code(BAD_REQUEST);
 		return false;
 	}
+	if (_pathInfo != "")
+		_pathInfo = fileName;
 	return true;
 }
 
 	// currently doesn't account for spaces. Request must contain
-	// exactly "HTTP/{VERSION}" or br considered invalid.
+	// exactly "HTTP/{VERSION}" or be considered invalid.
 bool	Req::_validVersion(string &line)
 {
 	size_t	ver1 = line.find("HTTP/1.1");
@@ -78,19 +107,43 @@ bool	Req::_validVersion(string &line)
 	if ((ver1 == string::npos && ver2 == string::npos) ||
 		(ver1 != string::npos && ver2 != string::npos))
 		return false;
-
+	if (ver1 != string::npos)
+		_protocol = "HTTP/1.1";
+	else
+		_protocol = "HTTP/1.0";
 	return true;
 }
 
 bool	Req::_validPath(string &line)
 {
-	string::iterator it = line.begin() + line.find(' ') + 1;
-	size_t	extensionEnd = _findExtensionEnd(line, ".html");
+
+							// cout << "LINE IN _validpath\n|" << line << "|" << endl;
+	if (line.compare(0, 6, "GET / ") == 0)	// checks for initial index call: "GET / HTTP:1.1"
+	{
+		_fileName = PATH_TO_INDEX;
+		_extension = ".html";
+		return true;
+	}
+
+	if (line.compare(0, 27, "POST /uploadSuccessful.html") == 0)
+	{
+						cout << "FOUND UPLOAD, is it valid?" << endl;
+		_isUpload = true;
+		return true;
+	}
+	size_t	extensionEnd = _findExtensionEnd(line);
 	if (extensionEnd == string::npos)
-		fatal("invalid HTTP Request: resource path");
-	_fileName = line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
+		return false;
+	if (line.at(extensionEnd) != ' ' && line.at(extensionEnd) != '/')
+		return false;
+	if (_extension == ".py")
+		_fileName = PATH_TO_CGI;
+	else
+		_fileName = _location.get_root();
+	string::iterator it = line.begin() + line.find(' ') + 1;
+	_fileName += line.substr(it - line.begin(), extensionEnd - (it - line.begin()));
 	it = line.begin() + extensionEnd;
-	if (*it == '/')
+	if (*it == '/')	// checks for PATH_INFO
 	{
 		it++;
 		while (*it != ' ' && it != line.end() && *it != '?')
@@ -99,16 +152,38 @@ bool	Req::_validPath(string &line)
 			it++;
 		}
 	}
+
 	return true;
 }
 
-size_t	 Req::_findExtensionEnd(string &line, const string &extension)
+	// refarctored to use mim instead of it's own vector
+	//	looks for the extension(mime.first) in line. sets _extension if found
+	// returns the position in line of the last charcter of extension.
+size_t	 Req::_findExtensionEnd(string &line)
 {
-	size_t	extensionPos;
-	extensionPos = line.find(extension);
-	if (extensionPos != string::npos)
-		return extensionPos + extension.length();
-	return string::npos;
+	string	extension = "";
+	for(string::iterator it = line.begin(); it != line.end(); it++)
+	{
+		if (*it == '.')
+		{
+			while (*it != ' '){
+				extension += *it;
+				it++;
+			}
+			break;
+		}
+	}
+	std::vector<std::pair<std::string, std::string> >::iterator it = mime.begin();
+	while (it != mime.end())
+	{
+		if (it->first == extension)
+		{
+			_extension = it->first;
+			return line.find(_extension) + _extension.length();
+		}
+		it++;
+	}
+	return std::string::npos;
 }
 
 bool	Req::_validMethod(const string &line)
@@ -140,39 +215,4 @@ bool	Req::_validMethod(const string &line)
 		return false;
 	else
 		return true;
-}
-
-/**************************************************************************
-		UNKNOWN OR DEPRECATED
-**************************************************************************/
-
-std::string Req::cType( void )
-{
-	std::string tmp;
-
-	size_t pos = this->_fileName.find('.');
-	if (pos == std::string::npos)
-		return(std::string("application/octet-stream"));
-	tmp = this->_fileName.substr(pos);
-	for (size_t i = 0; i < mime.size(); i++)
-	{
-		if (tmp == mime[i].first)
-			return (mime[i].second);
-	}
-	return (std::string("application/octet-stream"));
-}
-				// unable to test right now due to funcitons needind to be a socket and not just an fd
-				// I think this method is actually creating the response _header, as the request _header is 
-				// already given to use
-void Req::header_creation(void)
-{
-	this->_header = "Host: " + std::string(inet_ntoa(_client.getAddr().sin_addr)) + ":" + std::to_string(ntohs(_client.getAddr().sin_port)) + "\r\n";
-	if (this->methode == &Req::getFonc || this->status_code == 404 || this->status_code == 400)
-	{
-		this->_header += "Content-Type: " + cType() + "; charset=UTF-8\r\n"; // peut PEUT ËTRE causé un problme (utf-8 etc.)
-		this->_header += "Content-Length: " + std::to_string(this->_body.length()) + "\r\n";
-	}
-
-	// 				User-Agent
-	this->_header += "\r\n";
 }

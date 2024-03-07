@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:11 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/27 10:11:51 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/07 11:14:23 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define PARSING_CPP
 
 #include "../srcs/server/Server.hpp"
+#include "./Utils.hpp"
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -24,6 +25,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <poll.h>
+#include <algorithm>
 
 class Parsing
 {

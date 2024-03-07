@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_utils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 12:05:10 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/10/05 17:40:33 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/02/25 19:00:28 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ bool f_check_path_line(std::string line, int *num){
   (void)num;
   if (line.empty())
     return false;
-  std::ifstream archivo(line);
+  std::ifstream archivo(line.c_str());
   if (!archivo.is_open()){
     return false;
   }

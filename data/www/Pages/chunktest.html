@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chunked Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="navbar-logo">42-Webserver</a>
+        <div class="navbar-links">
+            <a href="index.html" class="navbar-link">Home</a>
+            <a href="form.html" class="navbar-link">CGI</a>
+            <a href="team.html" class="navbar-link">Team</a>
+            <a href="upload.html" class="navbar-link">Upload</a>
+            <a href="chunktest.html" class="navbar-link">Chunked Test</a>
+        </div>
+    </nav>
+
+    <!-- Add explanation about chunked requests -->
+    <div class="my-8 ml-6">
+        <p class="text-lg">
+            What is a HTTP chunked request?<br><br>
+            It's a way to send data in in parts, rather than sending the entire data payload in a single request.<br>
+            This is useful when the data length is not known or the when we're dealing with large payloads such as:<br>
+                - Streaming data: data is sent as soon as it is available.<br>
+                - Large Files: helps avoid loading the entire file into memory before sending.<br><br>
+
+            You can identify a chunked request by checking the if variable: "Transfer-Encoding" is set to "chunked" in the HTTP header.<br><br>
+
+            Chunked request follow the following format:<br><br>
+            
+            [chunksize in hexadecimal]<br>
+            [chunk body]<br><br>
+
+            Repeating until the last chunk which will have length = 0<br>
+            
+            The button bellow simulates a chunked HTTP requests.<br>
+            It sends a request that follows the structure of a chunked request but is not a chunked request itself.<br>
+            It should be able to demonstrate how our server handles chunking.<br><br>
+
+            It will contain the following chunked body:<br><br>
+
+            5<br>
+            data <br>
+            A<br>
+            chunk test<br>
+            0<br><br>
+
+            The expected result is that the request is unchunked before being processed.<br>
+            So the body should become:<br><br>
+            
+            data chunk test<br>
+
+            <br> When you press this button it should display the full HTTP request with the unchunked data printed in your terminal<br>
+
+        </p>
+    </div>
+
+    <!-- Add Unchunk Test Button -->
+    <button id="unchunkTestBtn" class="bg-green-500 text-white px-4 py-2 rounded my-4 ml-10">Unchunk Test</button>
+
+    <script>
+        document.getElementById('unchunkTestBtn').addEventListener('click', function() {
+            // Prepare the chunked data
+            const chunkedData = "5\r\ndata \r\nA\r\nchunk test\r\n0\r\n\r\n";
+
+            // Perform an asynchronous POST request with fetch
+            fetch('/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/octet-stream',
+                    'Transfer-Encoding': 'chunked'
+                },
+                body: chunkedData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Response:', data);
+            })
+            .catch(error => {
+                console.error('Error during fetch:', error);
+            });
+        });
+    </script>
+
+</body>
+</html>

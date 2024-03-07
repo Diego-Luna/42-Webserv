@@ -49,6 +49,12 @@ Note: For MacOS, use `fcntl()` with the `F_SETFL` flag set to `O_NONBLOCK` for a
 
 Feel free to explore and contribute to this HTTP server implementation.
 
+## For run CGI Test
+
+```
+g++ -o web_server web_server.cpp -lpthread && ./web_server
+```
+and the website : http://localhost:8080/form.html
 
 
 
@@ -64,3 +70,6 @@ Feel free to explore and contribute to this HTTP server implementation.
 </footer>
 
  ***********************************************
+
+
+

@@ -40,6 +40,7 @@
 #include <fstream>
 #include <vector>
 #include <utility>
+#include <sstream>
 
 
 #endif
@@ -48,14 +49,15 @@
 #define DEFAULT_PORT 8080	
 
 # define MESSAGE_OK 						"OK"
-# define MESSAGE_OK_CREATED 				"OK CREATED"
+# define MESSAGE_OK_CREATED 				"Created"
 # define MESSAGE_OK_NO_CONTENT				"No Content"
-# define MESSAGE_MOVED_TO_NEW_URL 			"MOVED TO NEW URL"
-# define MESSAGE_NOT_MODIFIED 				"NOT MODIFIED"
-# define MESSAGE_BAD_REQUEST 				"BAD REQUEST"
-# define MESSAGE_UNAUTHORIZED 				"UNAUTHORIZED"
+# define MESSAGE_MOVED_TO_NEW_URL 			"Moved to New Url"
+# define MESSAGE_NOT_MODIFIED 				"Not Modified"
+# define MESSAGE_BAD_REQUEST 				"Bad Request"
+# define MESSAGE_UNAUTHORIZED 				"Unauthorized"
 # define MESSAGE_NOT_FOUND 					"Not Found"
-# define MESSAGE_INTERNAL_SERVER_ERROR		"INTERNAL SERVER ERRROR"
+# define MESSAGE_INTERNAL_SERVER_ERROR		"Internal Server Error"
+# define MESSAGE_VERS_NOT_SUPPORTED			"HTTP Version Not Supported"
 
 enum		status_code
 {
@@ -67,7 +69,8 @@ enum		status_code
 	BAD_REQUEST = 400,
 	UNAUTHORIZED = 401,
 	NOT_FOUND = 404,
-	INTERNAL_SERVER_ERROR = 500
+	INTERNAL_SERVER_ERROR = 500,
+	HTTP_VERSION_NOT_SUPPORTED = 505
 };
 
 enum		HTTP_METHODE
@@ -78,13 +81,11 @@ enum		HTTP_METHODE
 	DELETE
 };
 
-
 std::vector<std::string> split(const std::string &input, char c);
 void fatal(const char *msg);
 char **vecToChar(std::vector<std::string> &vec);
 
-/*  PROTORYPES    */
-
-
+/*  PROTOTYPES    */
+std::string size_tToString(size_t number);
 
 #endif

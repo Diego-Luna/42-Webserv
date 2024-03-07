@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/27 09:59:09 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/07 11:15:17 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ bool Parsing::checkData(std::string dataUrl){
     if (dataUrl.empty() == true)
       return false;
 
-    std::ifstream archivo(dataUrl);
+    std::ifstream archivo(dataUrl.c_str());
     std::string line;
 
     // check the ".config"
@@ -106,7 +106,7 @@ bool Parsing::checkData(std::string dataUrl){
 
 bool Parsing::f_is_file(std::string path)
 {
-  std::ifstream archivo(path);
+  std::ifstream archivo(path.c_str());
 
   size_t point = path.find_last_of(".");
   size_t found;
@@ -140,7 +140,7 @@ void Parsing::saveData(std::string dataUrl)
     return;
   try
   {
-    std::ifstream archivo(dataUrl);
+    std::ifstream archivo(dataUrl.c_str());
     (dataUrl.length() == 0 || dataUrl.empty() == true) ? throw formatWrong() : true;
     if (f_is_file(dataUrl) == false)
     {
@@ -296,7 +296,13 @@ void Parsing::saveData(std::string dataUrl)
               {
                 throw formatWrong();
               }
-              s_tem->set_body_size(std::stoll( f_cut_space(line, line.find("body_size") + 10)));
+              // changed to comply with c++ 98
+              // s_tem->set_body_size(std::stoll( f_cut_space(line, line.find("body_size") + 10)));
+              std::istringstream iss(f_cut_space(line, line.find("body_size") + 10));
+              long long bodySize = 0;
+              s_tem->set_body_size(bodySize);
+
+              
               server_body_size = true;
             }
             if (line.find("root") != std::string::npos)
@@ -364,21 +370,31 @@ void Parsing::saveData(std::string dataUrl)
 
         this->f_organise_listen();
         this->f_clean_listen();
-        
+
         for (size_t serve_i = 0; serve_i < get_server_size(); serve_i++)
         {
           if ((this->v_servers[serve_i].get_name().length() == 0 &&
-            this->v_servers[serve_i].get_ports_size() == 0 &&
-            this->v_servers[serve_i].get_host().length() == 0 &&
-            this->v_servers[serve_i].get_root().length() == 0 &&
-            this->v_servers[serve_i].get_index().length() == 0 &&
-            this->v_servers[serve_i].get_error_page_size() == 0 &&
-            this->v_servers[serve_i].get_methods_size() == 0 ) ||
-            (this->v_servers[serve_i].get_host().length() == 0 ||
-             this->v_servers[serve_i].get_ports_size() == 0 ))
+                this->v_servers[serve_i].get_ports_size() == 0  &&
+                this->v_servers[serve_i].get_host().length() == 0 &&
+                this->v_servers[serve_i].get_root().length() == 0 &&
+                this->v_servers[serve_i].get_index().length() == 0 &&
+                this->v_servers[serve_i].get_error_page_size() == 0 &&
+                this->v_servers[serve_i].get_methods_size() == 0))
           {
             throw formatWrong();
           }
+          // if ((this->v_servers[serve_i].get_name().length() == 0 &&
+          //   this->v_servers[serve_i].get_ports_size() == 0 &&
+          //   this->v_servers[serve_i].get_host().length() == 0 &&
+          //   this->v_servers[serve_i].get_root().length() == 0 &&
+          //   this->v_servers[serve_i].get_index().length() == 0 &&
+          //   this->v_servers[serve_i].get_error_page_size() == 0 &&
+          //   this->v_servers[serve_i].get_methods_size() == 0 ) ||
+          //   (this->v_servers[serve_i].get_host().length() == 0 ||
+          //    this->v_servers[serve_i].get_ports_size() == 0 ))
+          // {
+          //   throw formatWrong();
+          // }
         }
 
         this->f_save_default();
@@ -668,45 +684,77 @@ void    Parsing::f_check_data_with_path(){
   }
 }
 
+int  print_run_default(bool *default_mode, int mode)
+{
+
+  if (*default_mode == false && mode == 0)
+  {
+    *default_mode =  true;
+    std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "------------------- default server -------------------" << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
+  }
+  if (mode == 1)
+  {
+    std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "------------------- default server -------------------" << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
+  }
+
+  return 1;
+}
+
 void    Parsing::f_save_default(){
+
+
   for(size_t i = 0; i <  this->get_server_size(); i++){
+
+    bool default_mode = false;
     Server server_save = get_server(i);
-    if (server_save.get_name().length() == 0)
+
+    if (server_save.get_name().length() == 0 && print_run_default(&default_mode, 0))
     {
-      std::cout << "-> default server -> name: Server" << std::to_string(i) << std::endl;
-      server_save.set_name("Server" + std::to_string(i));
+      // std::cout << "-> default server -> name: Server" << std::to_string(i) << std::endl;
+      std::cout << "-> default server -> name: Server" << size_tToString(i) << std::endl;
+      // server_save.set_name("Server" + std::to_string(i));
+      server_save.set_name("Server" + size_tToString(i));
     }
-    if (server_save.get_ports_size() == 0)
+    if (server_save.get_ports_size() == 0 && print_run_default(&default_mode, 0))
     {
-      std::cout << "-> default server -> ports: 8" << std::to_string(i) << std::endl;
-      server_save.set_new_port("8" + std::to_string(i));
+      // std::cout << "-> default server -> ports: 8" << std::to_string(i) << std::endl;
+      std::cout << "-> default server -> ports: 8" << size_tToString(i) << std::endl;
+      // server_save.set_new_port("8" + std::to_string(i));
+      server_save.set_new_port("8" + size_tToString(i));
     }
-    if (server_save.get_host().length() == 0)
+    if (server_save.get_host().length() == 0 && print_run_default(&default_mode, 0))
     {
-      std::cout << "-> default server -> host: 8" << std::to_string(i) << std::endl;
-      server_save.set_host("8" + std::to_string(i));
+      // std::cout << "-> default server -> host: 8" << std::to_string(i) << std::endl;
+      std::cout << "-> default server -> host: 8" << size_tToString(i) << std::endl;
+      // server_save.set_host("8" + std::to_string(i));
+      server_save.set_host("8" + size_tToString(i));
     }
-    if (server_save.get_root().length() == 0)
+    if (server_save.get_root().length() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> root: " << "data/www/Pages" << std::endl;
       server_save.set_root("data/www/Pages");
     }
-    if (server_save.get_index().length() == 0)
+    if (server_save.get_index().length() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> index: " << "index.html" << std::endl;
       server_save.set_index("index.html");
     }
-    if (server_save.get_error_page_size() == 0)
+    if (server_save.get_error_page_size() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> error_page: 404 /ErrorPages/404notFound.html" << std::endl;
       server_save.set_new_error_page("404", "/ErrorPages/404notFound.html");
     }
-    if (server_save.get_methods_size() == 0)
+    if (server_save.get_methods_size() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> methods: GET" << std::endl;
       server_save.set_new_method("GET");
     }
     this->v_servers[i] = server_save;
+    print_run_default(&default_mode, 1);
   }
 }
 
@@ -827,8 +875,7 @@ bool Parsing::check_error()
 
 Server &Parsing::get_ref_server(size_t index)
 {
-	// if (index < 0 || index > this->v_servers.size())  // linux comp. flagged index < 0 as error
-  if (index > this->v_servers.size())
+	if (index > this->v_servers.size())
 	{
 		throw std::invalid_argument("Index out of range");
 	}

@@ -3,58 +3,103 @@
 /*************************************************************************
 		CANNONICAL FORM REQUIREMENTS
 **************************************************************************/
-Req::Req(std::string HTTP_Req, const int fd, Location &location)
-	: _client(fd), _location(location), _http_Req(HTTP_Req)
+// Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
+// 	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
+// {
+	// cout<< "<> hello " <<endl;
+	// cout<< "==> _server = [" << _server.get_location_size() << "]"  <<endl;
+	// cout<< "==> _server = [" << _server.get_location(0).get_name() << "]"  <<endl;
+	// cout<< "==> _server = [" << _server.get_location(1).get_name() << "]"  <<endl;
+// }
+
+Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
+	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
 {
-	if (HTTP_Req.length() < 1)
-		fatal("Bad HTTP REQUEST");
+	_error = false;
+	_isUpload = false;
+	envCGIExecve = NULL;
+	if (_http_Req.length() < 1)
+	{
+		_error = true;
+		set_status_code(BAD_REQUEST);
+	}
 	_ReqStream.str(_http_Req);
 	if (!_ReqStream.good())
-		fatal ("failed to create request string stream");
-						cout << "pre parseHeader" << endl;
-	parseHeader();
-	if (_isCGI)
+		{
+		_error = true;
+		set_status_code(INTERNAL_SERVER_ERROR);
+	}
+	if (_error == false)
+		parseHeader();
+
+	if (_isUpload == true && _error == false)
+	{
+		parseUpload();
+		if (_error == false)
+			createUploadFile();
+		Response response(*this);
+		return;
+	}
+	else if (_isCGI && _error == false)
 	{
 		CGI	Cgi(*this);
+	} else {
+		if (_run_location(_extractURL(httpRequest), httpRequest) == false){
+			Response response(*this);
+		} else {
+			status_code = 200;
+			Response response(*this, this->_data_file);
+		}
 	}
 }
-			// MISSING:operator=overload
 
 Req::~Req()
 {
-	size_t	mapSize = env.size();
-	for (size_t i = 0; i < mapSize; i++)
+	if (envCGIExecve)
 	{
-		delete[] envCGIExecve[i];
+		// printReq();
+		size_t	mapSize = env.size();
+		for (size_t i = 0; i < mapSize; i++)
+		{
+			delete[] envCGIExecve[i];
+		}
+		delete[] envCGIExecve;
 	}
-	delete[] envCGIExecve;
 }
 
 /**************************************************************************
 		CGI PREP
 **************************************************************************/
 
-void	Req::_makeEnvCGI(void)
+void	Req::_makeEnv(void)
 {
-	_populateEnvCGI(string("Host"));
-	_populateEnvCGI(string("User-Agent"));
-	_populateEnvCGI(string("Content-Type"));
-	_populateEnvCGI(string("Content-Length"));
-	_populateEnvCGI(string("Accept"));
-	_populateEnvCGI(string("Accept-Language"));
-	_populateEnvCGI(string("Connection"));
-	env["REQUEST_METHOD"] = _method;
-	if (_header.find("HTTP/1.0"))
-		env["SERVER_PROTOCOL"] = "HTTP/1.0";
-	else if (_header.find("HTTP/1.1"))
-		env["SERVER_PROTOCOL"] = "HTTP/1.1";
+	_populateEnv(string("Host"));
+	_populateEnv(string("User-Agent"));
+	_populateEnv(string("Content-Length"));
+	_populateEnv(string("Accept"));
+	_populateEnv(string("Accept-Language"));
+	_populateEnv(string("Connection"));
 	_buildEncoded();
+	env["CONTENT_TYPE"] = getContentType(_extension);
+	env["SERVER_PROTOCOL"] = _protocol;
 	env["FILE_NAME"] = _decodeURI(_fileName);
 	env["PATH_INFO"] = _decodeURI(_pathInfo);
 	if (!_querryString.empty())
 		env["QUERRY_STRING"] = _decodeURI(_querryString);
-	//     _env.push_back("SERVER_PORT=" + std::to_string(m_server.get_ports()[0]));
 }
+
+string	Req::getContentType(string &extension)
+{
+	for (std::vector<std::pair<string, string> >::iterator it = mime.begin(); it != mime.end(); it++)
+	{
+		if (extension == it->first)
+			return it->second;
+	}
+	set_status_code(BAD_REQUEST);
+	_error = true;
+	return "";
+}
+
 
 void	Req::_buildEncoded()
 {
@@ -98,7 +143,10 @@ string	Req::_decodeURI(string str)
 		{
 			string hex = str.substr(it2 - str.begin(), 3);
 			if (hex != "%25")
-				fatal("Invalid header character");
+			{
+				set_status_code(BAD_REQUEST);
+				_error = true;
+			}
 			str.replace(it2 - str.begin(), 3, "%");
 		}
 		it2++;
@@ -117,18 +165,17 @@ void	Req::_makeExecveEnv()
 	while(it != env.end())
 	{
 		envCGIExecve[i] = new char[it->first.size() + it->second.size() + 4];	// +4 -> 3 for " = " + Null termination
-						// cout << "pre loop insinde _makeExecEnv" << endl;
 		std::strcpy(envCGIExecve[i], (it->first + " = " + it->second).c_str());
 		i++;
 		it++;
 	}
 }
 
-void	Req::_populateEnvCGI(string var)
+void	Req::_populateEnv(string var)
 {
 	string				tmp;
 	string::iterator	it;
-	
+
 	if (!_isValidVariable(var))
 		return;
 	size_t pos = _header.find(var) + var.length() + 2; // +2 -> accounts for the ": "
@@ -177,6 +224,7 @@ string	Req::_formatStringEnvCGI(string str)
 	}
 	return str;
 }
+			// MISSING:operator=overload
 
 /*************************************************************************
 		VALIDATION
@@ -187,27 +235,66 @@ void	Req::_validate()
 {
 		// checks for invalid characters
 	if (!_allValidCharsURI(_fileName))
-		fatal("invalid Character in Script Name");
+	{
+		perror("invalid Character in File Name");
+		set_status_code(BAD_REQUEST);
+		_error = true;
+		return;
+	}
 	if (!_allValidCharsURI(_pathInfo))
-		fatal("invalid Character in Path Info");
+	{
+		perror("invalid Character in Path Info");
+		set_status_code(BAD_REQUEST);
+		_error = true;
+		return;
+	}
 	if (!_allValidCharsURI(_querryString))
-		fatal("invalid Character in Querry String");
-						// cout << "filename: " << _fileName << endl;
-						// cout << "pathInfo: " << _pathInfo << endl;
+	{
+		perror("invalid Character in Querry String");
+		set_status_code(BAD_REQUEST);
+		_error = true;
+		return;
+	}
 		// checks if files are accessible
 	if (access(_fileName.c_str(), F_OK) != 0)
-		fatal("file not found");
-	if (access(_pathInfo.c_str(), F_OK) != 0)
-		fatal("Path Info file not found");
-		
-	// check version -> must have access to Server class.
-
-	// check content type / mime
-
-	// check port
-
+	{
+		std::cerr << "filename not accessible" << endl;
+		set_status_code(NOT_FOUND);
+		_error = true;
+		return;
+	}
+	if (_pathInfo != "")
+	{
+		if (access(_pathInfo.c_str(), F_OK) != 0)
+		{
+			perror("Path Info file not found");
+			set_status_code(BAD_REQUEST);
+			_error = true;
+			return;
+		}
+	}
+	if (_validPort(env["HOST"]) == false)
+	{
+		set_status_code(BAD_REQUEST);
+		_error = true;
+	}
+	set_status_code(OK);
 
 }
+
+bool	Req::_validPort(string host)
+{
+	size_t	digitPos = host.find_first_of("0123456789");
+	if (digitPos == string::npos)
+		return false;
+	string tmp = host.substr(digitPos);
+	if (std::atoi(tmp.c_str()) == _listenner.portNumber)
+		return true;
+	else
+		return false;
+	return false;
+}
+
 
 bool	Req::_allValidCharsURI(string str)
 {
@@ -216,10 +303,9 @@ bool	Req::_allValidCharsURI(string str)
 	{
 		if (!_isValidCharURI(static_cast<uint8_t>(*it)))
 		{
-							// cout << "invalid char: " << *it << endl;
 			return false;
 		}
-		
+
 		it++;
 	}
 	return true;
@@ -262,12 +348,21 @@ bool	Req::getIsCGI() const
 	return this->_isCGI;
 }
 
+string	Req::getBody()const
+{
+	return this->_body;
+}
+
+string	Req::getRoot()const
+{
+	return _location.get_root();
+}
 
 /**************************************************************************
 		PRINTING / TESTING
 **************************************************************************/
 void	Req::printReq() {
-	
+
 	cout << "\nPRINTING REQUEST\n" << endl;
 	cout << "FULL http Req:\n";
 	cout << _http_Req << endl << endl;
@@ -297,27 +392,78 @@ void	Req::printReq() {
 }
 
 /**************************************************************************
-		UNKNOWN OR DEPRECATED
+		Locacion
 **************************************************************************/
 
-				// depracated due to not using fd
-				// I think this might actuallly be creating the body for the response
-void Req::body_creation(void)
-{
-	// if (!this->file.is_open())
-	// {
-	// 	if (this->status_code == 404)
-	// 		this->file.open(this->file_name);
-	// 	else if (this->status_code == 400)
-	// 		this->file.open(this->file_name);
-	// 	if (!this->file.is_open())
-	// 		fatal("open");
-	// }
-	// this->body.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-	// file.close();
+// std::string Req::_extractURL(const std::vector<char>& dataVector) {
+std::string Req::_extractURL(std::string &dataVector) {
+  // Convertir el vector de caracteres a un string
+  std::string data(dataVector.begin(), dataVector.end());
+
+  // Buscar el inicio de la petición GET
+  size_t start = data.find("GET ");
+  if (start == std::string::npos) {
+      return ""; // No se encontró la petición GET
+  }
+  start += 4; // Ajustar para omitir "GET "
+
+  // Buscar el final de la URL (espacio antes de HTTP)
+  size_t end = data.find(" ", start);
+  if (end == std::string::npos) {
+      return ""; // No se encontró el final de la URL
+  }
+
+  // Extraer la URL
+  std::string url = data.substr(start, end - start);
+
+  return url;
 }
 
+std::string readFileContents(const std::string& filePath) {
+  std::ifstream file(filePath.c_str());
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  return buffer.str();
+}
 
+bool Req::_run_location(std::string name, std::string httpRequest){
 
+	size_t posicionEspacio = httpRequest.find(' ');
+	std::string method_http;
 
+  if (posicionEspacio != std::string::npos) {
+      method_http = httpRequest.substr(0, posicionEspacio);
+  } else {
+      return false;
+  }
 
+	for (size_t i = 0; i < _server.get_location_size(); i++) {
+		if (_server.get_location(i).get_name() == name) {
+
+			bool find_method_http = false;
+			for (size_t ii = 0; ii < _server.get_location(i).get_methods_size(); ii++)
+			{
+				if (method_http == _server.get_location(i).get_methods(ii))
+					find_method_http = true;
+			}
+			if (!find_method_http)
+				return false;
+
+			std::string filePath = _server.get_location(i).get_root() + "/" + _server.get_location(i).get_index();
+			env["FILE_NAME"] = filePath;
+			env["SERVER_PROTOCOL"] = "HTTP/1.1";
+
+			std::ifstream file(filePath.c_str());
+    	if (!file.is_open()) {
+    	  return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nFile not found.";
+			}
+
+			std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+			file.close();
+
+			_data_file = content;
+			return true;
+    }
+  }
+  return false;
+}

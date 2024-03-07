@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 11:48:42 by dluna-lo          #+#    #+#             */
-/*   Updated: 2023/11/27 10:12:35 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/07 11:15:17 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,8 @@ std::string f_cut_space(std::string path, size_t start)
   size_t cut_end = 0;
   size_t cut_start = 0;
 
-    // commented the two following lines due to multiple compilation errors in Linux
-  // if (index < 0 || index > this->v_servers.size())   // linux comp. flagged start < 0 as error.
-  //   throw std::exception();
+  if (start > path.length())
+    throw std::exception();
     // throw formatWrong();
   for (size_t i = start; i < path.length(); i++)
   {

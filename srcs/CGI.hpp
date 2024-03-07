@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CGI_HPP
+#define CGI_HPP
+
 // #include "../Includes/Parsing.hpp"
 
 #include "request/Req.hpp"
@@ -7,6 +9,7 @@
 #include <cstdio>
 #include <string>
 #include <iostream>
+#include <poll.h>
 
 using std::string;
 class Req;
@@ -14,11 +17,12 @@ class Response;
 
 #define BUFFER_SIZE 1024
 
-
 class CGI {
 private:
 	CGI();
 	CGI(CGI &original);
+	string	makeBody(int fdOut);
+	
 
 public:
 	~CGI();
@@ -30,3 +34,4 @@ public:
 	// should probably be set in Req, and accessed through it.
 	Server			m_server;
 };
+#endif
