@@ -128,8 +128,9 @@ string	Response::makeErrorHeader()
 	header += _Req.env["SERVER_PROTOCOL"] + " ";
 	// header += std::to_string(_Req.get_status_code()) + " ";
 	header += size_tToString(_Req.get_status_code());
+	header += " ";
+	// header += message_status_code(_Req.get_status_code()) + "\r\n";
 	header += message_status_code(_Req.get_status_code()) + "\r\n";
-
 	string errorPage = findErrorPage(_Req.get_status_code());
 	std::fstream htmlFile(errorPage.c_str());
 		if (!htmlFile.is_open())

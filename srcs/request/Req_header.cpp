@@ -40,15 +40,15 @@ void	Req::parseFirstLine(void)
 		_error = true;
 		return;
 	}
-	if (!_validPath(line))
-	{
-		set_status_code(NOT_FOUND);
-		_error = true;
-		return;
-	}
 	if (!_validVersion(line))
 	{
 		set_status_code(HTTP_VERSION_NOT_SUPPORTED);
+		_error = true;
+		return;
+	}
+	if (!_validPath(line))
+	{
+		set_status_code(NOT_FOUND);
 		_error = true;
 		return;
 	}

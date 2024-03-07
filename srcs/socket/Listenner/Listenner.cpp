@@ -93,7 +93,7 @@ void listenner::run(Server _server)
 						cout << receivedData << endl;
 						continue;
 					}
-					// std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  receivedData << std::endl;
+										std::cout << RED << "[DEBUG] [RECV] : \n" << RESET <<  receivedData << std::endl;
 					try {
 						Req request(_server, receivedData, fds[i].fd, this->_location, *this);
 
@@ -107,7 +107,6 @@ void listenner::run(Server _server)
 							internalError(fds[i].fd);
 							continue; 
 						}
-						// std::cout << RED << "[DEBUG] [SEND] : \n" << RESET <<  request.getHttpString() << std::endl;
 					}
 					catch (std::exception &e) {
 						// std::cout << RED << "[DEBUG] catch: \n" << RESET <<  e.what() << std::endl;
