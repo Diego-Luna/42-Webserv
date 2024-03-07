@@ -113,16 +113,10 @@ string	CGI::makeBody(int fdOut)
 	char buffer[BUFFER_SIZE];
 	int	finishedReading = 1;
 
-			// poll() setup
+	//  setup
 	struct pollfd pollContext;
 	pollContext.fd = fdOut;
 	pollContext.events = POLLIN;
-	int	pollReturn = poll(&pollContext, 1, -1);
-	if (pollReturn == -1) {
-		req.set_status_code(INTERNAL_SERVER_ERROR);
-		close(fdOut);
-		return "";
-	}
 
 	lseek(fdOut, 0, SEEK_SET);
 	while (finishedReading > 0)
