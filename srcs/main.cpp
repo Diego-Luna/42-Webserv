@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
+/*   Updated: 2024/03/08 11:50:33 by dluna-lo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../Includes/Parsing.hpp"
 #include "request/Req.hpp"
 
@@ -38,7 +50,6 @@ int main(int argc, char const *argv[])
 	Parsing parsing;
 
 	if (argc == 2) {
-		std::cerr << "-> file" << std::endl;
 		parsing.checkData(argv[1]);
 		if (parsing.check_error())
 			return (1);
@@ -70,19 +81,12 @@ int main(int argc, char const *argv[])
     for (size_t i = 0; i < parsing.get_server_size(); i++) {
       Server &server = parsing.get_ref_server(i);
       for (size_t j = 0; j < server.get_ports_size(); j++) {
-				// server.get_listenners(j).run();
 				server.get_listenners(j).run(server);
 			}
 		}
 	}
 
 				cout << "back to main from get_listeners.run()" << endl;
-
-	// for (size_t i = 0; i < parsing.get_server_size(); i++) {
-  //   Server &server = parsing.get_ref_server(i);
-  //   server.startListeningOnPorts();
-	// }
-
 
 	return 0;
 }
