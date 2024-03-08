@@ -453,3 +453,11 @@ bool Req::_run_location(std::string name, std::string httpRequest){
   }
   return false;
 }
+
+/**************************************************************************
+		Server
+**************************************************************************/
+
+std::string	Req::return_map_server_pages(std::string index){
+	return _server.get_error_page(index);
+}

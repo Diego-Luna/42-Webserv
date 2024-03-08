@@ -109,6 +109,8 @@ public:
 	u_int16_t				get_status_code() const;
 	void 					set_status_code(u_int16_t statusCode_);
 	void					printReq();
+
+	std::string	return_map_server_pages(std::string index);
 };
 
 #endif

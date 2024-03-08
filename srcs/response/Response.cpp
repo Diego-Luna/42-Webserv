@@ -145,9 +145,27 @@ string	Response::makeErrorHeader()
 
 string	Response::findErrorPage(u_int16_t statusCode)
 {
+	string	fileName;
+
+	std::stringstream convertedNumber;
+  convertedNumber << statusCode;
+  // return convertedNumber.str();
+
+	std::string website = _Req.return_map_server_pages(convertedNumber.str());
+
+	std::cout << "--> Diego - statusCode : {" << convertedNumber.str() << "}"<< std::endl;
+	std::cout << "--> Diego - website : {" << website << "}"<< std::endl;
+
 	string	errorRoot = _Req.getRoot() + "/ErrorPages/";
 
-	string	fileName;
+	if (!website.empty()){
+		// website
+		string	errorRoot = _Req.getRoot();
+		fileName = errorRoot + website;
+		std::cout << "--> Diego - fileName : {" << fileName << "}"<< std::endl;
+		return fileName;
+	}
+
 	switch (statusCode)
 	{
 		case 204:
