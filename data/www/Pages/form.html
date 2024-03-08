@@ -134,7 +134,8 @@
                     .then(response => response.text()) // we make sure to switch to text
                     .then(data => {
                         // Opens a new window or tab and displays the answer
-                        var newWindow = window.open('', '_blank');
+                        // alert(data)
+                        var newWindow = window.open('', '_blank')
                         newWindow.document.write(data); // Type the answer in the new window
                         newWindow.document.close(); // Closes the document to display the page.
                     })

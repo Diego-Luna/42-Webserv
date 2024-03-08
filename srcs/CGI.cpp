@@ -88,11 +88,6 @@ string CGI::exec() {
 
         // Check if the child process exited normally
         if (WIFEXITED(status)) {
-            // Response can be constructed with Req and body,
-            // and automatically sets the right headers and status.
-            // Response response(req, body); // Adjust according to your Response class design
-            // responseString is a member of Req or wherever you need it
-            // req.responseString = response->constructResponse(); // This method should return the full HTTP response
             return body; // Or return the full response as needed
         } else {
             req.set_status_code(INTERNAL_SERVER_ERROR);
@@ -113,10 +108,7 @@ string	CGI::makeBody(int fdOut)
         responseBody.append(buffer, bytesRead);
     }
 
-
 	close(fdOut);
-        // changed to comply with c++98
-	// req.env["CONTENT_LENGTH"] = std::to_string(responseBody.length());
     req.env["CONTENT_LENGTH"] = size_tToString(responseBody.length());
 	return responseBody;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/08 11:31:38 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/03/08 14:05:39 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,17 +151,14 @@ void Parsing::saveData(std::string dataUrl)
       s_default.set_name("default");
       s_default.set_new_port("8080");
       s_default.set_host("127.0.0.1");
-      s_default.set_root("data/www/Pages");
+      s_default.set_root("data/www/Pages/");
+      s_default.set_index("index.html");
 
-      s_default.set_body_size(500);
+      s_default.set_body_size(55);
       s_default.set_new_error_page("404", "/ErrorPages/404notFound.html");
 
-      s_default.set_new_method("GET");
-      s_default.set_new_method("POST");
-      s_default.set_new_method("DELETE");
-
       default_location.set_name("/error");
-      default_location.set_root("data/www/Pages/");
+      default_location.set_root("data/www/Pages/ErrorPages");
       default_location.set_new_method("GET");
       default_location.set_new_method("POST");
       default_location.set_new_method("DELETE");

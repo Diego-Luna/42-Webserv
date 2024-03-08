@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/08 11:50:33 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/03/08 13:47:59 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,10 @@ void Req::innitMime(void)
 		Req::mime.push_back(std::make_pair(mf[i], mf[i + 1]));
 }
 
-
 int main(int argc, char const *argv[])
 {
 	if (argc > 2)
 	{
-		// TODO: set to default config file when no args.
 		std::cerr << "Error: only one or two input." << std::endl;
 		return (1);
 	}
@@ -76,7 +74,6 @@ int main(int argc, char const *argv[])
 		parsing.get_ref_server(i).initPorts();
 	}
 
-
 	while (true) {
     for (size_t i = 0; i < parsing.get_server_size(); i++) {
       Server &server = parsing.get_ref_server(i);
@@ -85,8 +82,5 @@ int main(int argc, char const *argv[])
 			}
 		}
 	}
-
-				cout << "back to main from get_listeners.run()" << endl;
-
 	return 0;
 }

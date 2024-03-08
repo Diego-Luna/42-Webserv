@@ -222,12 +222,7 @@ void Server::initPorts(void)
 
   for (size_t i = 0; i < this->_ports.size(); i++)
   {
-        // changed to comply with c++98 Feb 25
-	    // listenner tmp = listenner(std::stoi(this->_ports[i]), this->v_locations.at(0), get_host());
       listenner tmp = listenner(std::atoi(this->_ports[i].c_str()), this->v_locations.at(0), get_host());
-
-      // location is weird
-
 	    this->_listenners.push_back(tmp);
   }
   std::cout << "\n this->_listenners.size: " << this->_listenners.size() << "\n" << std::endl;
@@ -247,8 +242,6 @@ std::vector<std::string>& Server::get_ports_ref()
 void Server::startListeningOnPorts() {
      for (size_t i = 0; i < _ports.size(); ++i) {
         const std::string& port_str = _ports[i];
-        // changed to comply with c++98 Feb 25
-        // int port = std::stoi(port_str);
         int port = std::atoi(port_str.c_str());
         int server_fd = socket(AF_INET, SOCK_STREAM, 0);
         if (server_fd == -1) {

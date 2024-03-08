@@ -28,8 +28,26 @@ def test_wrong_port():
 
     print(f"\nINPUT: {url}\n{expected_result}\n{obtained_result}\n")
 
+def test_multiple_correct_ports():
+    print("\nTESTING MULTIPLE CORRECT PORTS")
+    print("remeber to adjust according to config file")
+    ports = [8080, 3000]
+    timeout_seconds = 5
+    
+    for port in ports:
+        url = f"http://localhost:{port}"
+        expected_result = "Expecting status code 200"
+        
+        try:
+            response = requests.get(url, timeout=timeout_seconds)
+            obtained_result = f"Obtained Result: Status Code {response.status_code}"
+        except requests.exceptions.ConnectionError as e:
+            obtained_result = "Obtained Result: ConnectionError (as expected)"
+
+        print(f"\nINPUT: {url}\n{expected_result}\n{obtained_result}")
+
 def test_multiple_ports():
-    print("\nTESTING MULTIPLE PORTS")
+    print("\nTESTING MULTIPLE WRONG PORTS")
     ports = [9090, 9091]
     timeout_seconds = 5
     
@@ -92,14 +110,14 @@ def test_http_methods():
     print("\nTESTING GET POST DELETE METHODS")
     base_url = "http://localhost:{}/".format(DEFAULT_PORT)
     expected_result = "Expecting status code 200"
-    # Test GET method
-    get_url = base_url + "/index.html"
+    print("GET method")
+    get_url = base_url + "index.html"
     get_response = requests.get(get_url)
     print(f"\nINPUT: {get_url}\n{expected_result}")
     print(f"Obtained Result: status code {get_response.status_code}")
     assert get_response.status_code == 200
 
-    # Test POST method
+    print("POST method")
     post_url = base_url + "submit.py"
     post_data = {"key": "value"}
     post_response = requests.post(post_url, data=post_data)
@@ -107,7 +125,7 @@ def test_http_methods():
     print(f"Obtained Result: status code {post_response.status_code}")
     assert post_response.status_code == 200
 
-    # Test DELETE method
+    print("DELETE method")
     delete_url = base_url + "delete.py"
     delete_response = requests.delete(delete_url)
     print(f"\nINPUT: {delete_url}\n{expected_result}")
@@ -117,22 +135,20 @@ def test_http_methods():
 def test_chunked_request():
     print("\nSTARTING CHUNKED TEST")
     url = f"http://localhost:{DEFAULT_PORT}/submit.py"
-    expected_result = "Expecting a successful response for chunked request"
 
     # Example data for a chunked request
     chunked_data = "5\r\nHello\r\n7\r\n, World\r\n0\r\n\r\n"
 
     # Send a chunked request
     response = requests.post(url, data=chunked_data, headers={"Transfer-Encoding": "chunked"}, timeout=5)
-    print("RETURN FROM REQUEST\n")
 
     # Print test information
-    print(f"\nINPUT: {url}\n{expected_result}")
-    print(f"Obtained Result: status code {response.status_code}")
+    print(f"\nCHUNKED INPUT: \n5\nHello\n7\n, World\n0\n\n")
+    print("Expected result: body of the request should be:\nHello, World\n")
+    # print(f"Obtained Result: status code {response.status_code}")
 
     # Output a message to check the web server logs
-    print("Please check the web server logs for more details.")
-    print("The test does not perform additional assertions.")
+    print("Please check the web server logs to confirm the body is unchunked.")
 
 
 if __name__ == "__main__":

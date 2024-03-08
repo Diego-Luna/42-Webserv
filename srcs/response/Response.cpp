@@ -146,6 +146,7 @@ string	Response::makeErrorHeader()
 string	Response::findErrorPage(u_int16_t statusCode)
 {
 	string	errorRoot = _Req.getRoot() + "/ErrorPages/";
+
 	string	fileName;
 	switch (statusCode)
 	{

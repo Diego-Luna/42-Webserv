@@ -76,9 +76,6 @@ string	Req::_getQuerryString(string &line)
 	return querryString;
 }
 
-		// for now only check files for .py extensions. Could Change to check for .py or
-		// which other script extensions we would need.
-		// possibly check if it is in the /CGI/bin folder
 bool	Req::_checkCGI(string &fileName)
 {
 	if (fileName == "")
@@ -116,13 +113,9 @@ bool	Req::_validVersion(string &line)
 
 bool	Req::_validPath(string &line)
 {
-
-							// cout << "LINE IN _validpath\n|" << line << "|" << endl;
 	if (line.compare(0, 6, "GET / ") == 0)	// checks for initial index call: "GET / HTTP:1.1"
 	{
 		_fileName = _server.get_root() + "/" + _server.get_index();
-						cout << "filename: " << _fileName << endl;
-
 		_extension = ".html";
 		return true;
 	}
@@ -155,9 +148,6 @@ bool	Req::_validPath(string &line)
 	return true;
 }
 
-	// refarctored to use mim instead of it's own vector
-	//	looks for the extension(mime.first) in line. sets _extension if found
-	// returns the position in line of the last charcter of extension.
 size_t	 Req::_findExtensionEnd(string &line)
 {
 	size_t firstSpace = line.find(' ');

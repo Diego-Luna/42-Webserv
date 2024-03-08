@@ -44,46 +44,74 @@ host: 127.0.0.1 port :3000
 
  this->_listenners.size: 2
 
-INSIDE UNCHUNCKEDPOST /submit.py HTTP/1.1
-Host: localhost:8080
-User-Agent: python-requests/2.31.0
-Accept-Encoding: gzip, deflate
-Accept: */*
-Connection: keep-alive
-Transfer-Encoding: chunked
-Content-Length: 27
+INSIDE UNCHUNCKEDPOST /submit.py HTTP/1.1
+
+Host: localhost:8080
+
+User-Agent: python-requests/2.31.0
+
+Accept-Encoding: gzip, deflate
+
+Accept: */*
+
+Connection: keep-alive
+
+Transfer-Encoding: chunked
+
+Content-Length: 27
+
 
 Hello
-INSIDE UNCHUNCKEDPOST /submit.py HTTP/1.1
-Host: localhost:8080
-User-Agent: python-requests/2.31.0
-Accept-Encoding: gzip, deflate
-Accept: */*
-Connection: keep-alive
-Transfer-Encoding: chunked
-Content-Length: 27
+INSIDE UNCHUNCKEDPOST /submit.py HTTP/1.1
+
+Host: localhost:8080
+
+User-Agent: python-requests/2.31.0
+
+Accept-Encoding: gzip, deflate
+
+Accept: */*
+
+Connection: keep-alive
+
+Transfer-Encoding: chunked
+
+Content-Length: 27
+
 
 Hello, Worl
 [31m[DEBUG] [RECV] : 
-[0mPOST /submit.py HTTP/1.1
-Host: localhost:8080
-User-Agent: python-requests/2.31.0
-Accept-Encoding: gzip, deflate
-Accept: */*
-Connection: keep-alive
-Transfer-Encoding: chunked
-Content-Length: 27
+[0mPOST /submit.py HTTP/1.1
+
+Host: localhost:8080
+
+User-Agent: python-requests/2.31.0
+
+Accept-Encoding: gzip, deflate
+
+Accept: */*
+
+Connection: keep-alive
+
+Transfer-Encoding: chunked
+
+Content-Length: 27
+
 
 Hello, Worl
 
-CONNECTION = keep-alive
-CONTENT_LENGTH = 27
+CONNECTION = keep-alive
+
+CONTENT_LENGTH = 27
+
 CONTENT_TYPE = application/x-www-form-urlencoded
 FILE_NAME = CGI/bin/submit.py
-HOST = localhost:8080
+HOST = localhost:8080
+
 PATH_INFO = 
 SERVER_PROTOCOL = HTTP/1.1
-USER_AGENT = python-requests/2.31.0
+USER_AGENT = python-requests/2.31.0
+
 
 
 printing response body
@@ -122,7 +150,9 @@ printing response body
 
 [31m[DEBUG] [SEND] : 
 [0mHTTP/1.1 200 OK
-Connection: keep-aliveContent-Type: text/html
+Connection: keep-alive
+
+Content-Type: text/html
 Content-Length: 1184
 
 <!DOCTYPE html>

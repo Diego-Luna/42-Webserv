@@ -84,13 +84,7 @@ std::string Req::trimLine(std::string line)
 	}
 	return line;
 }
-		// changed to comply with c++98
-// string	Req::trimLine(string line)
-// {
-// 	while (line.back() == '\n' || line.back() == '\r')
-// 		line.pop_back();
-// 	return line;
-// }
+
 
 string	Req::findUploadBoundry(void)
 {
@@ -162,12 +156,3 @@ void Req::stripQuotes(string &original)
 		original.erase(original.size() - 1);
 	}
 }
-		// changed to comply with c++ 98
-// void	Req::stripQuotes(string &original)
-// {
-// 	if (original.front() == '"')
-// 		original.erase(0, 1);
-// 	if (original.back() == '"')
-// 		original.pop_back();
-// 	return;
-// }
