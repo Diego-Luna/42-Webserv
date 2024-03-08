@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/08 14:05:39 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/08 14:15:30 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,257 +140,231 @@ void Parsing::saveData(std::string dataUrl)
     return;
   try
   {
+    if (f_is_file(dataUrl) == false)
+      dataUrl = "ConfigFiles/good/ok.config";
+
     std::ifstream archivo(dataUrl.c_str());
     (dataUrl.length() == 0 || dataUrl.empty() == true) ? throw formatWrong() : true;
-    if (f_is_file(dataUrl) == false)
+
+    bool server = false;
+    bool location = false;
+    bool server_body_size = false;
+    bool location_index = false;
+
+    Server *s_tem;
+    Location *l_tem;
+
+    if (archivo.is_open())
     {
-      // only path. check is the path ok?
-      Server s_default;
-      Location default_location;
+      while (std::getline(archivo, line))
+      {
+        // checl=k is open server ot location
+        if (line.find("server") != std::string::npos && server == false)
+        {
+          server = true;
+          server_body_size = false;
+          s_tem = new Server;
+            // num_location = 0;
+        } else if (line.find("server ") != std::string::npos && server == true){
+          throw formatWrong();
+        }
 
-      s_default.set_name("default");
-      s_default.set_new_port("8080");
-      s_default.set_host("127.0.0.1");
-      s_default.set_root("data/www/Pages/");
-      s_default.set_index("index.html");
+        if (line.find("location") != std::string::npos && location == false)
+        {
+          location = true;
+          location_index = false;
+          l_tem = new Location;
+          // num_location++;
+        } else if (line.find("location ") != std::string::npos && location == true){
+          throw formatWrong();
+        }
 
-      s_default.set_body_size(55);
-      s_default.set_new_error_page("404", "/ErrorPages/404notFound.html");
+        // check is close server or location
+        if (line.find("}") != std::string::npos && server == true && location == false)
+        {
+          server = false;
+          this->v_servers.push_back(*s_tem);
+          delete s_tem;
+        }
+        else if (line.find("}") != std::string::npos && location == true)
+        {
+          location = false;
+          if (l_tem->get_name().length() == 1)
+            throw formatWrong();
 
-      default_location.set_name("/error");
-      default_location.set_root("data/www/Pages/ErrorPages");
-      default_location.set_new_method("GET");
-      default_location.set_new_method("POST");
-      default_location.set_new_method("DELETE");
-      default_location.set_index("400badRequest.html");
+          if (l_tem->get_root().length() == 0 || l_tem->get_index().length() == 0 || l_tem->get_methods_size() == 0)
+          {
+            std::cout << "-> putting default location information:" << std::endl;
+            if (l_tem->get_root().length() == 0)
+            {
+              std::cout << "--> default root: data/www/Pages" << std::endl;
+              l_tem->set_root("data/www/Pages");
+            }
+            if (l_tem->get_index().length() == 0)
+            {
+              std::cout << "--> default index: 400badRequest.html;" << std::endl;
+              l_tem->set_index("400badRequest.html;");
+            }
+            if (l_tem->get_methods_size() == 0)
+            {
+              std::cout << "--> default method: GET" << std::endl;
+              l_tem->set_new_method("GET");
+            }
+          }
+          s_tem->set_new_location(*l_tem);
+          delete l_tem;
+        }
+        else if (line.find("}") != std::string::npos)
+        {
+          throw formatWrong();
+        }
+        // save data
+        if (server == true && location == false)
+        {
+          if (line.find("listen") != std::string::npos)
+          {
+            if (s_tem->get_ports_size() != 0)
+            {
+              throw formatWrong();
+            }
+            f_save_multiple_values_in_server(line, line.find("listen") + 7, s_tem, "ports");
+          }
+          if (f_counter_clean_worlds(line, "host") == 1)
+          {
+            if (s_tem->get_host().length() != 0)
+            {
+              throw formatWrong();
+            }
+            s_tem->set_host(f_cut_space(line, line.find("host") + 4));
+          }
+          if (line.find("methods") != std::string::npos)
+          {
+            if (s_tem->get_methods_size() != 0)
+            {
+              throw formatWrong();
+            }
+            f_save_multiple_values_in_server(line, line.find("methods") + 8, s_tem, "methods");
+          }
+          if (line.find("error_page") != std::string::npos)
+          {
+            if (s_tem->get_error_page_size() != 0)
+            {
+              throw formatWrong();
+            }
+            f_save_multiple_values_in_server_2(line, line.find("error_page") + 11, s_tem);
+          }
 
-      s_default.set_new_location(default_location);
-      this->v_servers.push_back(s_default);
+          if (line.find("server_name") != std::string::npos)
+          {
+            if (s_tem->get_name().length() != 0)
+            {
+              throw formatWrong();
+            }
+            s_tem->set_name(f_cut_space(line, line.find("server_name") + 12));
+          }
+          if (line.find("body_size") != std::string::npos)
+          {
+            if (server_body_size == true)
+            {
+              throw formatWrong();
+            }
+            std::istringstream iss(f_cut_space(line, line.find("body_size") + 10));
+            long long bodySize = 0;
+            s_tem->set_body_size(bodySize);
+
+
+            server_body_size = true;
+          }
+          if (line.find("root") != std::string::npos)
+          {
+            if (s_tem->get_root().length() != 0)
+            {
+              throw formatWrong();
+            }
+            s_tem->set_root(f_cut_space(line, line.find("root") + 5));
+          }
+          if (line.find("index") != std::string::npos)
+          {
+            if (s_tem->get_index().length() != 0)
+            {
+              throw formatWrong();
+            }
+            s_tem->set_index(f_cut_space(line, line.find("index") + 6));
+          }
+
+          // methods
+        }
+        else if (server == true && location == true)
+        {
+          if (line.find("location") != std::string::npos)
+          {
+            l_tem->set_name(f_cut_space(line, line.find("location") + 9));
+          }
+          if (line.find("root") != std::string::npos)
+          {
+            if (l_tem->get_root().length() != 0)
+            {
+              throw formatWrong();
+            }
+            l_tem->set_root(f_cut_space(line, line.find("root") + 5));
+          }
+          // methods
+          if (line.find("methods") != std::string::npos)
+          {
+            if (l_tem->get_methods_size() != 0)
+            {
+              throw formatWrong();
+            }
+            f_save_multiple_values_in_location(line, line.find("methods") + 8, l_tem, "methods");
+          }
+
+          if (line.find("index") != std::string::npos)
+          {
+            /// ///
+            if (location_index == true)
+            {
+              throw formatWrong();
+            }
+            l_tem->set_index(f_cut_space(line, line.find("index") + 6));
+
+            location_index = true;
+          }
+        }
+      }
+
+      if (get_server_size() == 0)
+      {
+        throw emptyFile();
+      }
+      // list
+
+      this->f_organise_listen();
+      this->f_clean_listen();
+
+      for (size_t serve_i = 0; serve_i < get_server_size(); serve_i++)
+      {
+        if ((this->v_servers[serve_i].get_name().length() == 0 &&
+              this->v_servers[serve_i].get_ports_size() == 0  &&
+              this->v_servers[serve_i].get_host().length() == 0 &&
+              this->v_servers[serve_i].get_root().length() == 0 &&
+              this->v_servers[serve_i].get_index().length() == 0 &&
+              this->v_servers[serve_i].get_error_page_size() == 0 &&
+              this->v_servers[serve_i].get_methods_size() == 0))
+        {
+          throw formatWrong();
+        }
+        if (this->v_servers[serve_i].get_location_size() == 0)
+        {
+          throw formatWrong();
+        }
+      }
+
+      this->f_save_default();
+      this->f_check_repeat();
     }
     else
     {
-      bool server = false;
-      bool location = false;
-      bool server_body_size = false;
-      bool location_index = false;
-      // size_t num_location = 0;
-
-      Server *s_tem;
-      Location *l_tem;
-
-      if (archivo.is_open())
-      {
-
-        while (std::getline(archivo, line))
-        {
-          // checl=k is open server ot location
-          if (line.find("server") != std::string::npos && server == false)
-          {
-            server = true;
-            server_body_size = false;
-            s_tem = new Server;
-            // num_location = 0;
-          } else if (line.find("server ") != std::string::npos && server == true){
-            throw formatWrong();
-          }
-
-          if (line.find("location") != std::string::npos && location == false)
-          {
-            location = true;
-            location_index = false;
-            l_tem = new Location;
-            // num_location++;
-          } else if (line.find("location ") != std::string::npos && location == true){
-            throw formatWrong();
-          }
-
-          // check is close server or location
-          if (line.find("}") != std::string::npos && server == true && location == false)
-          {
-            server = false;
-            this->v_servers.push_back(*s_tem);
-            delete s_tem;
-          }
-          else if (line.find("}") != std::string::npos && location == true)
-          {
-            location = false;
-            if (l_tem->get_name().length() == 1)
-              throw formatWrong();
-
-            if (l_tem->get_root().length() == 0 || l_tem->get_index().length() == 0 || l_tem->get_methods_size() == 0)
-            {
-              std::cout << "-> putting default location information:" << std::endl;
-              if (l_tem->get_root().length() == 0)
-              {
-                std::cout << "--> default root: data/www/Pages" << std::endl;
-                l_tem->set_root("data/www/Pages");
-              }
-              if (l_tem->get_index().length() == 0)
-              {
-                std::cout << "--> default index: 400badRequest.html;" << std::endl;
-                l_tem->set_index("400badRequest.html;");
-              }
-              if (l_tem->get_methods_size() == 0)
-              {
-                std::cout << "--> default method: GET" << std::endl;
-                l_tem->set_new_method("GET");
-              }
-            }
-            s_tem->set_new_location(*l_tem);
-            delete l_tem;
-          }
-          else if (line.find("}") != std::string::npos)
-          {
-            throw formatWrong();
-          }
-          // save data
-          if (server == true && location == false)
-          {
-            if (line.find("listen") != std::string::npos)
-            {
-              if (s_tem->get_ports_size() != 0)
-              {
-                throw formatWrong();
-              }
-              f_save_multiple_values_in_server(line, line.find("listen") + 7, s_tem, "ports");
-            }
-            if (f_counter_clean_worlds(line, "host") == 1)
-            {
-              if (s_tem->get_host().length() != 0)
-              {
-                throw formatWrong();
-              }
-              s_tem->set_host(f_cut_space(line, line.find("host") + 4));
-            }
-            if (line.find("methods") != std::string::npos)
-            {
-              if (s_tem->get_methods_size() != 0)
-              {
-                throw formatWrong();
-              }
-              f_save_multiple_values_in_server(line, line.find("methods") + 8, s_tem, "methods");
-            }
-            if (line.find("error_page") != std::string::npos)
-            {
-              if (s_tem->get_error_page_size() != 0)
-              {
-                throw formatWrong();
-              }
-              f_save_multiple_values_in_server_2(line, line.find("error_page") + 11, s_tem);
-            }
-
-            if (line.find("server_name") != std::string::npos)
-            {
-              if (s_tem->get_name().length() != 0)
-              {
-                throw formatWrong();
-              }
-              s_tem->set_name(f_cut_space(line, line.find("server_name") + 12));
-            }
-            if (line.find("body_size") != std::string::npos)
-            {
-              if (server_body_size == true)
-              {
-                throw formatWrong();
-              }
-              std::istringstream iss(f_cut_space(line, line.find("body_size") + 10));
-              long long bodySize = 0;
-              s_tem->set_body_size(bodySize);
-
-
-              server_body_size = true;
-            }
-            if (line.find("root") != std::string::npos)
-            {
-              if (s_tem->get_root().length() != 0)
-              {
-                throw formatWrong();
-              }
-              s_tem->set_root(f_cut_space(line, line.find("root") + 5));
-            }
-            if (line.find("index") != std::string::npos)
-            {
-              if (s_tem->get_index().length() != 0)
-              {
-                throw formatWrong();
-              }
-              s_tem->set_index(f_cut_space(line, line.find("index") + 6));
-            }
-
-            // methods
-          }
-          else if (server == true && location == true)
-          {
-            if (line.find("location") != std::string::npos)
-            {
-              l_tem->set_name(f_cut_space(line, line.find("location") + 9));
-            }
-            if (line.find("root") != std::string::npos)
-            {
-              if (l_tem->get_root().length() != 0)
-              {
-                throw formatWrong();
-              }
-              l_tem->set_root(f_cut_space(line, line.find("root") + 5));
-            }
-            // methods
-            if (line.find("methods") != std::string::npos)
-            {
-              if (l_tem->get_methods_size() != 0)
-              {
-                throw formatWrong();
-              }
-              f_save_multiple_values_in_location(line, line.find("methods") + 8, l_tem, "methods");
-            }
-
-            if (line.find("index") != std::string::npos)
-            {
-              /// ///
-              if (location_index == true)
-              {
-                throw formatWrong();
-              }
-              l_tem->set_index(f_cut_space(line, line.find("index") + 6));
-
-              location_index = true;
-            }
-          }
-        }
-
-        if (get_server_size() == 0)
-        {
-          throw emptyFile();
-        }
-        // list
-
-        this->f_organise_listen();
-        this->f_clean_listen();
-
-        for (size_t serve_i = 0; serve_i < get_server_size(); serve_i++)
-        {
-          if ((this->v_servers[serve_i].get_name().length() == 0 &&
-                this->v_servers[serve_i].get_ports_size() == 0  &&
-                this->v_servers[serve_i].get_host().length() == 0 &&
-                this->v_servers[serve_i].get_root().length() == 0 &&
-                this->v_servers[serve_i].get_index().length() == 0 &&
-                this->v_servers[serve_i].get_error_page_size() == 0 &&
-                this->v_servers[serve_i].get_methods_size() == 0))
-          {
-            throw formatWrong();
-          }
-          if (this->v_servers[serve_i].get_location_size() == 0)
-          {
-            throw formatWrong();
-          }
-        }
-
-        this->f_save_default();
-        this->f_check_repeat();
-      }
-      else
-      {
-        throw formatWrong();
-      }
+      throw formatWrong();
     }
     this->f_check_data_with_path(); //error - multiple servers
     return;
@@ -432,29 +406,29 @@ void Parsing::f_organise_listen()
 
     for (size_t i = 0; i < get_server_size(); i++)
     {
-        Server &s_default = get_ref_server(i);
-        tem = s_default.get_ports_size();
+      Server &s_default = get_ref_server(i);
+      tem = s_default.get_ports_size();
 
-        // Get Server ports
-        std::vector<std::string> &ports = s_default.get_ports_ref();
+      // Get Server ports
+      std::vector<std::string> &ports = s_default.get_ports_ref();
 
-        // Create a temporary container for ports with "localhost:"
-        std::vector<std::string> localhostPorts;
+      // Create a temporary container for ports with "localhost:"
+      std::vector<std::string> localhostPorts;
 
-        // Separate the ports with "localhost:" and the others
-        for (size_t j = 0; j < tem; j++)
-        {
-            if (IsLocalhostPort()(ports[j]))
-            {
-                localhostPorts.push_back(ports[j]);
-            }
-        }
+      // Separate the ports with "localhost:" and the others
+      for (size_t j = 0; j < tem; j++)
+      {
+          if (IsLocalhostPort()(ports[j]))
+          {
+              localhostPorts.push_back(ports[j]);
+          }
+      }
 
-        // Remove ports with "localhost:" from the original container
-        ports.erase(std::remove_if(ports.begin(), ports.end(), IsLocalhostPort()), ports.end());
+      // Remove ports with "localhost:" from the original container
+      ports.erase(std::remove_if(ports.begin(), ports.end(), IsLocalhostPort()), ports.end());
 
-        // Insert ports with "localhost:" at the beginning of the original container
-        ports.insert(ports.begin(), localhostPorts.begin(), localhostPorts.end());
+      // Insert ports with "localhost:" at the beginning of the original container
+      ports.insert(ports.begin(), localhostPorts.begin(), localhostPorts.end());
     }
 }
 
