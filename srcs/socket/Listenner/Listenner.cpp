@@ -21,7 +21,6 @@ void listenner::init(u_int32_t port, std::string host)
 	this->fds[0].fd = this->getfd();
 	this->fds[0].events = POLLIN | POLLOUT;
 	this->n_fd = 1;
-
 }
 
 listenner::listenner(u_int32_t port, Location &location, std::string host) : portNumber(port), _location(location)

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   uitlParsing.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/16 11:48:42 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/02/08 10:41:57 by gmiyakaw         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../Includes/Parsing.hpp"
 #include "../Includes/Utils.hpp"
 
@@ -22,7 +10,6 @@ char **vecToChar(std::vector<std::string> &vec)
 	ptr[vec.size()] = NULL;
 	return ptr;
 }
-
 
 int f_counter_worlds(std::string str, std::string find){
   if (find.empty() || str.empty())
@@ -138,9 +125,6 @@ bool f_run_each_words(std::string str, int *num, size_t start, bool (*f)(std::st
 
   *num = 0;
 
-  // std::cout << "\n\n start{" << start << "}" << std::endl;
-  // std::cout << "\n\n str{" << str.substr(start, str.length()) << "}" << std::endl;
-
 	if (str.empty() || start > str.length())
 		return false;
 	for(size_t i = start; i < str.length(); i++){
@@ -216,6 +200,5 @@ size_t f_count_words_string(std::string str){
           }
       }
   }
-
     return count;
 }

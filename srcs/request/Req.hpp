@@ -6,7 +6,6 @@
 #include "../CGI.hpp"
 #include "../response/Response.hpp" // Asegúrate de usar la ruta correcta al archivo de cabecera
 
-
 #include <sstream>
 #include <iostream>
 #include <cstring>
@@ -86,7 +85,6 @@ private:
 	bool					_isValidCharURI(uint8_t ch);
 
 	// Diego - location
-	// std::string _extractURL(const std::vector<char>& dataVector);
 	std::string _extractURL(std::string &dataVector);
 	bool _run_location(std::string name, std::string httpRequest);
 
@@ -97,7 +95,7 @@ public:
 	listenner					&_listenner;
 	std::map<string, string>	env;
 	string						responseString;
-	char						**envCGIExecve;		// must be deleted by destructor
+	char						**envCGIExecve;
 	static						std::vector<std::pair<std::string, std::string> > mime;
 	static void 				innitMime(void);
 

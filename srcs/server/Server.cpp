@@ -13,16 +13,8 @@ Server::Server()
   this->_host = "";
   this->_root = "";
   this->_index = "";
-  this->_body_size = -1; // no limit
+  this->_body_size = -1;
 
-
-
-
-	// for (size_t i = 0; i < this->_ports.size(); i++)
-	// {
-	// 	listenner tmp = listenner(std::stoi(this->_ports[i]));
-	// 	this->_listenners.push_back(tmp);
-	// }
 }
 Server::~Server()
 {
@@ -260,16 +252,13 @@ void Server::startListeningOnPorts() {
             close(server_fd);
             continue; // Procesar el siguiente puerto
         }
-
         // Escuchar en el socket
         if (listen(server_fd, 10) < 0) { // 10 es el número máximo de conexiones pendientes
             std::cerr << "Error listening on port: " << port << std::endl;
             close(server_fd);
             continue; // Procesar el siguiente puerto
         }
-
         std::cout << "Server listening on " << _host << ":" << port << std::endl;
-
         // Aquí puedes agregar lógica para manejar las conexiones entrantes
         // ...
         

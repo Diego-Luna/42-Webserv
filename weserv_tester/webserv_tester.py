@@ -150,7 +150,6 @@ def test_chunked_request():
     # Output a message to check the web server logs
     print("Please check the web server logs to confirm the body is unchunked.")
 
-
 if __name__ == "__main__":
     # Run all tests when the script is executed directly
     pytest.main([__file__, '-s'])

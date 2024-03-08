@@ -7,14 +7,12 @@ CGI::CGI(Req &req_) : req(req_), m_server() {
 	string responseBody = exec();
 
 	Response response(req, responseBody);
-		// MAKE REPONSE CLASS AND SEND BODY, EVEN IF EMPTY
 }
 
 CGI::~CGI() {}
 
 string CGI::exec() {
 
-	// std::cout << "-> Diego -> req.envCGIExecve:{";
 	size_t envCount = 0;
 	while (req.envCGIExecve[envCount])
 	{
@@ -81,8 +79,6 @@ string CGI::exec() {
     		}
     		delete[] newEnv;
 
-        // Now, instead of manually reading output and forming the response,
-        // let's use the makeBody function to do that.
         string body = makeBody(pfd[0]);
         close(pfd[0]);
 

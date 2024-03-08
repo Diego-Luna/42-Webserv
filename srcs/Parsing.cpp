@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/08 14:15:30 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/03/08 14:28:22 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -675,24 +675,18 @@ void    Parsing::f_save_default(){
 
     if (server_save.get_name().length() == 0 && print_run_default(&default_mode, 0))
     {
-      // std::cout << "-> default server -> name: Server" << std::to_string(i) << std::endl;
       std::cout << "-> default server -> name: Server" << size_tToString(i) << std::endl;
-      // server_save.set_name("Server" + std::to_string(i));
       server_save.set_name("Server" + size_tToString(i));
     }
     if (server_save.get_ports_size() == 0 && print_run_default(&default_mode, 0))
     {
-      // std::cout << "-> default server -> ports: 8" << std::to_string(i) << std::endl;
       std::cout << "-> default server -> ports: 8" << size_tToString(i) << std::endl;
-      // server_save.set_new_port("8" + std::to_string(i));
       server_save.set_new_port("8" + size_tToString(i));
     }
     if (server_save.get_host().length() == 0 && print_run_default(&default_mode, 0))
     {
       std::cout << "-> default server -> host: 127.0.0.1" << std::endl;
       server_save.set_host("127.0.0.1");
-      // std::cout << "-> default server -> host: 8" << size_tToString(i) << std::endl;
-      // server_save.set_host("8" + size_tToString(i));
     }
     if (server_save.get_root().length() == 0 && print_run_default(&default_mode, 0))
     {

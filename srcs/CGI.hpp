@@ -23,7 +23,6 @@ private:
 	CGI(CGI &original);
 	string	makeBody(int fdOut);
 	
-
 public:
 	~CGI();
 	CGI(Req &req_);
@@ -31,7 +30,6 @@ public:
 	Req		&req;
 	string	exec();
 
-	// should probably be set in Req, and accessed through it.
 	Server			m_server;
 };
 #endif

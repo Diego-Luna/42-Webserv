@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:14 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/01/15 13:29:42 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/08 14:28:45 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,12 +100,8 @@ public:
     void set_index(std::string index);
     void set_new_error_page(std::string index, std::string path);
     void set_new_method(std::string method);
-
-
-
     void set_new_location(Location lo);
     void initPorts(void);
-
 
 	listenner &get_listenners(int index);
 	size_t get_listenners_size();

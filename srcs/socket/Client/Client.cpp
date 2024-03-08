@@ -1,8 +1,6 @@
 #include "Client.hpp"
 #include "../Listenner/Listenner.hpp"
 
-
-
 client::client(listenner &_server)
 {
 	this->fd_socket = accept(_server.getfd(), (struct sockaddr*)&this->addr, &this->addr_size);

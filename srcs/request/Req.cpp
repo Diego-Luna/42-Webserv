@@ -148,7 +148,7 @@ void	Req::_makeExecveEnv()
 {
 	size_t	mapSize = env.size();
 	envCGIExecve = new char*[mapSize + 1];
-	envCGIExecve[mapSize] = NULL;	// null-terminating it here, but if uncessary, remove this line and the +1 in the line above
+	envCGIExecve[mapSize] = NULL;
 
 	size_t	i = 0;
 	std::map<string, string>::iterator it = env.begin();

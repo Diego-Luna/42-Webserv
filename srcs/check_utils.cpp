@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   check_utils.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/21 12:05:10 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/02/25 19:00:28 by gmiyakaw         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../Includes/Parsing.hpp"
 
 void Parsing::f_check_proms(std::string line){
@@ -65,10 +53,6 @@ void Parsing::f_check_proms(std::string line){
   else if(f_string_has_words(line) == true && f_str_is_only_bracket(line) == false){
     throw formatWrong();
   }
-  // }else if(f_string_has_words(line) == true &&
-  //   f_str_is_only_bracket(line) == false){
-  //   throw formatWrong();
-  // }
 }
 
 bool f_check_on(std::string line, int *num){
@@ -134,10 +118,6 @@ bool f_check_port(std::string line, int *num){
       line.substr(i, i + 10) == "localhost:" &&
       f_check_port(line.substr(10, line.length()), num) == true
       ){
-      // if (i == 0 && (
-      //   (line[i] == 'h' && line.length() > 10  && line.substr(0, 10) == "localhost:" && f_check_port(line.substr(10, line.length()), num) == true)
-      //   || (line[i] == 'l' && line.length() > 17 && line.substr(0, 17) == "http://localhost:" && f_check_port(line.substr(17, line.length()), num) == true))){
-          // is_local = false;
           continue;
       }
       else if (i == 0) {
@@ -150,14 +130,12 @@ bool f_check_port(std::string line, int *num){
   return true;
 }
 
-// bool Parsing::f_check_methods_line(std::string line){
 bool f_check_methods_line(std::string line, int *num){
   (void) num;
   if (line == "GET" || line == "POST" || line == "DELETE")
     return true;
   return false;
 }
-
 
 bool f_check_par(std::string line , int *num, bool (*f_1)(std::string str, int *num), bool (*f_2)(std::string str, int *num)){
 

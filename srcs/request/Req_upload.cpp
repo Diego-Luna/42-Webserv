@@ -16,7 +16,7 @@ void	Req::parseUpload(void)
 	_buildEncoded();
 	env["CONTENT_TYPE"] = "text/plain";
 	env["SERVER_PROTOCOL"] = _protocol;
-	env["FILE_NAME"] = _fileName;	// might change it to uploadfilenam
+	env["FILE_NAME"] = _fileName;
 	if (_error == false)
 	{
 		set_status_code(OK);
@@ -44,7 +44,6 @@ void	Req::createUploadFile()
 	}
 	fclose(uploadFile);
 }
-		// WORKING FOR TXT FILES -> NEW VERSION IN PROGRESS
 	// picks up the stream from where findUploadFileName left off
 string	Req::findUploadBody(string boundary)
 {
@@ -61,7 +60,6 @@ string	Req::findUploadBody(string boundary)
 		std::getline(_ReqStream, line);
 		line = trimLine(line);
 	}
-		// working, but could use some cleanup.
 	while (!_ReqStream.eof() && line.compare(0, boundary.length(), boundary) != 0)
 	{
 		std::getline(_ReqStream, line);
@@ -85,7 +83,6 @@ std::string Req::trimLine(std::string line)
 	return line;
 }
 
-
 string	Req::findUploadBoundry(void)
 {
 	string boundary = "boundary=";
@@ -105,7 +102,6 @@ string	Req::findUploadBoundry(void)
 	}
 	return boundary;
 }
-		// KNOWN BUG: filename can't have a space in it.
 
 string	Req::findUploadFileName(string boundary)
 {
@@ -150,7 +146,6 @@ void Req::stripQuotes(string &original)
 	{
 		original.erase(0, 1);
 	}
-
 	if (!original.empty() && original[original.size() - 1] == '"')
 	{
 		original.erase(original.size() - 1);
