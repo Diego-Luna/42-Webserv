@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/08 13:47:59 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/08 14:22:42 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,14 @@ int main(int argc, char const *argv[])
 			return (1);
 	}
 	else {
+
+    	std::string dataUrl = "ConfigFiles/good/ok.config";
+
 		std::cerr << "-> run default" << std::endl;
-		parsing.saveData("run default");
+		parsing.checkData(dataUrl);
 		if (parsing.check_error())
 			return (1);
-		parsing.seeData();
+		parsing.saveData(dataUrl);
 		if (parsing.check_error())
 			return (1);
 	}
