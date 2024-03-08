@@ -1,8 +1,6 @@
 NAME = webserv
 CC = c++
 CFLAGS = -Wall -Wextra -Werror -g -std=c++98
-# FLAGS FOR LINUX
-# CFLAGS = -Wall -Wextra -Werror -g
 RM = rm -rf
 
 SRC_DIR = srcs/
