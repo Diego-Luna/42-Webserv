@@ -39,8 +39,6 @@
             
             The button bellow simulates a chunked HTTP requests.<br>
             It sends a request that follows the structure of a chunked request but is not a chunked request itself.<br>
-            It should be able to demonstrate how our server handles chunking.<br><br>
-
             It will contain the following chunked body:<br><br>
 
             5<br>
@@ -49,13 +47,7 @@
             chunk test<br>
             0<br><br>
 
-            The expected result is that the request is unchunked before being processed.<br>
-            So the body should become:<br><br>
-            
-            data chunk test<br>
-
-            <br> When you press this button it should display the full HTTP request with the unchunked data printed in your terminal<br>
-
+            <br> It should display the full HTTP request with the unchunked data printed in your terminal<br>
         </p>
     </div>
 
@@ -72,7 +64,6 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/octet-stream',
-                    'Transfer-Encoding': 'chunked'
                 },
                 body: chunkedData
             })

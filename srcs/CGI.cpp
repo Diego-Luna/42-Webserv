@@ -6,7 +6,6 @@
 CGI::CGI(Req &req_) : req(req_), m_server() {
 	string responseBody = exec();
 
-					cout << "\n\nprinting response body\n" << responseBody << endl;
 	Response response(req, responseBody);
 		// MAKE REPONSE CLASS AND SEND BODY, EVEN IF EMPTY
 }

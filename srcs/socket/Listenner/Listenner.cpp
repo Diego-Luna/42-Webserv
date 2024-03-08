@@ -89,7 +89,9 @@ void listenner::run(Server _server)
 					if (isChunked(receivedData) || isChunkTest(receivedData))
 						receivedData = unchunk(receivedData);
 					if (isChunkTest(receivedData)) {
-						cout << "printing unchunked data" << endl;
+						cout << "\nUNCHUNK TEST" << endl;
+						cout << "Expected result: request body should be:" << endl;
+						cout << "data chunk test" << endl << endl;
 						cout << receivedData << endl;
 						continue;
 					}
@@ -124,27 +126,26 @@ string	listenner::unchunk(const string &receivedData) {
 	while (std::getline(rawRequest, line) && line != "\r")
 	{
 		unchunked += line;
-		unchunked += "\r\n";
+		unchunked += "\n";
 	}
-	unchunked += "\r\n";
+	unchunked += "\n";
 	size_t length;
 	do {
 		std::getline(rawRequest, line);
 		trimLine(line);
-		std::stringstream ss;
-		ss << std::hex << line;
-		ss >> length;
+		std::stringstream hexConvertion;
+		hexConvertion << std::hex << line;
+		hexConvertion >> length;
 		if (length == 0)
 			break;
 		std::getline(rawRequest, line);
 		trimLine(line);
 		unchunked.append(line, 0, length); // appends length characters, counted from the start, to unchunked
-				cout << "INSIDE UNCHUNCKED" << unchunked << endl;
 	} while (rawRequest.eof() == false);
 	unchunked += "\r\n";
+
 	return unchunked;
 }
-
 			// for testing purposes only
 bool	listenner::isChunkTest(const string &httpRequest) {
 	size_t pos = httpRequest.find("chunk test");

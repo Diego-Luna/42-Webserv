@@ -1,17 +1,5 @@
 #include "Req.hpp"
 
-/*************************************************************************
-		CANNONICAL FORM REQUIREMENTS
-**************************************************************************/
-// Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
-// 	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
-// {
-	// cout<< "<> hello " <<endl;
-	// cout<< "==> _server = [" << _server.get_location_size() << "]"  <<endl;
-	// cout<< "==> _server = [" << _server.get_location(0).get_name() << "]"  <<endl;
-	// cout<< "==> _server = [" << _server.get_location(1).get_name() << "]"  <<endl;
-// }
-
 Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
 	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
 {
