@@ -39,10 +39,6 @@ string CGI::exec() {
   newEnv[envCount + 1] = NULL;
 
 
-	// std::cout << "}" << std::endl;
-
-	// std::cout << "-> Diego -> req.getBody():{" << req.getBody() << "}" << std::endl;
-
     int pfd[2], input_pfd[2];
     if (pipe(pfd) == -1 || pipe(input_pfd) == -1) {
         perror("pipe failed");
@@ -110,27 +106,14 @@ string	CGI::makeBody(int fdOut)
 	req.set_status_code(OK);
 	string	responseBody;
 	char buffer[BUFFER_SIZE];
-	int	finishedReading = 1;
+    ssize_t bytesRead;
 
-			// poll() setup
-	struct pollfd pollContext;
-	pollContext.fd = fdOut;
-	pollContext.events = POLLIN;
-	int	pollReturn = poll(&pollContext, 1, -1);
-	if (pollReturn == -1) {
-		req.set_status_code(INTERNAL_SERVER_ERROR);
-		close(fdOut);
-		return "";
-	}
+    lseek(fdOut, 0, SEEK_SET);
+    while ((bytesRead = read(fdOut, buffer, BUFFER_SIZE)) > 0) {
+        responseBody.append(buffer, bytesRead);
+    }
 
-	lseek(fdOut, 0, SEEK_SET);
-	while (finishedReading > 0)
-	{
-		if (pollContext.revents & POLLIN)
-			finishedReading = read(fdOut, buffer, BUFFER_SIZE);
-		if (finishedReading > 0)
-			responseBody.append(buffer, finishedReading);
-	}
+
 	close(fdOut);
         // changed to comply with c++98
 	// req.env["CONTENT_LENGTH"] = std::to_string(responseBody.length());

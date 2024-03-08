@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/02/25 19:10:50 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/08 11:31:38 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void Parsing::saveData(std::string dataUrl)
 
       s_default.set_name("default");
       s_default.set_new_port("8080");
-      s_default.set_host("127.0.0.1:8080");
+      s_default.set_host("127.0.0.1");
       s_default.set_root("data/www/Pages");
 
       s_default.set_body_size(500);
@@ -296,13 +296,11 @@ void Parsing::saveData(std::string dataUrl)
               {
                 throw formatWrong();
               }
-              // changed to comply with c++ 98
-              // s_tem->set_body_size(std::stoll( f_cut_space(line, line.find("body_size") + 10)));
               std::istringstream iss(f_cut_space(line, line.find("body_size") + 10));
               long long bodySize = 0;
               s_tem->set_body_size(bodySize);
 
-              
+
               server_body_size = true;
             }
             if (line.find("root") != std::string::npos)
@@ -383,18 +381,10 @@ void Parsing::saveData(std::string dataUrl)
           {
             throw formatWrong();
           }
-          // if ((this->v_servers[serve_i].get_name().length() == 0 &&
-          //   this->v_servers[serve_i].get_ports_size() == 0 &&
-          //   this->v_servers[serve_i].get_host().length() == 0 &&
-          //   this->v_servers[serve_i].get_root().length() == 0 &&
-          //   this->v_servers[serve_i].get_index().length() == 0 &&
-          //   this->v_servers[serve_i].get_error_page_size() == 0 &&
-          //   this->v_servers[serve_i].get_methods_size() == 0 ) ||
-          //   (this->v_servers[serve_i].get_host().length() == 0 ||
-          //    this->v_servers[serve_i].get_ports_size() == 0 ))
-          // {
-          //   throw formatWrong();
-          // }
+          if (this->v_servers[serve_i].get_location_size() == 0)
+          {
+            throw formatWrong();
+          }
         }
 
         this->f_save_default();
@@ -405,7 +395,7 @@ void Parsing::saveData(std::string dataUrl)
         throw formatWrong();
       }
     }
-    this->f_check_data_with_path();
+    this->f_check_data_with_path(); //error - multiple servers
     return;
   }
   catch (const std::exception &e)
@@ -728,10 +718,10 @@ void    Parsing::f_save_default(){
     }
     if (server_save.get_host().length() == 0 && print_run_default(&default_mode, 0))
     {
-      // std::cout << "-> default server -> host: 8" << std::to_string(i) << std::endl;
-      std::cout << "-> default server -> host: 8" << size_tToString(i) << std::endl;
-      // server_save.set_host("8" + std::to_string(i));
-      server_save.set_host("8" + size_tToString(i));
+      std::cout << "-> default server -> host: 127.0.0.1" << std::endl;
+      server_save.set_host("127.0.0.1");
+      // std::cout << "-> default server -> host: 8" << size_tToString(i) << std::endl;
+      // server_save.set_host("8" + size_tToString(i));
     }
     if (server_save.get_root().length() == 0 && print_run_default(&default_mode, 0))
     {
