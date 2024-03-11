@@ -94,10 +94,10 @@ void listenner::run(Server _server)
 						cout << receivedData << endl;
 						continue;
 					}
-					// std::cout << RED << "[RECV] : \n" << RESET <<  receivedData << std::endl;
+					std::cout << RED << "[RECV] : \n" << RESET <<  receivedData << std::endl;
 					try {
 						Req request(_server, receivedData, fds[i].fd, this->_location, *this);
-						// std::cout << RED << "[SENT] : \n" << RESET <<  request.responseString << std::endl;
+						std::cout << RED << "[SENT] : \n" << RESET <<  request.responseString << std::endl;
 						ssize_t bytesSent = send(fds[i].fd, request.responseString.c_str(), request.responseString.length(), 0);
 						if ( bytesSent < 0)
 						{
