@@ -11,6 +11,20 @@
 #include <cstring>
 #include <string>
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <arpa/inet.h>
+#include <dirent.h>
+#include <sys/stat.h>
+
 #define PATH_TO_INDEX "data/www/Pages/index.html"
 #define PATH_TO_ROOT "data/www/Pages"
 #define PATH_TO_CGI "CGI/bin"
@@ -85,9 +99,12 @@ private:
 	bool					_isValidCharURI(uint8_t ch);
 	bool					_validBodySize(int bodySize);
 
+
 	// Diego - location
 	std::string _extractURL(std::string &dataVector);
 	bool _run_location(std::string name, std::string httpRequest);
+	// Server folder
+	std::string listDirectoryContents(const char *dirPath);
 
 public:
 	Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_);

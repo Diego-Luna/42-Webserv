@@ -15,12 +15,18 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 	}
 	_ReqStream.str(_http_Req);
 	if (!_ReqStream.good())
-		{
+	{
+		std::cout << "-> Paco -> error:" << std::endl;
 		_error = true;
 		set_status_code(INTERNAL_SERVER_ERROR);
 	}
 	if (_error == false)
+	{
+		std::cout << "---> Paco --> parseHeader" << std::endl;
 		parseHeader();
+	}
+
+	std::cout << "---> Paco --> Req : error: {" << _error << "}" << std::endl;
 
 	if (_isUpload == true && _error == false)
 	{
@@ -34,12 +40,54 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 	{
 		CGI	Cgi(*this);
 	} else {
-		if (_run_location(_extractURL(httpRequest), httpRequest) == false){
-			Response response(*this);
-		} else {
-			status_code = 200;
-			Response response(*this, this->_data_file);
-		}
+
+		// Obtiene el índice del servidor asociado
+    std::string index = _server.get_index();
+
+    // Verifica si el índice termina en ".html"
+    bool isHtmlFile = index.length() >= 5 && index.substr(index.length() - 5) == ".html";
+
+		std::vector<std::string> data = split(httpRequest, ' ');
+		std::cout << "--> paco : httpRequest.find(' ')={" << data[1] << "}" << std::endl;
+
+    if (!isHtmlFile && data[1] == "/") {
+        // El índice no es un archivo .html, lista el contenido del directorio
+        // Asume que el índice es el nombre del directorio dentro de la raíz del servidor
+        std::string dirPath = _server.get_root() + "/" + index;
+				std:: string listDirectory = listDirectoryContents(dirPath.c_str());
+				if (listDirectory != "Error")
+				{
+					status_code = 200;
+					env["FILE_NAME"] = "config-root-list-directory-server-dluna-lo's-and-gmiyakaw-team";
+					Response response(*this, listDirectory);
+				}
+    } else {
+
+				std::cout << "--> Diego antes del if{" << env["FILE_NAME"] << "}" << std::endl;
+				if (!isHtmlFile)
+				{
+					env["FILE_NAME"] = _server.get_root() + _server.get_index() + split(httpRequest, ' ')[1];
+					if (f_check_path_line(env["FILE_NAME"], NULL)){
+						status_code = 200;
+					}
+				}
+
+        // Maneja la lógica existente
+        if (_run_location(_extractURL(httpRequest), httpRequest) == false){
+						std::cout << "--> Diego dentro del if{" << env["FILE_NAME"] << "}" << std::endl;
+            Response response(*this);
+        } else {
+						std::cout << "--> Diego dentro del else {" << env["FILE_NAME"] << "}" << std::endl;
+            status_code = 200;
+            Response response(*this, this->_data_file);
+        }
+    }
+		// if (_run_location(_extractURL(httpRequest), httpRequest) == false){
+		// 	Response response(*this);
+		// } else {
+		// 	status_code = 200;
+		// 	Response response(*this, this->_data_file);
+		// }
 	}
 }
 
@@ -441,6 +489,8 @@ bool Req::_run_location(std::string name, std::string httpRequest){
       return false;
   }
 
+	std::cout << "---> Paco --> _run_location : error: {" << _error << "}" << std::endl;
+
 	for (size_t i = 0; i < _server.get_location_size(); i++) {
 		if (_server.get_location(i).get_name() == name) {
 
@@ -478,4 +528,35 @@ bool Req::_run_location(std::string name, std::string httpRequest){
 
 std::string	Req::return_map_server_pages(std::string index){
 	return _server.get_error_page(index);
+}
+
+
+/**************************************************************************
+		Server folder
+**************************************************************************/
+std::string Req::listDirectoryContents(const char *dirPath) {
+    DIR *dir;
+    struct dirent *ent;
+    // char message[BUFFER_SIZE] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<html><body><h1>Directory Listing</h1><ul>";
+    char message[BUFFER_SIZE] = "";
+
+    if ((dir = opendir(dirPath)) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            if (ent->d_name[0] != '.') { // Ignore hidden files (and parent/current directories)
+                strcat(message, "<li><a href=\"");
+                strcat(message, ent->d_name);
+                strcat(message, "\">");
+                strcat(message, ent->d_name);
+                strcat(message, "</a></li>");
+            }
+        }
+        closedir(dir);
+    } else {
+        // Could not open directory
+        perror("Could not open directory");
+        return "Error";
+    }
+
+    strcat(message, "</ul></body></html>");
+		return message;
 }
