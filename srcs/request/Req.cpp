@@ -45,7 +45,10 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
     // Verifica si el índice termina en ".html"
     bool isHtmlFile = index.length() >= 5 && index.substr(index.length() - 5) == ".html";
 
-    if (!isHtmlFile) {
+		std::vector<std::string> data = split(httpRequest, ' ');
+		std::cout << "--> paco : httpRequest.find(' ')={" << data[1] << "}" << std::endl;
+
+    if (!isHtmlFile && data[1] == "/") {
         // El índice no es un archivo .html, lista el contenido del directorio
         // Asume que el índice es el nombre del directorio dentro de la raíz del servidor
         std::string dirPath = _server.get_root() + "/" + index;
@@ -57,10 +60,22 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 					Response response(*this, listDirectory);
 				}
     } else {
+
+				std::cout << "--> Diego antes del if{" << env["FILE_NAME"] << "}" << std::endl;
+				if (!isHtmlFile)
+				{
+					env["FILE_NAME"] = _server.get_root() + _server.get_index() + split(httpRequest, ' ')[1];
+					if (f_check_path_line(env["FILE_NAME"], NULL)){
+						status_code = 200;
+					}
+				}
+
         // Maneja la lógica existente
         if (_run_location(_extractURL(httpRequest), httpRequest) == false){
+						std::cout << "--> Diego dentro del if{" << env["FILE_NAME"] << "}" << std::endl;
             Response response(*this);
         } else {
+						std::cout << "--> Diego dentro del else {" << env["FILE_NAME"] << "}" << std::endl;
             status_code = 200;
             Response response(*this, this->_data_file);
         }
@@ -510,7 +525,7 @@ std::string Req::listDirectoryContents(const char *dirPath) {
     if ((dir = opendir(dirPath)) != NULL) {
         while ((ent = readdir(dir)) != NULL) {
             if (ent->d_name[0] != '.') { // Ignore hidden files (and parent/current directories)
-                strcat(message, "<li><a href=\"./");
+                strcat(message, "<li><a href=\"");
                 strcat(message, ent->d_name);
                 strcat(message, "\">");
                 strcat(message, ent->d_name);
