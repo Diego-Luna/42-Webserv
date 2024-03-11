@@ -70,15 +70,21 @@ string	Response::makeHeader()
 	else if (_Req.get_status_code() == OK) {
 
 		std::fstream htmlFile(_Req.env["FILE_NAME"].c_str());
-		if (!htmlFile.is_open())
-		{
-			std::cerr << "error opening file: " << _Req.env["FILE_NAME"] << endl;
-			_Req.set_status_code(INTERNAL_SERVER_ERROR);
-			return makeErrorHeader();
+
+		if (_Req.env["FILE_NAME"] != "config-root-list-directory-server-dluna-lo's-and-gmiyakaw-team"){
+			std::cout << "--> _Req.env[FILE_NAME]:{" << _Req.env["FILE_NAME"] << "}" << std::endl;
+			std::cout << "--> _responseBody:{" << _responseBody << "}" << std::endl;
+			if (!htmlFile.is_open())
+			{
+				std::cerr << "error opening file: " << _Req.env["FILE_NAME"] << endl;
+				_Req.set_status_code(INTERNAL_SERVER_ERROR);
+				return makeErrorHeader();
+			}
+			string line;
+			while (std::getline(htmlFile, line))
+				_responseBody += line + "\r\n";
 		}
-		string line;
-		while (std::getline(htmlFile, line))
-			_responseBody += line + "\r\n";
+
 		htmlFile.close();
 		header += "Content-Type: " + _Req.env["CONTENT_TYPE"];
 		header += "\r\n";
@@ -149,12 +155,8 @@ string	Response::findErrorPage(u_int16_t statusCode)
 
 	std::stringstream convertedNumber;
   convertedNumber << statusCode;
-  // return convertedNumber.str();
 
 	std::string website = _Req.return_map_server_pages(convertedNumber.str());
-
-	std::cout << "--> Diego - statusCode : {" << convertedNumber.str() << "}"<< std::endl;
-	std::cout << "--> Diego - website : {" << website << "}"<< std::endl;
 
 	string	errorRoot = _Req.getRoot() + "/ErrorPages/";
 

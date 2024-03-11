@@ -23,7 +23,7 @@ void listDirectoryContents(int clientSocket, const char *dirPath) {
     if ((dir = opendir(dirPath)) != NULL) {
         while ((ent = readdir(dir)) != NULL) {
             if (ent->d_name[0] != '.') { // Ignore hidden files (and parent/current directories)
-                strcat(message, "<li><a href=\"");
+                strcat(message, "<li><a href=. \"");
                 strcat(message, ent->d_name);
                 strcat(message, "\">");
                 strcat(message, ent->d_name);
