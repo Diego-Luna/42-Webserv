@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:14 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/08 14:28:45 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/11 18:22:31 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ public:
     void restar_itr_error_page();
 
     size_t get_methods_size();
+    int get_body_size();
     std::string get_methods();
     std::string get_methods(int index);
     void restar_itr_methods();

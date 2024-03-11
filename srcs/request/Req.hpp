@@ -83,6 +83,7 @@ private:
 	void					_validate();
 	bool					_allValidCharsURI(string str);
 	bool					_isValidCharURI(uint8_t ch);
+	bool					_validBodySize(int bodySize);
 
 	// Diego - location
 	std::string _extractURL(std::string &dataVector);

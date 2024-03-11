@@ -3,6 +3,8 @@
 Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
 	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
 {
+
+					// cout << "server body size max: " << _server.get_body_size() << endl;
 	_error = false;
 	_isUpload = false;
 	envCGIExecve = NULL;
@@ -266,8 +268,22 @@ void	Req::_validate()
 		set_status_code(BAD_REQUEST);
 		_error = true;
 	}
+	if (_validBodySize(_server.get_body_size()) == false)
+	{
+		set_status_code(REQUEST_TOO_BIG);
+		_error = true;
+	}
+
 	set_status_code(OK);
 
+}
+
+bool	Req::_validBodySize(int bodySize) {
+	if (_server.get_body_size() == -1) // means it never got set in config, therefore any value is good
+		return true;
+	if ( std::atoi(env["CONTENT_LENGTH"].c_str()) > _server.get_body_size() * 1000000) // assumes .config is dealing in megabytes
+		return false;
+	return true;
 }
 
 bool	Req::_validPort(string host)

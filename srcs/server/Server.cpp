@@ -50,6 +50,10 @@ std::string Server::get_ports(int index){
   return this->_ports[index];
 }
 
+int Server::get_body_size() {
+  return this->_body_size;
+}
+
 std::string Server::get_host(){
   return this->_host;
 }
