@@ -129,7 +129,7 @@ string	Req::findUploadFileName(string boundary)
 		return "";
 	}
 	string::iterator it = line.begin() + line.find("filename=") + 9;
-	while (it != line.end() && *it != ' ')
+	while (it != line.end())
 	{
 		fileName += *it;
 		it++;
