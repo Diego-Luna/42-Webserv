@@ -25,6 +25,29 @@ void	Req::parseUpload(void)
 
 void	Req::createUploadFile()
 {
+	// create upload directory
+	// if (_location.uploadFolder.empty() == false) //if variable is set to be empty / not initialized
+	// {
+	// 	string directoryName = _location.get_upload_folder();
+
+	// 	// Create the directory using system command
+	// 	std::string command = "mkdir " + directoryName;
+
+	// 	int result = system(command.c_str());
+	// 	if (result != 0)
+	// 	{
+	// 		std::cerr << "error. could not create folder" << endl;
+	// 		set_status_code(INTERNAL_SERVER_ERROR);
+	// 		_error = true;
+	// 		return;
+	// 	}
+	// 	// directoryName.append("/");
+
+	// 	_fileName = directoryName + _fileName;
+	// } else {
+	// 	_fileName = PATH_TO_UPLOAD + _fileName;
+	// }
+
 	FILE	*uploadFile = fopen(_fileName.c_str(), "w");
 
 	if (uploadFile == NULL)
@@ -136,7 +159,7 @@ string	Req::findUploadFileName(string boundary)
 	}
 	fileName = trimLine(fileName);
 	stripQuotes(fileName);
-	fileName = PATH_TO_UPLOAD + fileName;
+	// fileName = PATH_TO_UPLOAD + fileName;
 	return fileName;
 }
 
