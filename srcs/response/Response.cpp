@@ -72,8 +72,6 @@ string	Response::makeHeader()
 		std::fstream htmlFile(_Req.env["FILE_NAME"].c_str());
 
 		if (_Req.env["FILE_NAME"] != "config-root-list-directory-server-dluna-lo's-and-gmiyakaw-team"){
-			std::cout << "--> _Req.env[FILE_NAME]:{" << _Req.env["FILE_NAME"] << "}" << std::endl;
-			std::cout << "--> _responseBody:{" << _responseBody << "}" << std::endl;
 			if (!htmlFile.is_open())
 			{
 				std::cerr << "error opening file: " << _Req.env["FILE_NAME"] << endl;

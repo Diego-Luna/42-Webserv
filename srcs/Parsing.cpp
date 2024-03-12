@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/12 18:50:43 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/03/12 18:53:29 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,6 @@ void Parsing::saveData(std::string dataUrl)
 
           if (l_tem->get_root().length() == 0 || l_tem->get_index().length() == 0 || l_tem->get_methods_size() == 0 || l_tem->get_upload_folder().length() == 0)
           {
-            std::cout << "-> putting default location information:" << std::endl;
             if (l_tem->get_root().length() == 0)
             {
               std::cout << "--> default location root: data/www/Pages" << std::endl;

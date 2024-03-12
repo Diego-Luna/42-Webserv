@@ -56,12 +56,10 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 		bool isHtmlFileLocation = location_index.length() >= 5 && location_index.substr(location_index.length() - 5) == ".html";
 		if (!isHtmlFileLocation && data[1] == location_check.get_name())
 		{
-			std::cout << "--> luna - > en el if de archivos" << std::endl;
 			std::string dirPath = location_check.get_root() + location_index;
 			std:: string listDirectory = listDirectoryContents(dirPath.c_str());
 			if (listDirectory != "Error")
 			{
-				std::cout << "--> luna - > en el if de no error" << std::endl;
 				status_code = 200;
 				env["CONTENT_TYPE"] =  "text/html";
 				env["FILE_NAME"] = "config-root-list-directory-server-dluna-lo's-and-gmiyakaw-team";
