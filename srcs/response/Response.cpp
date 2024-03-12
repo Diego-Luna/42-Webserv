@@ -177,6 +177,9 @@ string	Response::findErrorPage(u_int16_t statusCode)
 		case 400:
 			fileName = errorRoot + "400badRequest.html";
 			return fileName;
+		case 413:
+			fileName = errorRoot + "413fileTooBig.html";
+			return fileName;
 		default:
 			fileName = errorRoot + "500internalServerError.html";
 			return fileName;

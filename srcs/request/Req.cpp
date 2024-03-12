@@ -3,8 +3,6 @@
 Req::Req(Server _server, string httpRequest, const int fd, Location &location, listenner &listenner_)
 	: _location(location), _server(_server), _http_Req(httpRequest), _client(fd), _listenner(listenner_)
 {
-
-					cout << "server body size max: " << _server.get_body_size() << endl;
 	_error = false;
 	_isUpload = false;
 	envCGIExecve = NULL;
@@ -25,6 +23,11 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 	if (_isUpload == true && _error == false)
 	{
 		parseUpload();
+		if (_validBodySize(_server.get_body_size()) == false)
+		{
+			_error = true;
+			set_status_code(REQUEST_TOO_BIG);
+		}
 		if (_error == false)
 			createUploadFile();
 		Response response(*this);
@@ -270,9 +273,8 @@ void	Req::_validate()
 	}
 	if (_validBodySize(_server.get_body_size()) == false)
 	{
-		// set_status_code(REQUEST_TOO_BIG);
-		// _error = true;
-
+		set_status_code(REQUEST_TOO_BIG);
+		_error = true;
 		std::cerr << "BODY TOO BIG ERROR" << endl;
 	}
 

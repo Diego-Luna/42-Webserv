@@ -6,7 +6,7 @@
 /*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/08 14:28:22 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/11 19:04:40 by gmiyakaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,10 +269,14 @@ void Parsing::saveData(std::string dataUrl)
               throw formatWrong();
             }
             std::istringstream iss(f_cut_space(line, line.find("body_size") + 10));
-            long long bodySize = 0;
+            std::string bodySizeString;
+            iss >> bodySizeString;
+            if (bodySizeString.find_first_not_of("0123456789") != std::string::npos) {
+             // Not all characters are digits, handle the error
+                throw formatWrong();
+            }
+            long long bodySize = std::atoi(bodySizeString.c_str());
             s_tem->set_body_size(bodySize);
-
-
             server_body_size = true;
           }
           if (line.find("root") != std::string::npos)
