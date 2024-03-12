@@ -506,7 +506,7 @@ bool Req::_run_location(std::string name, std::string httpRequest){
 		if (_server.get_location(i).get_name() == name) {
 
 			bool find_method_http = false;
-			for (size_t ii = 0; ii < _server.get_location(i).get_methods_size(); ii++)
+			for (size_t ii = 0; ii < _server.get_location(i).get_methods_size() && find_method_http == false; ii++)
 			{
 				if (method_http == _server.get_location(i).get_methods(ii))
 					find_method_http = true;
@@ -518,15 +518,15 @@ bool Req::_run_location(std::string name, std::string httpRequest){
 			env["FILE_NAME"] = filePath;
 			env["SERVER_PROTOCOL"] = "HTTP/1.1";
 
-			std::ifstream file(filePath.c_str());
-    	if (!file.is_open()) {
-    	  return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nFile not found.";
-			}
+			// std::ifstream file(filePath.c_str());
+    		// if (!file.is_open()) {
+    	  		// return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nFile not found.";
+			// }
 
-			std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-			file.close();
+			// std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+			// file.close();
 
-			_data_file = content;
+			// _data_file = content;
 			return true;
     }
   }
