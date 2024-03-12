@@ -26,24 +26,33 @@ void	Req::parseUpload(void)
 void	Req::createUploadFile()
 {
 	// create upload directory
-	if (_location.get_upload_folder().empty() == false) //if variable is set to be empty / not initialized
+	if (_pathInfo == _location.get_name())
 	{
-		string directoryName = _location.get_upload_folder();
-
-		// Create the directory using system command
-		std::string command = "mkdir " + directoryName;
-		int result = system(command.c_str());
-		if (result != 0)
+		std::cout << "--≥ Luna :" << split(_http_Req, ' ')[1]  << std::endl;
+		if (_location.get_upload_folder() != "") //if variable is set to be empty / not initialized
 		{
-			std::cerr << "error. could not create folder" << endl;
-			set_status_code(INTERNAL_SERVER_ERROR);
-			_error = true;
-			return;
-		}
-		_fileName = directoryName + _fileName;
-	} else {
-		_fileName = PATH_TO_UPLOAD + _fileName;
-	}
+			string directoryName = _location.get_upload_folder();
+
+			// Create the directory using system command
+			// check if it already exists
+			if (access(directoryName.c_str(), F_OK) == -1)
+			{
+
+				std::string command = "mkdir " + directoryName;
+				int result = std::system(command.c_str());
+				if (result != 0)
+				{
+					std::cerr << "error. could not create folder" << endl;
+					set_status_code(INTERNAL_SERVER_ERROR);
+					_error = true;
+					return;
+				}
+			}
+			_fileName = directoryName + _fileName;
+		} else
+			_fileName = PATH_TO_UPLOAD + _fileName;
+	} else
+			_fileName = PATH_TO_UPLOAD + _fileName;
 
 	FILE	*uploadFile = fopen(_fileName.c_str(), "w");
 

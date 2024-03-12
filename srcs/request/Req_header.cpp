@@ -122,6 +122,15 @@ bool	Req::_validPath(string &line)
 	}
 	if (line.compare(0, 27, "POST /uploadSuccessful.html") == 0){
 		_isUpload = true;
+
+		string::iterator it = line.begin() + line.find('/') + 1;
+		while (*it != '/')
+			it++;
+		while (*it != ' ' && it != line.end() && *it != '?')
+		{
+			_pathInfo += *it;
+			it++;
+		}
 		return true;
 	}
 	size_t	extensionEnd = _findExtensionEnd(line);
@@ -159,7 +168,7 @@ size_t	 Req::_findExtensionEnd(string &line)
 			if (*it == ' ')
 				break;
 			if (*it == '.') {
-				while (it != line.end() && *it != ' ') {
+				while (it != line.end() && *it != ' ' && *it != '/') {
 					_extension += *it;
 					++it;
 				}

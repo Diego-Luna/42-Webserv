@@ -314,16 +314,16 @@ void	Req::_validate()
 		_error = true;
 		return;
 	}
-	if (_pathInfo != "")
-	{
-		if (access(_pathInfo.c_str(), F_OK) != 0)
-		{
-			perror("Path Info file not found");
-			set_status_code(BAD_REQUEST);
-			_error = true;
-			return;
-		}
-	}
+	// if (_pathInfo != "")
+	// {
+	// 	if (access(_pathInfo.c_str(), F_OK) != 0)
+	// 	{
+	// 		perror("Path Info file not found");
+	// 		set_status_code(BAD_REQUEST);
+	// 		_error = true;
+	// 		return;
+	// 	}
+	// }
 	if (_validPort(env["HOST"]) == false)
 	{
 		set_status_code(BAD_REQUEST);
