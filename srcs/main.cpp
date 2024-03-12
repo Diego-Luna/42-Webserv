@@ -6,7 +6,7 @@
 /*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 13:22:29 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/08 14:22:42 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/03/12 15:17:13 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ int main(int argc, char const *argv[])
 		parsing.checkData(argv[1]);
 		if (parsing.check_error())
 			return (1);
-		parsing.saveData(argv[1]);
-		if (parsing.check_error())
-			return (1);
+		// parsing.saveData(argv[1]);
+		// if (parsing.check_error())
+		// 	return (1);
 	}
 	else {
 
@@ -70,20 +70,20 @@ int main(int argc, char const *argv[])
 
 	parsing.seeData();
 
-	Req::innitMime();
+	// Req::innitMime();
 
-	for (size_t i = 0; i < parsing.get_server_size(); i++)
-	{
-		parsing.get_ref_server(i).initPorts();
-	}
+	// for (size_t i = 0; i < parsing.get_server_size(); i++)
+	// {
+	// 	parsing.get_ref_server(i).initPorts();
+	// }
 
-	while (true) {
-    for (size_t i = 0; i < parsing.get_server_size(); i++) {
-      Server &server = parsing.get_ref_server(i);
-      for (size_t j = 0; j < server.get_ports_size(); j++) {
-				server.get_listenners(j).run(server);
-			}
-		}
-	}
+	// while (true) {
+    // 	for (size_t i = 0; i < parsing.get_server_size(); i++) {
+    // 		Server &server = parsing.get_ref_server(i);
+	// 		for (size_t j = 0; j < server.get_ports_size(); j++) {
+	// 			server.get_listenners(j).run(server);
+	// 		}
+	// 	}
+	// }
 	return 0;
 }

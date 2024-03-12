@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/11 19:04:40 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/12 15:18:39 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,16 +82,16 @@ bool Parsing::checkData(std::string dataUrl){
         throw fileNotFoundWrong();
     }
 
-    bool find_server = false;
-    bool find_locacation = false;
-    bool find_new_line = false;
+    // bool find_server = false;
+    // bool find_locacation = false;
+    // bool find_new_line = false;
 
-    // check line for line
+    // // check line for line
     while (std::getline(archivo, line)){
       // check ";"
       f_check_final_line(line);
       // check "{}"
-      f_check_close(line, &find_server, &find_locacation, &find_new_line);
+      // f_check_close(line, &find_server, &find_locacation, &find_new_line);
       // check proms and values
       f_check_proms(line);
      }
@@ -197,17 +197,17 @@ void Parsing::saveData(std::string dataUrl)
             std::cout << "-> putting default location information:" << std::endl;
             if (l_tem->get_root().length() == 0)
             {
-              std::cout << "--> default root: data/www/Pages" << std::endl;
-              l_tem->set_root("data/www/Pages");
+              std::cout << "--> default location root: data/www/Pages" << std::endl;
+              l_tem->set_root("data/www/Pages/");
             }
             if (l_tem->get_index().length() == 0)
             {
-              std::cout << "--> default index: 400badRequest.html;" << std::endl;
-              l_tem->set_index("400badRequest.html;");
+              std::cout << "--> default location index: index.html" << std::endl;
+              l_tem->set_index("index.html");
             }
             if (l_tem->get_methods_size() == 0)
             {
-              std::cout << "--> default method: GET" << std::endl;
+              std::cout << "--> default location method: GET" << std::endl;
               l_tem->set_new_method("GET");
             }
           }
@@ -285,7 +285,8 @@ void Parsing::saveData(std::string dataUrl)
             {
               throw formatWrong();
             }
-            s_tem->set_root(f_cut_space(line, line.find("root") + 5));
+            // s_tem->set_root(f_cut_space(line, line.find("root") + 5));
+            s_tem->set_root(addSlashIfNeeded(f_cut_space(line, line.find("root") + 5)));
           }
           if (line.find("index") != std::string::npos)
           {
@@ -310,7 +311,8 @@ void Parsing::saveData(std::string dataUrl)
             {
               throw formatWrong();
             }
-            l_tem->set_root(f_cut_space(line, line.find("root") + 5));
+            // l_tem->set_root(f_cut_space(line, line.find("root") + 5));
+            l_tem->set_root(addSlashIfNeeded(f_cut_space(line, line.find("root") + 5)));
           }
           // methods
           if (line.find("methods") != std::string::npos)
@@ -370,7 +372,7 @@ void Parsing::saveData(std::string dataUrl)
     {
       throw formatWrong();
     }
-    this->f_check_data_with_path(); //error - multiple servers
+    this->f_check_data_with_path();
     return;
   }
   catch (const std::exception &e)
@@ -646,6 +648,16 @@ void    Parsing::f_check_data_with_path(){
         }
       }
     }
+
+    // check the location
+    for (size_t l_i = 0; l_i < server_check.get_location_size(); l_i++)
+    {
+      Location location_check = server_check.get_location(l_i);
+      std::cout << "--> Diego error in locations ={" <<  location_check.get_root() + location_check.get_index() << "}" << std::endl;
+      if (f_check_path_line(location_check.get_root() + location_check.get_index(), &no_important) == false)
+        throw fileNotFoundWrong();
+    }
+
   }
 }
 
@@ -839,4 +851,12 @@ Server &Parsing::get_ref_server(size_t index)
 		throw std::invalid_argument("Index out of range");
 	}
 	return this->v_servers[index];
+}
+
+
+std::string Parsing::addSlashIfNeeded(const std::string input){
+  if (input.empty() || input.back() != '/')
+    return input + '/';
+  else
+    return input;
 }

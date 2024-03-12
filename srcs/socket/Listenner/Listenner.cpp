@@ -103,7 +103,7 @@ void listenner::run(Server _server)
 						{
 							cout << "bytes sent to client: " << bytesSent << endl;
 							internalError(fds[i].fd);
-							continue; 
+							continue;
 						}
 					}
 					catch (std::exception &e) {

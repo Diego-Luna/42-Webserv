@@ -40,6 +40,8 @@ private:
     void    f_save_multiple_values_in_server(std::string path, size_t start, Server *ser, std::string metod);
     void    f_save_multiple_values_in_server_2(std::string path, size_t start, Server *ser);
 
+    std::string addSlashIfNeeded(const std::string input);
+
     // > default path
     bool    f_check_path(std::string path);
     void    f_default_config(std::string dataUrl);

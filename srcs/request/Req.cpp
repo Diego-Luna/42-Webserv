@@ -50,30 +50,53 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
     // Verifica si el índice termina en ".html"
     bool isHtmlFile = index.length() >= 5 && index.substr(index.length() - 5) == ".html";
 
-		std::vector<std::string> data = split(httpRequest, ' ');
-		std::cout << "--> paco : httpRequest.find(' ')={" << data[1] << "}" << std::endl;
+	std::vector<std::string> data = split(httpRequest, ' ');
+	std::cout << "--> paco : httpRequest.find(' ')={" << data[1] << "}" << std::endl;
+
+	for (size_t l_size= 0; l_size < _server.get_location_size(); l_size++)
+	{
+		Location location_check = _server.get_location(l_size);
+		std::string location_index = location_check.get_index();
+		bool isHtmlFileLocation = location_index.length() >= 5 && location_index.substr(location_index.length() - 5) == ".html";
+		if (!isHtmlFileLocation && data[1] == location_check.get_name())
+		{
+			std::cout << "--> luna - > en el if de archivos" << std::endl;
+			std::string dirPath = location_check.get_root() + location_index;
+			std:: string listDirectory = listDirectoryContents(dirPath.c_str());
+			if (listDirectory != "Error")
+			{
+				std::cout << "--> luna - > en el if de no error" << std::endl;
+				status_code = 200;
+				env["CONTENT_TYPE"] =  "text/html";
+				env["FILE_NAME"] = "config-root-list-directory-server-dluna-lo's-and-gmiyakaw-team";
+				Response response(*this, listDirectory);
+			}
+			return;
+		}
+	}
 
     if (!isHtmlFile && data[1] == "/") {
         // El índice no es un archivo .html, lista el contenido del directorio
         // Asume que el índice es el nombre del directorio dentro de la raíz del servidor
         std::string dirPath = _server.get_root() + "/" + index;
-				std:: string listDirectory = listDirectoryContents(dirPath.c_str());
-				if (listDirectory != "Error")
-				{
-					status_code = 200;
-					env["FILE_NAME"] = "config-root-list-directory-server-dluna-lo's-and-gmiyakaw-team";
-					Response response(*this, listDirectory);
-				}
-    } else {
+		std:: string listDirectory = listDirectoryContents(dirPath.c_str());
+		if (listDirectory != "Error")
+		{
+			status_code = 200;
+			env["FILE_NAME"] = "config-root-list-directory-server-dluna-lo's-and-gmiyakaw-team";
+			Response response(*this, listDirectory);
+		}
+	}
+    else {
 
-				std::cout << "--> Diego antes del if{" << env["FILE_NAME"] << "}" << std::endl;
-				if (!isHtmlFile)
-				{
-					env["FILE_NAME"] = _server.get_root() + _server.get_index() + split(httpRequest, ' ')[1];
-					if (f_check_path_line(env["FILE_NAME"], NULL)){
-						status_code = 200;
-					}
-				}
+		std::cout << "--> Diego antes del if{" << env["FILE_NAME"] << "}" << std::endl;
+		if (!isHtmlFile)
+		{
+			env["FILE_NAME"] = _server.get_root() + _server.get_index() + split(httpRequest, ' ')[1];
+			if (f_check_path_line(env["FILE_NAME"], NULL)){
+				status_code = 200;
+			}
+		}
 
         // Maneja la lógica existente
         if (_run_location(_extractURL(httpRequest), httpRequest) == false){
@@ -85,12 +108,6 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
             Response response(*this, this->_data_file);
         }
     }
-		// if (_run_location(_extractURL(httpRequest), httpRequest) == false){
-		// 	Response response(*this);
-		// } else {
-		// 	status_code = 200;
-		// 	Response response(*this, this->_data_file);
-		// }
 	}
 }
 
