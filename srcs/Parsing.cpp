@@ -6,7 +6,7 @@
 /*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/12 18:44:53 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/03/12 18:50:43 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,9 @@ bool Parsing::checkData(std::string dataUrl){
           throw fileNotFoundWrong();
       }else
         throw fileNotFoundWrong();
+    }
+    else{
+      throw fileNotFoundWrong();
     }
 
     bool find_server = false;
