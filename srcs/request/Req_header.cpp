@@ -47,15 +47,12 @@ void	Req::parseFirstLine(void)
 		return;
 	}
 
-	std::cout << "---> Paco --> parseFirstLine error: {" << _error << "}" << std::endl;
 	if (!_validPath(line))
 	{
-		std::cout << "---> Paco --> inside to _validPath" << std::endl;
 		set_status_code(NOT_FOUND);
 		_error = true;
 		return;
 	}
-	std::cout << "---> Paco --> parseFirstLine 2 error: {" << _error << "}" << std::endl;
 	if (_isUpload == true && _error == false)
 		return;
 	if (_error == false)

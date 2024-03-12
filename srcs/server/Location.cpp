@@ -7,6 +7,7 @@ Location::Location()
   this->_name = "";
   this->_root = "";
   this->_index = "";
+  this->_upload_folder = "";
   this->_autoindex = true;
 }
 
@@ -29,6 +30,11 @@ std::string Location::get_root(){
 std::string Location::get_index(){
   return this->_index;
 }
+
+std::string Location::get_upload_folder(){
+  return this->_upload_folder;
+}
+
 std::string Location::get_methods(){
   std::string methods = *this->itr_methods;
   if (this->itr_methods == this->_methods.end())
@@ -63,6 +69,10 @@ void Location::set_index(std::string index){
   this->_index = index;
 }
 
+void Location::set_upload_folder(std::string _upload_folder){
+  this->_upload_folder = _upload_folder;
+}
+
 void Location::set_new_method(std::string method){
   this->_methods.push_back(method);
 }
@@ -81,6 +91,7 @@ std::ostream& operator<<(std::ostream& out, Location& src) {
     out << "Location name:" << src.get_name() << "\n";
     out << "Location root:" << src.get_root() << "\n";
     out << "Location index:" << src.get_index() << "\n";
+    out << "Location upload_folder:" << src.get_upload_folder() << "\n";
 
     for (size_t i = 0; i < src.get_methods_size(); i++)
     {

@@ -6,7 +6,7 @@
 /*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/12 15:18:39 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/03/12 15:53:33 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,16 +82,16 @@ bool Parsing::checkData(std::string dataUrl){
         throw fileNotFoundWrong();
     }
 
-    // bool find_server = false;
-    // bool find_locacation = false;
-    // bool find_new_line = false;
+    bool find_server = false;
+    bool find_locacation = false;
+    bool find_new_line = false;
 
     // // check line for line
     while (std::getline(archivo, line)){
       // check ";"
       f_check_final_line(line);
       // check "{}"
-      // f_check_close(line, &find_server, &find_locacation, &find_new_line);
+      f_check_close(line, &find_server, &find_locacation, &find_new_line);
       // check proms and values
       f_check_proms(line);
      }
@@ -192,7 +192,7 @@ void Parsing::saveData(std::string dataUrl)
           if (l_tem->get_name().length() == 1)
             throw formatWrong();
 
-          if (l_tem->get_root().length() == 0 || l_tem->get_index().length() == 0 || l_tem->get_methods_size() == 0)
+          if (l_tem->get_root().length() == 0 || l_tem->get_index().length() == 0 || l_tem->get_methods_size() == 0 || l_tem->get_upload_folder().length() == 0)
           {
             std::cout << "-> putting default location information:" << std::endl;
             if (l_tem->get_root().length() == 0)
@@ -209,6 +209,11 @@ void Parsing::saveData(std::string dataUrl)
             {
               std::cout << "--> default location method: GET" << std::endl;
               l_tem->set_new_method("GET");
+            }
+            if (l_tem->get_upload_folder().length() == 0)
+            {
+              std::cout << "--> default upload folder :" <<  l_tem->get_name() << std::endl;
+              l_tem->set_upload_folder(l_tem->get_name().substr(1));
             }
           }
           s_tem->set_new_location(*l_tem);
@@ -313,6 +318,16 @@ void Parsing::saveData(std::string dataUrl)
             }
             // l_tem->set_root(f_cut_space(line, line.find("root") + 5));
             l_tem->set_root(addSlashIfNeeded(f_cut_space(line, line.find("root") + 5)));
+          }
+
+          if (line.find("upload_folder") != std::string::npos)
+          {
+            if (l_tem->get_upload_folder().length() != 0)
+            {
+              throw formatWrong();
+            }
+            // l_tem->set_root(f_cut_space(line, line.find("root") + 5));
+            l_tem->set_upload_folder(addSlashIfNeeded(f_cut_space(line, line.find("upload_folder") + 14)));
           }
           // methods
           if (line.find("methods") != std::string::npos)
@@ -653,7 +668,6 @@ void    Parsing::f_check_data_with_path(){
     for (size_t l_i = 0; l_i < server_check.get_location_size(); l_i++)
     {
       Location location_check = server_check.get_location(l_i);
-      std::cout << "--> Diego error in locations ={" <<  location_check.get_root() + location_check.get_index() << "}" << std::endl;
       if (f_check_path_line(location_check.get_root() + location_check.get_index(), &no_important) == false)
         throw fileNotFoundWrong();
     }
@@ -761,9 +775,10 @@ void    Parsing::f_check_repeat() {
       Location location_check = server_check.get_location(j);
       for (size_t jj = j + 1; jj < server_check.get_location_size(); jj++){
         Location location_compare = server_check.get_location(jj);
-        if (location_check.get_name() == location_compare.get_name()){
+        if (location_check.get_name() == location_compare.get_name())
           throw formatWrong();
-        }
+        if (location_check.get_upload_folder() == location_compare.get_upload_folder())
+          throw formatWrong();
       }
     }
   }

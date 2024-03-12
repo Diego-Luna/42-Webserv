@@ -17,6 +17,10 @@ void Parsing::f_check_proms(std::string line){
     f_run_each_words(line, &num_worlds, line.find("host") + 4, &f_check_port) == true &&
     num_worlds == 1 && f_check_clean_line(line, "host") == true){
     return ;
+  }else if (f_counter_clean_worlds(line, "upload_folder") == 1 &&
+    f_run_each_words(line, &num_worlds, line.find("upload_folder") + 13, &f_check_nothing) == true &&
+    num_worlds == 1 && f_check_clean_line(line, "upload_folder") == true){
+    return ;
   }else if (f_counter_clean_worlds(line, "server_name") == 1 &&
     f_run_each_words(line, &num_worlds, line.find("server_name") + 12, &f_check_nothing) == true &&
     num_worlds == 1 && f_check_clean_line(line, "server_name") == true){

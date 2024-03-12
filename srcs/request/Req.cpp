@@ -14,17 +14,14 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 	_ReqStream.str(_http_Req);
 	if (!_ReqStream.good())
 	{
-		std::cout << "-> Paco -> error:" << std::endl;
 		_error = true;
 		set_status_code(INTERNAL_SERVER_ERROR);
 	}
 	if (_error == false)
 	{
-		std::cout << "---> Paco --> parseHeader" << std::endl;
 		parseHeader();
 	}
 
-	std::cout << "---> Paco --> Req : error: {" << _error << "}" << std::endl;
 
 	if (_isUpload == true && _error == false)
 	{
@@ -51,7 +48,6 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
     bool isHtmlFile = index.length() >= 5 && index.substr(index.length() - 5) == ".html";
 
 	std::vector<std::string> data = split(httpRequest, ' ');
-	std::cout << "--> paco : httpRequest.find(' ')={" << data[1] << "}" << std::endl;
 
 	for (size_t l_size= 0; l_size < _server.get_location_size(); l_size++)
 	{
@@ -89,7 +85,6 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 	}
     else {
 
-		std::cout << "--> Diego antes del if{" << env["FILE_NAME"] << "}" << std::endl;
 		if (!isHtmlFile)
 		{
 			env["FILE_NAME"] = _server.get_root() + _server.get_index() + split(httpRequest, ' ')[1];
@@ -100,10 +95,8 @@ Req::Req(Server _server, string httpRequest, const int fd, Location &location, l
 
         // Maneja la lógica existente
         if (_run_location(_extractURL(httpRequest), httpRequest) == false){
-						std::cout << "--> Diego dentro del if{" << env["FILE_NAME"] << "}" << std::endl;
             Response response(*this);
         } else {
-						std::cout << "--> Diego dentro del else {" << env["FILE_NAME"] << "}" << std::endl;
             status_code = 200;
             Response response(*this, this->_data_file);
         }
@@ -508,7 +501,6 @@ bool Req::_run_location(std::string name, std::string httpRequest){
       return false;
   }
 
-	std::cout << "---> Paco --> _run_location : error: {" << _error << "}" << std::endl;
 
 	for (size_t i = 0; i < _server.get_location_size(); i++) {
 		if (_server.get_location(i).get_name() == name) {

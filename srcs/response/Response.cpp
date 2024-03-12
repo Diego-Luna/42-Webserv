@@ -164,7 +164,6 @@ string	Response::findErrorPage(u_int16_t statusCode)
 		// website
 		string	errorRoot = _Req.getRoot();
 		fileName = errorRoot + website;
-		std::cout << "--> Diego - fileName : {" << fileName << "}"<< std::endl;
 		return fileName;
 	}
 
