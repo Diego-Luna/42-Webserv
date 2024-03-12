@@ -6,7 +6,7 @@
 /*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/12 15:53:33 by dluna-lo         ###   ########.fr       */
+/*   Updated: 2024/03/12 15:57:03 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,7 @@ void Parsing::saveData(std::string dataUrl)
             if (l_tem->get_upload_folder().length() == 0)
             {
               std::cout << "--> default upload folder :" <<  l_tem->get_name() << std::endl;
-              l_tem->set_upload_folder(l_tem->get_name().substr(1));
+              l_tem->set_upload_folder(l_tem->get_name().substr(1) + "/");
             }
           }
           s_tem->set_new_location(*l_tem);
