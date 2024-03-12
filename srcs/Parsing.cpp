@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmiyakaw <gmiyakaw@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dluna-lo <dluna-lo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:18:08 by dluna-lo          #+#    #+#             */
-/*   Updated: 2024/03/12 17:16:04 by gmiyakaw         ###   ########.fr       */
+/*   Updated: 2024/03/12 18:44:53 by dluna-lo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -777,7 +777,7 @@ void    Parsing::f_check_repeat() {
         Location location_compare = server_check.get_location(jj);
         if (location_check.get_name() == location_compare.get_name())
           throw formatWrong();
-        if (location_check.get_upload_folder() == location_compare.get_upload_folder())
+        if (!location_check.get_upload_folder().empty() && location_check.get_upload_folder() == location_compare.get_upload_folder())
           throw formatWrong();
       }
     }
